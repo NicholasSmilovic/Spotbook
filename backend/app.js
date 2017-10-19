@@ -1,46 +1,41 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+let express = require('express')
+var router = express.Router();
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+let request = require('request') // "Request" library
+let querystring = require('querystring')
+let cookieParser = require('cookie-parser')
+require('dotenv').config()
 
-var app = express();
+let app = express()
+app.set('view engine', 'ejs');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'express');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '.../public')));
+let PORT = process.env.PORT || 8080
 
-app.use('/', index);
-app.use('/users', users);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+let client_id = process.env.clientID // Your client id
+let client_secret = process.env.clientSecret; // Your secret
+let redirect_uri = `http://localhost:3000/spotify/callback` // Your redirect uri
+let app_uri = `http://localhost:3001`
+
+app.use(express.static(__dirname + '/public'))
+.use(cookieParser());
+
+
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+}
+app.use(allowCrossDomain)
+
+const spotifyRoutes = require("./routes/spotify");
+app.use("/spotify", spotifyRoutes);
+
+
+app.listen(PORT, () => { //listen on the port 8080 and let node know server started running
+  console.log(`Example listening on port ${PORT}`);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error.ejs');
-});
-
-module.exports = app;
