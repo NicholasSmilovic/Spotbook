@@ -258,7 +258,7 @@ let user_tracks7 = {
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
   return Promise.all([
-    knex('user_tracks').del(),
+   knex('user_tracks').del(),
     knex('artist_tracks').del(),
     knex('playlists').del(),
     knex('users').del(),
