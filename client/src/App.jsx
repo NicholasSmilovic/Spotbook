@@ -5,8 +5,9 @@ import {
   Link
 } from 'react-router-dom'
 
-import User from './User.jsx';
-import Playlist from './Playlist.jsx';
+import User from './Users/User.jsx';
+import Playlist from './Playlists/Playlist.jsx';
+import Landing from './Dashboard/Landing.jsx';
 
 const App = () => (
   <Router >
@@ -19,7 +20,7 @@ const App = () => (
 
       <hr/>
 
-      <Route exact path="/" component={Home}/>
+      <Route exact path="/" component={Landing}/>
       <Route path="/users" component={User}/>
       <Route path="/playlists" component={Playlist}/>
     </div>
