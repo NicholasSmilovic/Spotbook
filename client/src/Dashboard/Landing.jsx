@@ -7,7 +7,6 @@ class Landing extends Component{
   render (){
     return(
       <div>
-        Hello from Landing Page
         < SpotifyLogin />
       </div>
       )
