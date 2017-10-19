@@ -38,7 +38,8 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable('playlists', function (table) {
       table.increments('id').primary().unsigned();
       table.string('playlist_name');
-      table.string('spotify_id');
+      table.integer('spotify_owner_id').unsigned().references('id').inTable('users');
+      table.string('spotify_playlist_id');
       table.timestamps();
     }),
     knex.schema.createTable('users_tracks', function (table) {
