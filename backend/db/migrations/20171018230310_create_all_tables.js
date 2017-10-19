@@ -13,7 +13,7 @@ exports.up = function(knex, Promise) {
       table.string('track_name');
       table.string('spotify_id');
       table.json('image_urls')
-      table.float('dancebility');
+      table.float('danceability');
       table.float('energy');
       table.float('key');
       table.float('loudness');
@@ -42,16 +42,16 @@ exports.up = function(knex, Promise) {
       table.string('spotify_playlist_id');
       table.timestamps();
     }),
-    knex.schema.createTable('users_tracks', function (table) {
-      table.increments('id').primary().unsigned();
+    knex.schema.createTable('user_tracks', function (table) {
       table.integer('user_id').unsigned().references('id').inTable('users');
       table.integer('track_id').unsigned().references('id').inTable('tracks');
+      table.primary(['user_id','track_id'])
       table.timestamps();
     }),
-    knex.schema.createTable('artists_tracks', function (table) {
-      table.increments('id').primary().unsigned();
+    knex.schema.createTable('artist_tracks', function (table) {
       table.integer('artist_id').unsigned().references('id').inTable('artists');
       table.integer('track_id').unsigned().references('id').inTable('tracks');
+      table.primary(['artist_id','track_id'])
       table.timestamps();
     })
   ])
@@ -59,11 +59,11 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
-    knex.schema.dropTable('users_tracks'),
-    knex.schema.dropTable('artists_tracks'),
+    knex.schema.dropTable('user_tracks'),
+    knex.schema.dropTable('artist_tracks'),
+    knex.schema.dropTable('playlists'),
     knex.schema.dropTable('users'),
     knex.schema.dropTable('tracks'),
-    knex.schema.dropTable('artists'),
-    knex.schema.dropTable('playlists')
+    knex.schema.dropTable('artists')
   ])
 };
