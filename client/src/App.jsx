@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom'
 
 import User from './Users/User.jsx';
-import Playlist from './Playlists/Playlist.jsx';
+import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
 
 const App = () => (
@@ -21,16 +21,10 @@ const App = () => (
       <hr/>
 
       <Route exact path="/" component={Landing}/>
+      <Route path="/playlists" component={Playlists}/>
       <Route path="/users/:id" component={User}/>
-      <Route path="/playlists" component={Playlist}/>
     </div>
   </Router>
-)
-
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
 )
 
 
