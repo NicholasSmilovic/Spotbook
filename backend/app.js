@@ -1,9 +1,15 @@
 let express = require('express')
 var router = express.Router();
-
 let request = require('request') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
+var cookieSession = require('cookie-session')
+const ENV         = process.env.ENV || "development";
+const knexConfig  = require("./knexfile");
+const knex        = require("knex")(knexConfig[ENV]);
+const morgan      = require('morgan');
+const knexLogger  = require('knex-logger');
+
 require('dotenv').config()
 
 let app = express()
@@ -30,6 +36,17 @@ var allowCrossDomain = function(req, res, next) {
   next();
 }
 app.use(allowCrossDomain)
+
+app.use(morgan('dev'));
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userId']
+}))
+app.set('trust proxy', 1) // trust first proxy
+
+const DataHelpers = require("./lib/data-helpers.js")(knex);
+console.log(DataHelpers.userHelpers.starter())
 
 const spotifyRoutes = require("./routes/spotify");
 app.use("/spotify", spotifyRoutes);

@@ -14,14 +14,14 @@ const App = () => (
     <div>
       <div className="row">
         <div className="col-sm-4"><Link to="/">Home</Link></div>
-        <div className="col-sm-4"><Link to="/users">Users</Link></div>
+        <div className="col-sm-4"><Link to="/users/1">Users</Link></div>
         <div className="col-sm-4"><Link to="/playlists">Playlists</Link></div>
       </div>
 
       <hr/>
 
       <Route exact path="/" component={Landing}/>
-      <Route path="/users" component={User}/>
+      <Route path="/users/:id" component={User}/>
       <Route path="/playlists" component={Playlist}/>
     </div>
   </Router>
