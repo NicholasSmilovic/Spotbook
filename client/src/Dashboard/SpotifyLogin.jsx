@@ -7,12 +7,7 @@ import LoginPage from './LoginPage.jsx';
 class SpotifyLogin extends Component{
   constructor(props) {
     super(props);
-
-    let query = queryHelper.queryParse(location.search)
-
     this.state = {
-      access_token:query.access_token,
-      refresh_token:query.refresh_token,
       currentUser: {}
     }
   }
@@ -20,12 +15,7 @@ class SpotifyLogin extends Component{
 
   render (){
 
-    let loggedInUser = null
-    if (this.state.access_token){
-      loggedInUser = <CurrentUser />
-    } else {
-      loggedInUser = <LoginPage />
-    }
+    let loggedInUser = <LoginPage />
 
     return(
       <div>

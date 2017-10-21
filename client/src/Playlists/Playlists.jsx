@@ -1,26 +1,20 @@
 import React, {Component} from 'react';
 import Playlist from './Playlist.jsx';
 
-import queryHelper from '../Helpers/query.jsx'
-
-
 
 class Playlists extends Component{
 
   constructor(props) {
     super(props);
-    let query = queryHelper.queryParse(location.search)
     this.state = {
-      playlists:["ayyyy"],
-      access_token:query.access_token,
-      refresh_token:query.refresh_token
+      playlists:[]
 
     }
 
   }
 
   componentDidMount() {
-    fetch ("https://api.spotify.com/v1/me/playlists", {
+    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists/6PHdQYCifpEPBZDswKpI34/tracks", {
       headers: {
         Authorization: "Bearer "+this.state.access_token
       }
@@ -37,8 +31,11 @@ class Playlists extends Component{
   }
 
   render (){
-    const renderPlaylists = this.state.playlists.map((playlist)=>{
-      return < Playlist playlist={playlist} index={key}/>
+    const renderPlaylists = this.state.playlists.map((playlist, index)=>{
+      if(this.state.playlists) {
+        return <Playlist playlist={playlist} key={index}/>
+      }
+
     })
     return(
       <div>

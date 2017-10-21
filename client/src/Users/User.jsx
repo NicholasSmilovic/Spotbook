@@ -5,7 +5,7 @@ class User extends Component{
     return(
         <div>
         {this.props.match.params.id}
-        <h1>Hello form User :)</h1>
+          <h1>Hello form User :)</h1>
         </div>
       )
   }
