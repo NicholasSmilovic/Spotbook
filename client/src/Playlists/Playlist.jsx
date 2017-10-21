@@ -6,6 +6,7 @@ class Playlist extends Component{
   constructor(props) {
     super(props);
     this.state = {
+      songs:[],
       clicked: false
     }
 
@@ -28,23 +29,25 @@ class Playlist extends Component{
         return response.json()
       })
       .then((data) => {
-        this.setState({ playlists: data.items})
+        this.setState({ songs: data.items})
       })
 
   }
 
   render (){
-    let songs = null;
-    if (this.state.clicked) {
-
-      songs = <Songs  />
+    let renderSongs = null;
+    if(this.state.clicked && this.state.songs){
+      let renderSongs = this.state.songs.map((song, index)=>{
+        return <Song song={song} key={index}/>
+      })
     }
+
     return(
         <div>
           <button onClick = {this.toggleButton} >
             <h1>{this.props.playlist.name}</h1>
           </button>
-          {songs}
+          {renderSongs}
         </div>
       )
   }

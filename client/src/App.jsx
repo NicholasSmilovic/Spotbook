@@ -59,7 +59,7 @@ class App extends React.Component {
     }
 
     this.verifyLogin = () => {
-      fetch("https://api.spotify.com/v1/browse/categories",{
+      fetch("https://api.spotify.com/v1/me",{
         headers: {
           'Authorization': 'Bearer ' + this.state.access_token
         }
@@ -68,7 +68,7 @@ class App extends React.Component {
         return response.json()
       })
       .then((data) => {
-        if(data.categories){
+        if(data.country){
           this.setState({userState: "verified"})
           return true
         }
@@ -89,7 +89,10 @@ class App extends React.Component {
   render(){
     if(this.state.userState) {
       if(this.state.userState === "verified") {
-        return <Routes />
+        return <Routes
+                  accessToken = {this.state.access_token}
+                  refreshAccessToken = {this.refreshAccessToken}
+                  />
       }
       if(this.state.userState === "unverified") {
         return <Landing />

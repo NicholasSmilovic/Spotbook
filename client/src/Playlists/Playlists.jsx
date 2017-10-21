@@ -8,15 +8,14 @@ class Playlists extends Component{
     super(props);
     this.state = {
       playlists:[]
-
     }
-
   }
 
   componentDidMount() {
-    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists/6PHdQYCifpEPBZDswKpI34/tracks", {
+    let accessToken = this.props.accessToken
+    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists", {
       headers: {
-        Authorization: "Bearer "+this.state.access_token
+        Authorization: "Bearer " + accessToken
       }
     })
       .then((response) => {

@@ -8,11 +8,21 @@ import {
 import User from './Users/User.jsx';
 import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
+import currentUser from './Dashboard/CurrentUser.jsx'
 
 
 
 class Routes extends React.Component {
   render() {
+    const PlaylistsPage = (props) => {
+      return (
+          <Playlists
+            refreshAccessToken={this.props.refreshAccessTokens}
+            accessToken = {this.props.accessToken}
+            />
+        )
+    }
+
     return (
       <Router >
         <div>
@@ -24,8 +34,12 @@ class Routes extends React.Component {
 
           <hr/>
 
-          <Route exact path="/" component={Landing} updateTokens={this.updateTokens}/>
-          <Route path="/playlists" component={Playlists}/>
+          <Route  exact path="/"
+                  component={currentUser}
+                  refreshAccessToken={this.props.refreshAccessTokens}
+                  accessToken = {this.props.accessToken}
+                  />
+          <Route  path="/playlists" component={PlaylistsPage}/>
           <Route path="/users/:id" component={User}/>
         </div>
       </Router>
