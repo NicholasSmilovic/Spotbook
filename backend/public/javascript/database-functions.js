@@ -78,6 +78,68 @@ function getUserByID(id, callback) {
 // })
 
 
+// SELECT tracks.id FROM tracks
+//   JOIN user_tracks ON tracks.id = track_id
+//   JOIN users ON user_id = users.id
+//   WHERE users.id = 1;
+function getUserTopTracks(id, callback) {
+  knex.select('tracks.id').from('tracks')
+    .innerJoin('user_tracks', 'tracks.id', 'track_id')
+    .innerJoin('users', 'users.id', 'user_id')
+    .where('users.id', id)
+    .then((val) => {
+      let tracks = []
+      val.forEach((track => {
+        tracks.push(track)
+      }))
+      callback(tracks)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving tracks by user id ${id} from the database`)
+    })
+}
+
+// getUserTopTracks(1, function(response) {
+//   console.log(response)
+// })
+
+
+
+function getUserPlaylists(id, callback) {
+  knex.from('playlists').where('spotify_owner_id', id)
+    .then((val) => {
+      let playlists = []
+      val.forEach((playlist => {
+        playlists.push(playlist)
+      }))
+      callback(playlists)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving user ${id}'s playlists from the database`)
+    })
+}
+
+// getUserPlaylists(1, function(response) {
+//   console.log(response)
+// })
+
+
+function getUserFollows(id, callback) {
+  knex.select('following').from('users')
+    .where('id', id)
+    .then((val) => {
+      callback(val[0].following.following_array)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving user ${id}'s follows from the database`)
+    })
+}
+
+
+// getUserFollows(1, function(response) {
+//   console.log(response)
+// })
+
 
 
 
@@ -191,6 +253,35 @@ function getTrackByID(id, callback) {
 // getTrackByID(1, function(response) {
 //     console.log(response)
 // })
+
+
+// SELECT users.id FROM users
+//   JOIN user_tracks ON users.id = user_id
+//   JOIN tracks ON tracks.id = track_id
+//   WHERE track_id = 1;
+function getTrackListeners(id, callback) {
+  knex.select('users.id').from('users')
+    .innerJoin('user_tracks', 'user_id', 'users.id')
+    .innerJoin('tracks', 'track_id', 'tracks.id')
+    .where('tracks.id', id)
+    .orderBy('users.id')
+    .then((val) => {
+      let users = []
+      val.forEach((user => {
+        users.push(user)
+      }))
+      callback(users)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving users by ${id} from the database`)
+    })
+}
+
+
+// getTrackListeners(1, function(response) {
+//   console.log(response)
+// })
+
 
 
 
