@@ -6,7 +6,6 @@ class CurrentUser extends Component {
     return(
         <div id="user-profile">
           Inside user-profile div
-          <Pie/>
         </div>
       )
   }
