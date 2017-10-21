@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 
-class Songs extends Component{
+class Song extends Component{
   render (){
     return(
         <div>
-          <h1>Hello form Songs :)</h1>
+          <h5>{this.props.song.track.name}</h5>
         </div>
       )
   }
 }
 
-export default Songs;
+export default Song;

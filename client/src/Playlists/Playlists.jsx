@@ -32,7 +32,7 @@ class Playlists extends Component{
   render (){
     const renderPlaylists = this.state.playlists.map((playlist, index)=>{
       if(this.state.playlists) {
-        return <Playlist playlist={playlist} key={index}/>
+        return <Playlist playlist={playlist} accessToken={this.props.accessToken} key={index}/>
       }
 
     })

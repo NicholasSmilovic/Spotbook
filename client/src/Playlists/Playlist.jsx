@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Songs from './Songs.jsx';
+import Song from './Song.jsx';
 
 
 class Playlist extends Component{
@@ -17,9 +17,10 @@ class Playlist extends Component{
   }
 
   componentDidMount() {
+    let accessToken = this.props.accessToken
       fetch (this.props.playlist.tracks.href, {
       headers: {
-        Authorization: "Bearer " + this.state.access_token
+        Authorization: "Bearer " + accessToken
       }
     })
       .then((response) => {
@@ -37,10 +38,11 @@ class Playlist extends Component{
   render (){
     let renderSongs = null;
     if(this.state.clicked && this.state.songs){
-      let renderSongs = this.state.songs.map((song, index)=>{
-        return <Song song={song} key={index}/>
+      renderSongs = this.state.songs.map((song, index)=>{
+        return <Song song = {song} key = {index}/>
       })
     }
+
 
     return(
         <div>
