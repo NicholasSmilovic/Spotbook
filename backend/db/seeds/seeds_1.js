@@ -3,6 +3,9 @@ let user1 = {
   spotify_id: "brandontday",
   image_urls: {
     image: 'https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/5418_1048965638480046_5792373902737592201_n.jpg?oh=a7efc6820caaa05da0878c3cce749114&oe=5A7F413F'
+  },
+  following: {
+    following_array: [2]
   }
 }
 
@@ -11,6 +14,9 @@ let user2 = {
   spotify_id: "12181208318",
   image_urls: {
     image: 'https://scontent.xx.fbcdn.net/v/t1.0-1/s200x200/13775793_10153610171132687_1785877468594627692_n.jpg?oh=1c88fcbb62a8d746c544b6bbed9b8f9e&oe=5A775134'
+  },
+  following: {
+    following_array: [1]
   }
 }
 
