@@ -193,10 +193,10 @@ function unfollowUser(myID, theirID) {
 //   WHERE users.id = 2;
 
 function getUserTopTrackArtists(id, callback) {
-  knex('artists.id').from('artists')
+  knex.select('artists.id').from('artists')
     .innerJoin('artist_tracks', 'artists.id', 'artist_id')
-    .innerJoin('tracks').as('t').on('t.id', '=', 'track_id')
-    .innerJoin('user_tracks').as('u').on('u.track_id', '=', 't.id')
+    .innerJoin('tracks AS t', 't.id', 'track_id')
+    .innerJoin('user_tracks AS u', 'u.track_id', 't.id')
     .innerJoin('users', 'users.id', 'user_id')
     .where('users.id', id)
     .then((val) => {
