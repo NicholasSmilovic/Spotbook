@@ -1,55 +1,36 @@
 import React, {Component} from 'react';
-import Song from './Song.jsx';
+import Songs from './Songs.jsx';
 
 
 class Playlist extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      songs:[],
       clicked: false
     }
 
-    this.toggleButton= ()=> {
+    this.toggleButton = () => {
       const currentState = this.state.clicked;
       this.setState({ clicked: !currentState })
     };
   }
 
-  componentDidMount() {
-    let accessToken = this.props.accessToken
-      fetch (this.props.playlist.tracks.href, {
-      headers: {
-        Authorization: "Bearer " + accessToken
-      }
-    })
-      .then((response) => {
-        if(response.status >= 400){
-
-        }
-        return response.json()
-      })
-      .then((data) => {
-        this.setState({ songs: data.items})
-      })
-
-  }
-
   render (){
-    let renderSongs = null;
-    if(this.state.clicked && this.state.songs){
-      renderSongs = this.state.songs.map((song, index)=>{
-        return <Song song = {song} key = {index}/>
-      })
+    let renderSongs = null
+    if(this.state.clicked){
+      renderSongs = <Songs playlist={this.props.playlist} accessToken={this.props.accessToken}/>
     }
-
 
     return(
         <div>
-          <button onClick = {this.toggleButton} >
+          <span>
             <h1>{this.props.playlist.name}</h1>
-          </button>
-          {renderSongs}
+            <button className="btn btn-primary" onClick={this.toggleButton}>Show Tracks</button>
+            <button className="btn btn-success">EDIT??</button>
+            <button className="btn btn-danger">DELETE?</button>
+            {renderSongs}
+          </span>
+          <hr/>
         </div>
       )
   }

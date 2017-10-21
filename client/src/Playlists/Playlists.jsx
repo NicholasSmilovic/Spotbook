@@ -37,8 +37,9 @@ class Playlists extends Component{
 
     })
     return(
-      <div>
-        {renderPlaylists}
+      <div className="row">
+        <div className="col-sm-2"></div>
+        <div className="col-sm-10">{renderPlaylists}</div>
       </div>
     )
 }
