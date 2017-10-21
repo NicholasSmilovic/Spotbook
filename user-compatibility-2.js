@@ -43859,7 +43859,11 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
     genreMatch = 0.6
   }
 
+<<<<<<< HEAD
   console.log(`genre_match => ${genreMatch}`)
+=======
+  // console.log(`genre_match => ${genreMatch}`)
+>>>>>>> algorithms/refine-user-compatibility
 
   matchesArr.push(trackMatch*trackMatches)
   matchesArr.push(artistMatch*artistMatches)
@@ -43911,7 +43915,11 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
     percentMatch += 0.01
   }
 
+<<<<<<< HEAD
   console.log(matchesArr)
+=======
+  // console.log(matchesArr)
+>>>>>>> algorithms/refine-user-compatibility
 
   matchesArr.map((match) => {
     return percentMatch += match
@@ -43933,11 +43941,13 @@ for (let i = 0; i < user_count; i++) {
   for (let j = i + 1; j < user_count; j++) {
     console.log(`\n\n>> USER ${i+1} vs. USER ${j+1} <<`)
     console.log('   *****************')
-    console.log(userCompatibility(
+
+    console.log(`   PRE-CURVE ${userCompatibility(
       user_tracks[i], user_tracks[j],
       user_artists[i], user_artists[j],
       track_params[i], track_params[j]
-      ));
+      )}% MATCH!`);
+
   }
 }
 
