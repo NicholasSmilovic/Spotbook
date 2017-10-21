@@ -58303,12 +58303,12 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
   }
 
   // console.log(trackMatches*trackMatch)
-  if (trackMatch*trackMatches < 0.2) {
+  if (trackMatches < 0.2) {
     trackMatch = 0.2
     artistMatch = 0.2
     genreMatch = 0.3
   }
-  if (artistMatch*artistMatches < 0.2 && trackMatch*trackMatches < 0.2) {
+  if (artistMatches < 0.2 && trackMatches < 0.2) {
     trackMatch = 0.1
     artistMatch = 0.1
     genreMatch = 0.5
