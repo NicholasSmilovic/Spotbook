@@ -24,6 +24,9 @@ function addUser(displayName, spotifyID, imageURL) {
     spotify_id: spotifyID,
     image_urls: {
       image: imageURL
+    },
+    following: {
+      following_array: []
     }
   }
 
@@ -140,6 +143,73 @@ function getUserFollows(id, callback) {
 //   console.log(response)
 // })
 
+// DOESN'T WORK
+function followUser(myID, theirID) {
+  getUserByID(myID, function(response) {
+    response.following_array.push(theirID)
+    knex('users').where('id', myID)
+      .update({following: {'following_array': response.following_array}})
+      .then(() => {
+        console.log(`User ${myID} stopped following user ${theirID}`)
+      })
+      .catch(() => {
+        console.log(`There was an error. No change to follows !`)
+      })
+  })
+}
+
+// followUser(1,3)
+
+
+// DOESN'T WORK
+function unfollowUser(myID, theirID) {
+  getUserByID(myID, function(response) {
+    response.following_array.forEach((follow, index) => {
+      if (follow === theirID) {
+        response.following_array.splice(index, 1)
+      } else {
+        console.log(`User ${myID} does not follow user ${theirID}`)
+      }
+    })
+    knex('users').where('id', myID)
+      .update({following: {'following_array': response.following_array}})
+      .then(() => {
+        console.log(`User ${myID} stopped following user ${theirID}`)
+      })
+      .catch(() => {
+        console.log(`There was an error. No change to follows !`)
+      })
+  })
+}
+
+// unfollowUser(1, 2)
+
+
+// SELECT artists.id FROM artists
+//   JOIN artist_tracks ON artists.id = artist_id
+//   JOIN tracks AS t ON t.id = track_id
+//   JOIN user_tracks AS u ON u.track_id = t.id
+//   JOIN users ON users.id = user_id
+//   WHERE users.id = 2;
+
+function getUserTopTrackArtists(id, callback) {
+  knex('artists.id').from('artists')
+    .innerJoin('artist_tracks', 'artists.id', 'artist_id')
+    .innerJoin('tracks').as('t').on('t.id', '=', 'track_id')
+    .innerJoin('user_tracks').as('u').on('u.track_id', '=', 't.id')
+    .innerJoin('users', 'users.id', 'user_id')
+    .where('users.id', id)
+    .then((val) => {
+      callback(val)
+    })
+    .catch (() => {
+      console.log(`There was an error getting user ${id}'s tracks`)
+    })
+}
+
+getUserTopTrackArtists(1, function(response) {
+  console.log(response)
+})
 
 
 
