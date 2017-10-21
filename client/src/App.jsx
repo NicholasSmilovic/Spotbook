@@ -5,33 +5,103 @@ import {
   Link
 } from 'react-router-dom'
 
-import User from './Users/User.jsx';
-import Playlist from './Playlists/Playlist.jsx';
+import Routes from './Routes.jsx'
+
+// import User from './Users/User.jsx';
+// import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
 
-const App = () => (
-  <Router >
-    <div>
-      <div className="row">
-        <div className="col-sm-4"><Link to="/">Home</Link></div>
-        <div className="col-sm-4"><Link to="/users/1">Users</Link></div>
-        <div className="col-sm-4"><Link to="/playlists">Playlists</Link></div>
-      </div>
 
-      <hr/>
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      userState: null,
+      access_token:"",
+      refresh_token:""
+    }
+    this.dashboard = null
 
-      <Route exact path="/" component={Landing}/>
-      <Route path="/users/:id" component={User}/>
-      <Route path="/playlists" component={Playlist}/>
-    </div>
-  </Router>
-)
+    this.refreshAccessToken = () => {
+      console.log("http://localhost:3000?" + this.state.refresh_token)
+      fetch("http://localhost:3000/spotify/refresh_token/?refresh_token=" + this.state.refresh_token + "/")
+      .then((response) => {
+        if(response.status >= 400){
+          console.log("refresh error")
+        }
+        return response.json()
+      })
+      .then((data) => {
+        debugger
+      })
+    }
 
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
-)
+    this.queryParse = (queryString) => {
+      var query = {};
+      var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+      }
+      return query;
+    }
+
+    this.updateTokens = () => {
+      if(location.search){
+        let query = this.queryParse(location.search)
+        this.setState({
+          access_token: query.access_token,
+          refresh_token: query.refresh_token
+        })
+        this.render()
+      }
+      return false
+    }
+
+    this.verifyLogin = () => {
+      fetch("https://api.spotify.com/v1/me",{
+        headers: {
+          'Authorization': 'Bearer ' + this.state.access_token
+        }
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        if(data.country){
+          this.setState({userState: "verified"})
+          return true
+        }
+        this.setState({userState: "unverified"})
+        return false
+      })
+    }
+  }
+
+  componentWillMount() {
+    this.updateTokens()
+  }
+
+  componentDidMount() {
+    this.verifyLogin()
+  }
+
+  render(){
+    if(this.state.userState) {
+      if(this.state.userState === "verified") {
+        return <Routes
+                  accessToken = {this.state.access_token}
+                  refreshAccessToken = {this.refreshAccessToken}
+                  />
+      }
+      if(this.state.userState === "unverified") {
+        return <Landing />
+      }
+    }
+
+    return <div>Loading</div>
+  }
+}
 
 
-export default App
+export default App;

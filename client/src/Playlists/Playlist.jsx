@@ -1,30 +1,26 @@
 import React, {Component} from 'react';
-import New from './new.jsx';
-
-import queryHelper from '../Helpers/query.jsx'
-
+import Song from './Song.jsx';
 
 
 class Playlist extends Component{
-
   constructor(props) {
     super(props);
-    let query = queryHelper.queryParse(location.search)
     this.state = {
-      playlistName: "Rick Sanchez",
-      tracksInQueue: ["Steve the wonder", "Green Day"],
-      access_token:query.access_token,
-      refresh_token:query.refresh_token
-
+      songs:[],
+      clicked: false
     }
 
+    this.toggleButton= ()=> {
+      const currentState = this.state.clicked;
+      this.setState({ clicked: !currentState })
+    };
   }
 
-
-  render (){
-    fetch ("https://api.spotify.com/v1/me", {
+  componentDidMount() {
+    let accessToken = this.props.accessToken
+      fetch (this.props.playlist.tracks.href, {
       headers: {
-        Authorization: "Bearer "+this.state.access_token
+        Authorization: "Bearer " + accessToken
       }
     })
       .then((response) => {
@@ -34,16 +30,29 @@ class Playlist extends Component{
         return response.json()
       })
       .then((data) => {
-        this.setState({ playlistName: "AAYYYY"})
+        this.setState({ songs: data.items})
       })
+
+  }
+
+  render (){
+    let renderSongs = null;
+    if(this.state.clicked && this.state.songs){
+      renderSongs = this.state.songs.map((song, index)=>{
+        return <Song song = {song} key = {index}/>
+      })
+    }
+
+
     return(
-      <div>
-        <h1>Hello form Playlists :)</h1>
-        <New tracks = {this.state.tracksInQueue}/>
-        {this.state.playlists}
-      </div>
-    )
-}
+        <div>
+          <button onClick = {this.toggleButton} >
+            <h1>{this.props.playlist.name}</h1>
+          </button>
+          {renderSongs}
+        </div>
+      )
+  }
 }
 
 export default Playlist;
