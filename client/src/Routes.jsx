@@ -17,6 +17,7 @@ class Routes extends React.Component {
     const PlaylistsPage = (props) => {
       return (
           <Playlists
+            user = {this.props.user}
             refreshAccessToken={this.props.refreshAccessTokens}
             accessToken = {this.props.accessToken}
             />

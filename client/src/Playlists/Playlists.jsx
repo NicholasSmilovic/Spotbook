@@ -9,15 +9,15 @@ class Playlists extends Component{
     this.state = {
       playlists:[]
     }
-  }
 
-  componentDidMount() {
-    let accessToken = this.props.accessToken
-    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists", {
-      headers: {
-        Authorization: "Bearer " + accessToken
-      }
-    })
+    this.getSongs = () => {
+      let accessToken = this.props.accessToken
+      let user = this.props.user
+      fetch ("https://api.spotify.com/v1/users/"  + user + "/playlists", {
+        headers: {
+          Authorization: "Bearer " + accessToken
+        }
+      })
       .then((response) => {
         if(response.status >= 400){
 
@@ -27,6 +27,13 @@ class Playlists extends Component{
       .then((data) => {
         this.setState({ playlists: data.items})
       })
+    }
+
+  }
+
+
+  componentDidMount() {
+    this.getSongs()
   }
 
   render (){
@@ -34,14 +41,18 @@ class Playlists extends Component{
       if(this.state.playlists) {
         return <Playlist playlist={playlist} accessToken={this.props.accessToken} key={index}/>
       }
-
     })
+
+    if(renderPlaylists){
+      return <div>{renderPlaylists}</div>
+    }
+
     return(
       <div>
-        {renderPlaylists}
+        loading...
       </div>
     )
-}
+  }
 }
 
 export default Playlists;

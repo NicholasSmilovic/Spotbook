@@ -16,6 +16,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      user: null,
       userState: null,
       access_token:"",
       refresh_token:""
@@ -68,8 +69,11 @@ class App extends React.Component {
         return response.json()
       })
       .then((data) => {
-        if(data.country){
-          this.setState({userState: "verified"})
+        if(data.id){
+          this.setState({
+            userState: "verified",
+          })
+            this.setState({user:data.id})
           return true
         }
         this.setState({userState: "unverified"})
@@ -90,6 +94,7 @@ class App extends React.Component {
     if(this.state.userState) {
       if(this.state.userState === "verified") {
         return <Routes
+                  user = {this.state.user}
                   accessToken = {this.state.access_token}
                   refreshAccessToken = {this.refreshAccessToken}
                   />

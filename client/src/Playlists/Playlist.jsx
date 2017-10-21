@@ -10,7 +10,7 @@ class Playlist extends Component{
       clicked: false
     }
 
-    this.toggleButton= ()=> {
+    this.toggleButton = ()=> {
       const currentState = this.state.clicked;
       this.setState({ clicked: !currentState })
     };
