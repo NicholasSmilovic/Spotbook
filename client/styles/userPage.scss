@@ -1,0 +1,32 @@
+.user-sidebar {
+  color: white;
+  background-color: black;
+  position: fixed;
+  width: 20em;
+  overflow-y: scroll;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+
+.user-profile {
+  top: 0;
+  color: white;
+  height: 20em;
+  background-image:
+    -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0, rgb(4,3,5)),
+      color-stop(0.65, rgb(97,97,97))
+  )
+}
+
+.user-profile h1 {
+  font-size: 550%;
+}
+
+
+

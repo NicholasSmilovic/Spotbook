@@ -98,7 +98,6 @@ class App extends React.Component {
         return <Landing />
       }
     }
-
     return <div>Loading</div>
   }
 }
