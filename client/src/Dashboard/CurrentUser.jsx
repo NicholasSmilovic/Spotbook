@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PieChart from '../Charts/Pie.jsx';
+// import PieChart from '../Charts/Pie.jsx';
 import BarChart from '../Charts/Bar.jsx';
 
 class CurrentUser extends Component {
@@ -40,13 +40,6 @@ constructor(){
   render (){
     return(
         <div id="user-profile">
-          Inside user-profile div
-
-        <PieChart
-        chartData={this.state.chartData}
-        text="Pie Chart in "
-        location="Lighthouse Labs"
-        legendPosition="top"/>
 
         <BarChart
         chartData={this.state.chartData}

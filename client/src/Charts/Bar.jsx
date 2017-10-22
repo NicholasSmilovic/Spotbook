@@ -33,17 +33,19 @@ class BarChart extends Component{
               display:false,
               position:this.props.legendPosition
             },
-            scaleLabel: {
-              labelString: 'THIS IS THE Y-AXIS'
-            },
+
             scales: {
               yAxes: [{
-                  ticks: {
-                    callback: function(label, index, labels) {
-                      return '$' + label;
-                    }
+                scaleLabel: {
+                  display: true,
+                  labelString: 'THIS IS THE Y-AXIS'
+                },
+                ticks: {
+                  callback: function(label, index, labels) {
+                    return '$' + label;
                   }
-                }]
+                }
+              }]
             },
           }}
         />
