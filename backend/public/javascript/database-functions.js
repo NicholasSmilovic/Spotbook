@@ -14,7 +14,7 @@ var knexConfig = {
 
 var knex = require("knex")(knexConfig);
 
-
+//is this working?
 
 
 // USERS FUNCTIONS
@@ -207,9 +207,9 @@ function getUserTopTrackArtists(id, callback) {
     })
 }
 
-getUserTopTrackArtists(1, function(response) {
-  console.log(response)
-})
+// getUserTopTrackArtists(1, function(response) {
+//   console.log(response)
+// })
 
 
 
