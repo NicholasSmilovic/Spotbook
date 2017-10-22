@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Playlist from './Playlist.jsx';
+import StickySideBar from './StickySideBar.jsx'
 
 
 class Playlists extends Component{
@@ -38,8 +39,10 @@ class Playlists extends Component{
     })
     return(
       <div className="row">
-        <div className="col-sm-2"></div>
-        <div className="col-sm-10">{renderPlaylists}</div>
+        <div className="col-sm-2">
+          <StickySideBar />
+        </div>
+        <div className="col-sm-10 search-bar-container">{renderPlaylists}</div>
       </div>
     )
 }

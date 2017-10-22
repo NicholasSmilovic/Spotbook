@@ -4,6 +4,8 @@ import {
   Route,
   Link
 } from 'react-router-dom'
+import { StickyContainer, Sticky } from 'react-sticky';
+
 
 import User from './Users/User.jsx';
 import Playlists from './Playlists/Playlists.jsx';
@@ -25,15 +27,13 @@ class Routes extends React.Component {
 
     return (
       <Router >
-        <div>
+        <div className="page-container">
           <div className="row">
             <div className="col-sm-4"><Link to="/">Home</Link></div>
             <div className="col-sm-4"><Link to="/users/1">Users</Link></div>
             <div className="col-sm-4"><Link to="/playlists">Playlists</Link></div>
           </div>
-
           <hr/>
-
           <Route  exact path="/"
                   component={currentUser}
                   refreshAccessToken={this.props.refreshAccessTokens}
@@ -41,7 +41,7 @@ class Routes extends React.Component {
                   />
           <Route  path="/playlists" component={PlaylistsPage}/>
           <Route path="/users/:id" component={User}/>
-        </div>
+          </div>
       </Router>
       )
   }

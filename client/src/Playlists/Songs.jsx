@@ -39,10 +39,10 @@ class Songs extends Component {
         <hr/>
         <table className="table table-bordered">
             <thead><tr>
-              <th className="col-md-1">Album Art</th>
-              <th className="col-md-3">Track Name</th>
-              <th className="col-md-3">Track Artist</th>
-              <th className="col-md-3">Track Album</th>
+              <th className="col-xs-1">Album Art</th>
+              <th className="col-xs-4">Track Name</th>
+              <th className="col-xs-4">Track Artist</th>
+              <th className="col-xs-3">Track Album</th>
             </tr></thead>
             <tbody>
               {renderSongs}
