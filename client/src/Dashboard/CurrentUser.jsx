@@ -4,7 +4,7 @@ import BarChart from '../Charts/Bar.jsx';
 
 class CurrentUser extends Component {
 
-constructor(){
+  constructor(){
     super();
     this.state = {
       chartData:{}

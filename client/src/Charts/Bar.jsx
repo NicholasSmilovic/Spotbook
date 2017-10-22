@@ -23,6 +23,7 @@ class BarChart extends Component{
 
         <Bar
           data={this.state.chartData}
+          getDatasetAtEvent = {dataset => console.log(dataset)}
           options={{
             title:{
               display:this.props.displayTitle,
@@ -44,6 +45,12 @@ class BarChart extends Component{
                   callback: function(label, index, labels) {
                     return '$' + label;
                   }
+                }
+              }],
+              xAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'THIS IS THE X-AXIS'
                 }
               }]
             },
