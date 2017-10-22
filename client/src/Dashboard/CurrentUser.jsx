@@ -44,7 +44,9 @@ class CurrentUser extends Component {
         <BarChart
         chartData={this.state.chartData}
         text="Bar Chart in "
-        location="Lighthouse Labs"/>
+        location="Lighthouse Labs"
+        handleClick={
+          dataset => console.log(`INDEX: ${dataset[0]['_index']} => ${dataset[0]['_model']['label']}`)}/>
 
         </div>
       )
