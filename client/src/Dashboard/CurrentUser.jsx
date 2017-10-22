@@ -36,8 +36,17 @@ class CurrentUser extends Component {
     });
   }
 
+  handleClickElement = (event) => {
+    if (event[0]) {
+      let index = event[0]['_index'];
+      let label = this.state.chartData.labels[index];
+
+      console.log(`INDEX: ${index} => ${label}`);
+    }
+  }
 
   render (){
+
     return(
         <div id="user-profile">
 
@@ -45,15 +54,13 @@ class CurrentUser extends Component {
         chartData={this.state.chartData}
         text="Bar Chart in "
         location="Lighthouse Labs"
-        handleClick={
-          dataset => console.log(`INDEX: ${dataset[0]['_index']} => ${dataset[0]['_model']['label']}`)}/>
+        handleClick={ event => this.handleClickElement(event) }/>
 
         <PieChart
         chartData={this.state.chartData}
         text="Pie Chart in "
         location="Lighthouse Labs"
-        handleClick={
-          dataset => console.log(`INDEX: ${dataset[0]['_index']} => ${this.state.chartData.labels[dataset[0]['_index']]}`)}/>
+        handleClick={ event => this.handleClickElement(event) }/>
 
         </div>
       )

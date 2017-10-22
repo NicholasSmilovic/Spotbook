@@ -20,7 +20,6 @@ class PieChart extends Component{
     return (
       <div className="chart">
 
-
         <Pie
           data={this.state.chartData}
           getElementAtEvent = {this.props.handleClick}

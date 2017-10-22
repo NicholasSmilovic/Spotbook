@@ -20,7 +20,6 @@ class BarChart extends Component{
     return (
       <div className="chart">
 
-
         <Bar
           data={this.state.chartData}
           getElementAtEvent = {this.props.handleClick}
