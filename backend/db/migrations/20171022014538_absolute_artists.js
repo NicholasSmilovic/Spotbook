@@ -16,6 +16,8 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
+    knex.raw('ALTER SEQUENCE ' + 'absolute_artists_id_seq' + ' START WITH 1'),
+    knex.raw('ALTER SEQUENCE ' + 'absolute_artists_id_seq' + ' RESTART WITH 1'),
     knex.schema.dropTable('user_absolute_artists'),
     knex.schema.dropTable('absolute_artists')
   ])

@@ -258,14 +258,52 @@ let user_tracks7 = {
 
 
 
+let absolute_artist1 = {
+  artist_name: "Talking Heads",
+  genres: {
+    genres_array: [ "rock", "new wave" ]
+  }
+}
+
+let absolute_artist2 = {
+  artist_name: "Led Zeppelin",
+  genres: {
+    genres_array: [ "classic rock", "rock" ]
+  }
+}
+
+let absolute_artist3 = {
+  artist_name: "Pink Floyd",
+  genres: {
+    genres_array: [ "british invasion", "psychedelic rock", "rock" ]
+  }
+}
+
+let user_absolute_artist1 = {
+  user_id: 1,
+  absolute_artist_id: 1
+}
+
+let user_absolute_artist2 = {
+  user_id: 2,
+  absolute_artist_id: 2
+}
+
+let user_absolute_artist3 = {
+  user_id: 2,
+  absolute_artist_id: 1
+}
+
 
 
 
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
   return Promise.all([
-   knex('user_tracks').del(),
+    knex('user_absolute_artists').del(),
+    knex('user_tracks').del(),
     knex('artist_tracks').del(),
+    knex('absolute_artists').del(),
     knex('playlists').del(),
     knex('users').del(),
     knex('tracks').del(),
@@ -288,9 +326,11 @@ exports.seed = function(knex, Promise) {
         knex('artists').insert(artist3),
         knex('artists').insert(artist4),
 
-
         knex('playlists').insert(playlist1),
         knex('playlists').insert(playlist2),
+
+        knex('absolute_artists').insert(absolute_artist1),
+        knex('absolute_artists').insert(absolute_artist2),
 
         knex('artist_tracks').insert(artist_tracks1),
         knex('artist_tracks').insert(artist_tracks2),
@@ -304,7 +344,12 @@ exports.seed = function(knex, Promise) {
         knex('user_tracks').insert(user_tracks4),
         knex('user_tracks').insert(user_tracks5),
         knex('user_tracks').insert(user_tracks6),
-        knex('user_tracks').insert(user_tracks7)
+        knex('user_tracks').insert(user_tracks7),
+
+        knex('user_absolute_artists').insert(user_absolute_artist1),
+        knex('user_absolute_artists').insert(user_absolute_artist2),
+        knex('user_absolute_artists').insert(user_absolute_artist3),
+
         ]);
     });
 };
