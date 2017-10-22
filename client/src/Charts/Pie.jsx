@@ -23,6 +23,7 @@ class PieChart extends Component{
 
         <Pie
           data={this.state.chartData}
+          getElementAtEvent = {this.props.handleClick}
           options={{
             title:{
               display:this.props.displayTitle,

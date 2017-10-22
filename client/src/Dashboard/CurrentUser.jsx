@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-// import PieChart from '../Charts/Pie.jsx';
+import PieChart from '../Charts/Pie.jsx';
 import BarChart from '../Charts/Bar.jsx';
 
 class CurrentUser extends Component {
@@ -47,6 +47,13 @@ class CurrentUser extends Component {
         location="Lighthouse Labs"
         handleClick={
           dataset => console.log(`INDEX: ${dataset[0]['_index']} => ${dataset[0]['_model']['label']}`)}/>
+
+        <PieChart
+        chartData={this.state.chartData}
+        text="Pie Chart in "
+        location="Lighthouse Labs"
+        handleClick={
+          dataset => console.log(`INDEX: ${dataset[0]['_index']} => ${this.state.chartData.labels[dataset[0]['_index']]}`)}/>
 
         </div>
       )
