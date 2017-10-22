@@ -43,6 +43,6 @@ anything with a * has not been fully worked out yet
 - breakUserFromTrack
 
 ## USER_ABSOLUTE_ARTISTS
-- joinUserToArtist
-- breakUserFromArtist
+- joinUserToAbsArtist
+- breakUserFromAbsArtist
 
