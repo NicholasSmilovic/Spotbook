@@ -14,8 +14,6 @@ var knexConfig = {
 
 var knex = require("knex")(knexConfig);
 
-//is this working?
-
 
 // USERS FUNCTIONS
 function addUser(displayName, spotifyID, imageURL) {
@@ -103,6 +101,27 @@ function getUserTopTracks(id, callback) {
 }
 
 // getUserTopTracks(1, function(response) {
+//   console.log(response)
+// })
+
+function getUserTopAbsArtists(id, callback) {
+  knex.select('absolute_artists.id').from('absolute_artists')
+    .innerJoin('user_absolute_artists', 'absolute_artists.id', 'absolute_artist_id')
+    .innerJoin('users', 'users.id', 'user_id')
+    .where('users.id', id)
+    .then((val) => {
+      let artists = []
+      val.forEach((artist => {
+        artists.push(artist)
+      }))
+      callback(artists)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving artists by user id ${id} from the database`)
+    })
+}
+
+// getUserTopAbsArtists(2, function(response) {
 //   console.log(response)
 // })
 
@@ -433,6 +452,22 @@ function getArtistByID(id, callback) {
 
 // getArtistByID(1, function(response) {
 //     console.log(response)
+// })
+
+
+function getAbsArtistByID(id, callback) {
+  let artist = {}
+  knex('absolute_artists').where('id', id)
+    .then((val) => {
+      callback(val[0])
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving ${id} from the database`)
+    })
+  }
+
+// getAbsArtistByID(1, function(response) {
+//   console.log(response)
 // })
 
 
