@@ -19,17 +19,17 @@ class CurrentUser extends Component {
     // Ajax calls here
     this.setState({
       chartData:{
-        labels: ['Toronto', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+        labels: ['Carlo', 'Nich', 'Brandon', 'Bryce', 'Dummy_1', 'Dummy_2'],
         datasets:[{
-          label:'Population',
-          data:[617594, 181045, 153060, 106519, 105162, 95072],
+          label:'Points',
+          data:[50,30,70,100,110,20],
           backgroundColor:[
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(255, 206, 86, 0.6)',
-            'rgba(75, 192, 192, 0.6)',
-            'rgba(153, 102, 255, 0.6)',
-            'rgba(255, 159, 64, 0.6)'
+            '#59F64B',
+            '#6200EA',
+            '#0CE486',
+            '#4E9CF5',
+            '#B2FF59',
+            '#9CF1E0',
           ],
         }]
       }
@@ -53,13 +53,13 @@ class CurrentUser extends Component {
         <BarChart
         chartData={this.state.chartData}
         text="Bar Chart in "
-        location="Lighthouse Labs"
+        location="Spotcheck"
         handleClick={ event => this.handleClickElement(event) }/>
 
         <PieChart
         chartData={this.state.chartData}
         text="Pie Chart in "
-        location="Lighthouse Labs"
+        location="Spotcheck"
         handleClick={ event => this.handleClickElement(event) }/>
 
         </div>

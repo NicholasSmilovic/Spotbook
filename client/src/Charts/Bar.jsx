@@ -43,7 +43,8 @@ class BarChart extends Component{
                 ticks: {
                   callback: function(label, index, labels) {
                     return '$' + label;
-                  }
+                  },
+                  beginAtZero: true
                 }
               }],
               xAxes: [{
