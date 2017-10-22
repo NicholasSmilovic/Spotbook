@@ -23,7 +23,7 @@ class BarChart extends Component{
 
         <Bar
           data={this.state.chartData}
-          getDatasetAtEvent = {dataset => console.log(dataset)}
+          getElementAtEvent = {dataset => console.log(dataset)}
           options={{
             title:{
               display:this.props.displayTitle,
