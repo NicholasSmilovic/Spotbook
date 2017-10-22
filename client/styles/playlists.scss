@@ -3,12 +3,29 @@
 }
 
 body {
-  background-color: rgba(black, .9)
+  background-color: rgba(black, .9);
 }
 
 .playlist-header{
   background-color: #2E302D;
+  vertical-align: middle;
+  position: sticky;
+  top: 0px
 }
 
-.playlist-header-column{
+.page-container{
+}
+
+.search-bar-container{
+  height: 100vh;
+  overflow: auto;
+}
+
+.search-bar-query{
+  position: sticky;
+  top:20px
+}
+
+.button{
+  margin:0px auto; //it will center them
 }

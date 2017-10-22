@@ -22,35 +22,39 @@ class Playlist extends Component{
       renderSongs = <Songs playlist={this.props.playlist} accessToken={this.props.accessToken}/>
     }
 
+        // <StickyContainer>
+        //   <Sticky >
+        //     {
+        //       ({
+        //         style
+        //       }) => {
+        //         return(
+        //           <header style={style} className="panel panel-info playlist-header row text-center">
+        //             <div className='col-xl-6 text-center'>
+        //               <h1>{this.props.playlist.name}</h1>
+        //             </div>
+        //               <button className="col-xl-2 text-center btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
+        //               <button className="col-xl-2 text-center btn btn-success playlist-header-button">EDIT??</button>
+        //               <button className="col-xl-2 text-center btn btn-danger playlist-header-button">DELETE?</button>
+        //           </header>
+        //           )
+        //       }
+        //     }
+        //   </Sticky>
+        //   {renderSongs}
+        // </StickyContainer>
     return(
         <div>
-        <StickyContainer>
-          <Sticky >
-            {
-              ({
-                style
-              }) => {
-                return(
-                  <header style={style} className="playlist-header row">
-                    <div className='col-sm-6 text-center'>
+          <header className="panel panel-info playlist-header row text-center">
+                    <div className='col-xl-6 text-center'>
                       <h1>{this.props.playlist.name}</h1>
                     </div>
-                    <div className='col-sm-2 playlist-header-column'>
-                      <button className="btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
-                    </div>
-                    <div className='col-sm-2 playlist-header-column'>
-                      <button className="btn btn-success playlist-header-button">EDIT??</button>
-                    </div>
-                    <div className='col-sm-2 playlist-header-column'>
-                      <button className="btn btn-danger playlist-header-button">DELETE?</button>
-                    </div>
+                      <button className="col-xl-2 text-center btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
+                      <button className="col-xl-2 text-center btn btn-success playlist-header-button">EDIT??</button>
+                      <button className="col-xl-2 text-center btn btn-danger playlist-header-button">DELETE?</button>
                   </header>
-                  )
-              }
-            }
-          </Sticky>
-            {renderSongs}
-        </StickyContainer>
+                  {renderSongs}
+
           <hr/>
         </div>
       )
