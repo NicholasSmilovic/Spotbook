@@ -272,12 +272,6 @@ let absolute_artist2 = {
   }
 }
 
-let absolute_artist3 = {
-  artist_name: "Pink Floyd",
-  genres: {
-    genres_array: [ "british invasion", "psychedelic rock", "rock" ]
-  }
-}
 
 let user_absolute_artist1 = {
   user_id: 1,

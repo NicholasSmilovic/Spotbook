@@ -410,6 +410,27 @@ function addArtist(artistName, spotifyID, imageURLs, genresArray) {
 // addArtist(artist_name, spotify_id, image_urls, genres_array)
 
 
+function addAbsArtist(artistName, genresArray) {
+  let newArtist = {
+    artist_name: artistName,
+    genres: {
+      genres_array: genresArray
+    }
+  }
+
+  knex('absolute_artists').insert(newArtist)
+    .then(() => {
+      console.log(`${artistName} has beeen added to the database`)
+    })
+    .catch(() => {
+      console.log(`There was an error adding ${artistName} to the database`)
+    })
+}
+
+// let artist_name = 'Kanye West'
+// let genres_array = [ "pop rap", "rap" ]
+// addAbsArtist(artist_name, genres_array)
+
 
 function removeArtist(id) {
   knex('artists').where('id', id).del()
@@ -422,6 +443,19 @@ function removeArtist(id) {
 }
 
 // removeArtist(5)
+
+
+function removeAbsArtist(id) {
+  knex('absolute_artists').where('id', id).del()
+    .then(() => {
+      console.log(`${id} was removed from the database`)
+    })
+    .catch(() => {
+      console.log(`There was an error removing ${id} from the database`)
+    })
+}
+
+// removeAbsArtist(3)
 
 
 
@@ -642,6 +676,46 @@ function breakUserFromTrack(userID, trackID) {
 // joinUserToTrack(2,1)
 // breakUserFromTrack(2,1)
 
+
+
+function joinUserToAbsArtist(userID, artistID) {
+  let newUserArtistRelationship = {
+    user_id: userID,
+    absolute_artist_id: artistID
+  }
+
+  knex('user_absolute_artists').insert(newUserArtistRelationship)
+    .then(() => {
+      console.log(`Artist ${artistID} is now listened to by User ${userID}`)
+    })
+    .catch((e) => {
+      if (e.constraint === 'user_absolute_artists_pkey') {
+        console.log(`User ${userID} already listens to that artist`)
+      } else {
+        console.log(`There was an error adding this artist-user relation to the database`)
+      }
+    })
+
+}
+
+
+// joinUserToAbsArtist(1,2)
+
+function breakUserFromAbsArtist(userID, artistID) {
+  knex('user_absolute_artists').where({
+    user_id: userID,
+    absolute_artist_id: artistID
+  }).del()
+    .then(() => {
+      console.log(`The relation between User ${userID} and Artist ${artistID} has been broken`)
+    })
+    .catch(() => {
+      console.log(`There was an error breaking the artist-user relation`)
+    })
+}
+
+
+// breakUserFromAbsArtist(1,2)
 
 
 

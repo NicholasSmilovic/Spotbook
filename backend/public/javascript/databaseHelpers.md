@@ -22,7 +22,9 @@ anything with a * has not been fully worked out yet
 
 ## ARTISTS
 - addArtist
+- addAbsArtist
 - removeArtist
+- removeAbsArtist
 - getArtistByID
 - getAbsArtistByID
 - getArtistTracks
@@ -39,4 +41,8 @@ anything with a * has not been fully worked out yet
 ## USER_TRACKS
 - joinUserToTrack
 - breakUserFromTrack
+
+## USER_ABSOLUTE_ARTISTS
+- joinUserToArtist
+- breakUserFromArtist
 
