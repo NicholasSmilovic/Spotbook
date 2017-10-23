@@ -33,7 +33,6 @@ class TrackQuery extends Component{
       })
 
       .then((data) => {
-        debugger
         this.setState({ queryResults: data.tracks.items})
       })
   }
