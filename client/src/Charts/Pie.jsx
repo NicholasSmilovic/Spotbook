@@ -20,9 +20,9 @@ class PieChart extends Component{
     return (
       <div className="chart">
 
-
         <Pie
           data={this.state.chartData}
+          getElementAtEvent = {this.props.handleClick}
           options={{
             title:{
               display:this.props.displayTitle,
@@ -42,4 +42,4 @@ class PieChart extends Component{
   }
 }
 
-export default Pie;
+export default PieChart;
