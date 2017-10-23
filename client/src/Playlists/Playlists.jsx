@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Playlist from './Playlist.jsx';
+import StickySideBar from './StickySideBar.jsx'
 
 
 class Playlists extends Component{
@@ -13,7 +14,8 @@ class Playlists extends Component{
 
   componentDidMount() {
     let accessToken = this.props.accessToken
-    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists", {
+    let currentUser = this.props.currentUser
+    fetch ("https://api.spotify.com/v1/users/" + currentUser + "/playlists", {
       headers: {
         Authorization: "Bearer " + accessToken
       }
@@ -38,8 +40,10 @@ class Playlists extends Component{
     })
     return(
       <div className="row">
-        <div className="col-sm-2"></div>
-        <div className="col-sm-10">{renderPlaylists}</div>
+        <div className="col-md-2 col-xs-6 text-center">
+          <StickySideBar accessToken={this.props.accessToken}/>
+        </div>
+        <div className="col-md-10 col-xs-6 sticky-container">{renderPlaylists}</div>
       </div>
     )
 }

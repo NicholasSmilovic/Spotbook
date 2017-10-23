@@ -1,15 +1,22 @@
 import React, {Component} from 'react';
-// import PieChart from '../Charts/Pie.jsx';
-import BarChart from '../Charts/Bar.jsx';
+
+
+import UserMatchSidebar from './UserMatchSidebar.jsx';
+import UserProfile from './UserProfile.jsx';
+import Navbar from '../partials/Navbar.jsx'
+
+import SampleData from '../Charts/SampleChartData.jsx'
 import Palette from '../Charts/Palette.jsx'
+import BarChart from '../Charts/Bar.jsx'
+
 
 class CurrentUser extends Component {
 
+  // *** Charts Requires Stuff Below
   constructor(){
     super();
     this.state = {
       chartData:{},
-
     }
   }
 
@@ -17,19 +24,24 @@ class CurrentUser extends Component {
     this.getChartData();
   }
 
+  componentDidMount(){
+    this.makeChartPretty();
+  }
+
   getChartData(){
     // Ajax calls here
     this.setState({
-      chartData:{
-        labels: ['Carlo', 'Nich', 'Brandon', 'Bryce', 'Dummy_1', 'Dummy_2'],
-        datasets:[{
-          label:'Stuff',
-          data:[50,80,70,100,110,20],
-          backgroundColor: Palette().warm,
-        }]
-      }
+      chartData:SampleData()
     });
   }
+
+  makeChartPretty(){
+    let data = this.state.chartData;
+    data.datasets[0]["backgroundColor"] = Palette().cool;
+
+    this.setState({chartData:data});
+  }
+
 
   handleClickElement = (event) => {
     if (event[0]) {
@@ -40,17 +52,21 @@ class CurrentUser extends Component {
     }
   }
 
+  // *** Charts Requires Stuff Above
+
   render (){
 
     return(
-        <div id="user-profile">
 
-        <BarChart
-        chartData={this.state.chartData}
-        text="Bar Chart in "
-        location="Spotcheck"
-        handleClick={ event => this.handleClickElement(event) }/>
+        <div>
+          <UserProfile />
+          <UserMatchSidebar />
 
+          <BarChart
+          chartData={this.state.chartData}
+          text="Bar Chart in "
+          location="Spotcheck"
+          handleClick={ event => this.handleClickElement(event) }/>
         </div>
       )
   }

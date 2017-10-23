@@ -3,5 +3,37 @@
 }
 
 body {
-  background-color: rgba(black, .9)
+  background-color: $slightly-black;
+}
+
+.playlist-header{
+  background-color: $slightly-black;
+  vertical-align: middle;
+}
+
+.search-bar{
+}
+
+.search-bar-query{
+  background-color:black;
+  padding: 0;
+  width:80%;
+}
+
+.search-bar-query:focus{
+  outline-color: $spotify-green;
+}
+
+.sticky-container{
+  height: 100vh;
+  overflow: auto;
+}
+
+.sticky-block{
+  position: sticky;
+  top: 0px;
+}
+
+.button{
+  margin:0px auto; //it will center them
 }
