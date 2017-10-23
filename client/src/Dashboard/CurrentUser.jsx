@@ -53,8 +53,8 @@ class CurrentUser extends Component {
             chartData={this.state.chartData}
 
             title="Spotcheck"
-            y_label=""
-            x_label=""
+            y_label="Y-AXIS"
+            x_label="X-AXIS"
 
             handleClick={ event => this.handleClickElement(event) }
           />

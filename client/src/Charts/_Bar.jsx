@@ -10,6 +10,9 @@ class BarChart extends Component{
   }
 
   render(){
+
+    let fontColor = '#EEE';
+
     return (
       <div className="chart">
 
@@ -20,7 +23,7 @@ class BarChart extends Component{
             title:{
               display: true,
               text:this.props.title,
-              fontSize:25
+              fontSize: 25,
             },
 
             legend:{ display: false },
@@ -33,7 +36,8 @@ class BarChart extends Component{
                 },
                 scaleLabel: {
                   display: true,
-                  labelString: this.props.y_label
+                  labelString: this.props.y_label,
+                  fontColor: fontColor
                 },
                 ticks: {
                   display: false,
@@ -45,10 +49,14 @@ class BarChart extends Component{
                   display: false,
                   drawBorder: true,
                   color: '#FFF'
-                   },
+                },
                 scaleLabel: {
                   display: true,
-                  labelString: this.props.x_label
+                  labelString: this.props.x_label,
+                  fontColor: fontColor
+                },
+                ticks: {
+                  fontColor: fontColor
                 }
               }]
             },
