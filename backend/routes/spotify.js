@@ -138,15 +138,31 @@ module.exports = (DataHelpers) => {
 
   function dataStash(spotifyReqHeader, body) {
 
-    console.log(body.id)
     // add user to database, if not already there
-    DataHelpers.userHelpers.getUserBySpotifyID(body.id, function(found, response) {
-      console.log(found, response);
-      if (!found) {
-        DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
-      } else {
-        console.log(`Welcome back, ${body.display_name}`)
-      }
+    DataHelpers.userHelpers.getUserBySpotifyID(body)
+      .then((response) => {
+        console.log(response)
+        if (response === 'user not found') {
+          DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
+            .then((response) => {
+              console.log(response)
+            })
+            .catch((e) => {
+              console.log(e)
+            })
+        } else {
+          console.log(`Welcome back, ${body.display_name}`)
+        }
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+      // console.log(found, response);
+      // if (!found) {
+      //   DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
+      // } else {
+      //   console.log(`Welcome back, ${body.display_name}`)
+      // }
 
       // make API request for user's top tracks
       // fetch.fetchUrl("https://api.spotify.com/v1/me/top/tracks?limit=20", {
@@ -160,7 +176,7 @@ module.exports = (DataHelpers) => {
       //     }
       //     console.log(response.json())
       //   })
-      })
+      // }
   }
 }
 

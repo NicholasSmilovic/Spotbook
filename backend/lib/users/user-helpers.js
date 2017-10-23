@@ -16,9 +16,11 @@ module.exports = (knex) => {
     knex('users').insert(newUser)
       .then(() => {
         console.log(`${displayName} was added to the database!`)
+        resolve(true)
       })
       .catch(() => {
         console.log(`There was an error adding ${displayName} to the database`)
+        reject(false)
       })
 
     })
@@ -84,11 +86,10 @@ module.exports = (knex) => {
           }
         })
         .then(() => {
-          resolve(true, user)
+          resolve(user)
         })
         .catch(() => {
-          console.log(`There was an error retrieving ${id} from the database`)
-          reject(false, {})
+          reject('user not found')
         })
     })
   }
