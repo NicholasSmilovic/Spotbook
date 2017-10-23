@@ -43,7 +43,7 @@ class CurrentUser extends Component {
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      let label = this.state.chartData.labels[index];
+      let label = this.state.chartData.data.labels[index];
 
       alert(`INDEX: ${index} => ${label}`);
     }
@@ -51,12 +51,12 @@ class CurrentUser extends Component {
   // *** Charts Requires Stuff Above
 
   render (){
+          // <UserProfile />
+          // <UserMatchSidebar />
     return(
 
         <div>
 
-          <UserProfile />
-          <UserMatchSidebar />
 
           <BarChart
             chartData={this.state.chartData}
