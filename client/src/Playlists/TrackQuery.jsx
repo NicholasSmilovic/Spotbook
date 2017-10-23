@@ -10,14 +10,14 @@ class TrackQuery extends Component{
   }
 
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(this.props.query === nextProps.query)  {
-      return false
-    }
-    return true
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if(this.props.query === nextProps.query)  {
+  //     return false
+  //   }
+  //   return true
+  // }
 
-  componentWillUpdate() {
+  componentWillReceiveProps() {
     let accessToken = this.props.accessToken
     let query = this.props.query
     fetch ("https://api.spotify.com/v1/search?q=" + query + "&type=track", {

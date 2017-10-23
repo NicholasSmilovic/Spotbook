@@ -8,18 +8,46 @@ class Playlists extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      playlists:[]
+      playlists:[],
+      loading: true,
+      total: 0,
+      totalLoaded: 0
     }
+
   }
 
-  componentDidMount() {
-    let accessToken = this.props.accessToken
-    let currentUser = this.props.currentUser
-    fetch ("https://api.spotify.com/v1/users/" + currentUser + "/playlists", {
-      headers: {
-        Authorization: "Bearer " + accessToken
+  componentWillMount() {
+    this.fetchAllPlaylists()
+  }
+
+  fetchAllPlaylists() {
+    this.fetchLength((length) =>{
+      let numberOfFetches = Math.ceil(length / 20);
+      for(let fetchCount = 0; fetchCount < numberOfFetches; fetchCount++){
+        this.fetchPlaylists( fetchCount * 20, (data) => {
+          let newPlaylists = this.state.playlists.concat(data.items)
+          this.setState({ playlists: newPlaylists })
+          if(fetchCount === (numberOfFetches - 1)){
+            this.setState({ loading: false })
+          }
+        })
       }
     })
+  }
+
+  fetchLength(callback) {
+    this.fetchPlaylists(0, (data) => {
+      callback(data.total)
+    })
+  }
+
+  fetchPlaylists(offset, callback) {
+
+    fetch ("https://api.spotify.com/v1/users/" + this.props.currentUser + "/playlists?offset=" + offset, {
+        headers: {
+          Authorization: "Bearer " + this.props.accessToken
+        }
+      })
       .then((response) => {
         if(response.status >= 400){
 
@@ -27,17 +55,20 @@ class Playlists extends Component{
         return response.json()
       })
       .then((data) => {
-        this.setState({ playlists: data.items})
+        callback(data)
       })
   }
 
-  render (){
-    const renderPlaylists = this.state.playlists.map((playlist, index)=>{
-      if(this.state.playlists) {
-        return <Playlist playlist={playlist} accessToken={this.props.accessToken} key={index}/>
-      }
 
-    })
+  render (){
+    let renderPlaylists = <div>Loading...</div>
+    if(!(this.state.loading)) {
+      renderPlaylists = this.state.playlists.map((playlist, index)=>{
+        return <Playlist playlist={playlist} accessToken={this.props.accessToken} key={index}/>
+      })
+    }
+
+
     return(
       <div className="row">
         <div className="col-md-2 col-xs-6 text-center">
