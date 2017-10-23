@@ -27,15 +27,13 @@ class CurrentUser extends Component {
 
   getChartData(){
     // Ajax calls here
-    $.get('http://localhost:3001/')
-    .done(result => {
-
-      // this.setState({ tracks: result });
-      console.log(result);
-    } )
-    .fail( err => {
-      console.log(err);
+    $.get('http://localhost:3000/', )
+    .done( result => {
+      console.log(result)
     })
+    .fail( err => {
+      console.log(err)
+    });
 
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
@@ -52,12 +50,12 @@ class CurrentUser extends Component {
   // *** Charts Requires Stuff Above
 
   render (){
+          // <UserProfile />
+          // <UserMatchSidebar />
     return(
 
         <div>
 
-          <UserProfile />
-          <UserMatchSidebar />
 
           <BarChart
             chartData={this.state.chartData}
