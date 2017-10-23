@@ -1,19 +1,22 @@
 module.exports = (knex) => {
 
   function addPlaylist(playlistName, spotifyPlaylistID, spotifyOwnerID) {
-    let newPlaylist = {
-      playlist_name: playlistName,
-      spotify_playlist_id: spotifyPlaylistID,
-      spotify_owner_id: spotifyOwnerID
-    }
+    return new Promise(function(resolve, reject) {
+      let newPlaylist = {
+        playlist_name: playlistName,
+        spotify_playlist_id: spotifyPlaylistID,
+        spotify_owner_id: spotifyOwnerID
+      }
 
-    knex('playlists').insert(newPlaylist)
-      .then(() => {
-        console.log(`${playlistName} has beeen added to the database`)
-      })
-      .catch(() => {
-        console.log(`There was an error adding ${playlistName} to the database`)
-      })
+      knex('playlists').insert(newPlaylist)
+        .then(() => {
+          console.log(`${playlistName} has beeen added to the database`)
+        })
+        .catch(() => {
+          console.log(`There was an error adding ${playlistName} to the database`)
+        })
+
+    })
   }
 
   // let playlist_name = "Playlist 1"
@@ -24,19 +27,23 @@ module.exports = (knex) => {
 
 
   function removePlaylist(id) {
-    knex('playlists').where('id', id).del()
-      .then(() => {
-        console.log(`${id} was removed from the database`)
-      })
-      .catch(() => {
-        console.log(`There was an error removing ${id} from the database`)
-      })
+    return new Promise(function(resolve, reject) {
+      knex('playlists').where('id', id).del()
+        .then(() => {
+          console.log(`${id} was removed from the database`)
+        })
+        .catch(() => {
+          console.log(`There was an error removing ${id} from the database`)
+        })
+
+    })
   }
 
   // removePlaylist(3)
 
 
-  function getPlaylistByID(id, callback) {
+  function getPlaylistByID(id) {
+    return new Promise(function(resolve, reject) {
     let playlist = {}
     knex('playlists').where('id', id)
       .then((val) => {
@@ -48,12 +55,12 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        callback(playlist)
+        resolve(playlist)
       })
       .catch(() => {
         console.log(`There was an error retrieving ${id} from the database`)
       })
-
+    })
   }
 
   // getPlaylistByID(1, function(response) {

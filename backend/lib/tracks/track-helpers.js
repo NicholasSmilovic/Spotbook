@@ -1,35 +1,36 @@
 module.exports = (knex) => {
 
   function addTrack(trackName, spotifyID, imageURLs, audioFeatures) {
-    let newTrack = {
-      track_name: trackName,
-      spotify_id: spotifyID,
-      image_urls: {
-        large: imageURLs[0].url,
-        medium: imageURLs[1].url,
-        small: imageURLs[2].url,
-      },
-      danceability: audioFeatures.danceability,
-      energy: audioFeatures.energy,
-      key: audioFeatures.key,
-      loudness: audioFeatures.loudness,
-      mode: audioFeatures.mode,
-      speechiness: audioFeatures.speechiness,
-      acousticness: audioFeatures.acousticness,
-      instrumentalness: audioFeatures.instrumentalness,
-      liveness: audioFeatures.liveness,
-      valence: audioFeatures.valence,
-      tempo: audioFeatures.tempo
-    }
+    return new Promise(function(resolve, reject) {
+      let newTrack = {
+        track_name: trackName,
+        spotify_id: spotifyID,
+        image_urls: {
+          large: imageURLs[0].url,
+          medium: imageURLs[1].url,
+          small: imageURLs[2].url,
+        },
+        danceability: audioFeatures.danceability,
+        energy: audioFeatures.energy,
+        key: audioFeatures.key,
+        loudness: audioFeatures.loudness,
+        mode: audioFeatures.mode,
+        speechiness: audioFeatures.speechiness,
+        acousticness: audioFeatures.acousticness,
+        instrumentalness: audioFeatures.instrumentalness,
+        liveness: audioFeatures.liveness,
+        valence: audioFeatures.valence,
+        tempo: audioFeatures.tempo
+      }
 
-    knex('tracks').insert(newTrack)
-      .then(() => {
-        console.log(`${trackName} was added to the database`)
-      })
-      .catch (() => {
-        console.log(`There was an error adding ${trackName} to the database`)
-      })
-
+      knex('tracks').insert(newTrack)
+        .then(() => {
+          console.log(`${trackName} was added to the database`)
+        })
+        .catch (() => {
+          console.log(`There was an error adding ${trackName} to the database`)
+        })
+    })
   }
 
   // let track_name = "Hedwig's Theme"
@@ -57,6 +58,7 @@ module.exports = (knex) => {
 
   //hopefully this function will not be used in regular app usage, the more tracks the more data!
   function removeTrack(id) {
+    return new Promise(function(resolve, reject) {
     knex('tracks').where('id', id).del()
       .then(() => {
         console.log(`${id} was removed from the database`)
@@ -64,6 +66,7 @@ module.exports = (knex) => {
       .catch(() => {
         console.log(`There was an error removing ${id} from the database`)
       })
+    })
   }
 
   // removeTrack(6)
@@ -71,7 +74,8 @@ module.exports = (knex) => {
 
 
 
-  function getTrackByID(id, callback) {
+  function getTrackByID(id) {
+    return new Promise(function(resolve, reject) {
     let track = {}
     knex('tracks').where('id', id)
       .then((val) => {
@@ -98,12 +102,12 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        callback(track)
+        resolve(track)
       })
       .catch(() => {
         console.log(`There was an error retrieving ${id} from the database`)
       })
-
+    })
   }
 
   // getTrackByID(1, function(response) {
@@ -115,7 +119,8 @@ module.exports = (knex) => {
   //   JOIN user_tracks ON users.id = user_id
   //   JOIN tracks ON tracks.id = track_id
   //   WHERE track_id = 1;
-  function getTrackListeners(id, callback) {
+  function getTrackListeners(id) {
+    return new Promise(function(resolve, reject) {
     knex.select('users.id').from('users')
       .innerJoin('user_tracks', 'user_id', 'users.id')
       .innerJoin('tracks', 'track_id', 'tracks.id')
@@ -126,11 +131,12 @@ module.exports = (knex) => {
         val.forEach((user => {
           users.push(user)
         }))
-        callback(users)
+        resolve(users)
       })
       .catch(() => {
         console.log(`There was an error retrieving users by ${id} from the database`)
       })
+    })
   }
 
 
@@ -140,7 +146,8 @@ module.exports = (knex) => {
 
 
 
-  function getTrackBySpotifyID(id, callback) {
+  function getTrackBySpotifyID(id) {
+    return new Promise(function(resolve, reject) {
     let track = {}
     knex('tracks').where('spotify_id', id)
       .then((val) => {
@@ -167,12 +174,12 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        callback(true, track)
+        resolve(true, track)
       })
       .catch(() => {
-        callback(false, {})
+        reject(false, {})
       })
-
+    })
   }
   return {
     addTrack: addTrack,

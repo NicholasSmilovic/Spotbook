@@ -1,26 +1,28 @@
 module.exports = (knex) => {
 
   function addArtist(artistName, spotifyID, imageURLs, genresArray) {
-    let newArtist = {
-      artist_name: artistName,
-      spotify_id: spotifyID,
-      image_urls: {
-        large: imageURLs[0].url,
-        medium: imageURLs[1].url,
-        small: imageURLs[2].url
-      },
-      genres: {
-        genres_array: genresArray
+    return new Promise(function(resolve, reject) {
+      let newArtist = {
+        artist_name: artistName,
+        spotify_id: spotifyID,
+        image_urls: {
+          large: imageURLs[0].url,
+          medium: imageURLs[1].url,
+          small: imageURLs[2].url
+        },
+        genres: {
+          genres_array: genresArray
+        }
       }
-    }
 
-    knex('artists').insert(newArtist)
-      .then(() => {
-        console.log(`${artistName} has beeen added to the database`)
-      })
-      .catch(() => {
-        console.log(`There was an error adding ${artistName} to the database`)
-      })
+      knex('artists').insert(newArtist)
+        .then(() => {
+          console.log(`${artistName} has beeen added to the database`)
+        })
+        .catch(() => {
+          console.log(`There was an error adding ${artistName} to the database`)
+        })
+    })
   }
 
   // let artist_name = 'Kanye West'
@@ -38,42 +40,45 @@ module.exports = (knex) => {
 
 
   function removeArtist(id) {
-    knex('artists').where('id', id).del()
-      .then(() => {
-        console.log(`${id} was removed from the database`)
-      })
-      .catch(() => {
-        console.log(`There was an error removing ${id} from the database`)
-      })
+    return new Promise(function(resolve, reject) {
+      knex('artists').where('id', id).del()
+        .then(() => {
+          console.log(`${id} was removed from the database`)
+        })
+        .catch(() => {
+          console.log(`There was an error removing ${id} from the database`)
+        })
+    })
   }
 
   // removeArtist(5)
 
 
 
-  function getArtistByID(id, callback) {
-    let artist = {}
-    knex('artists').where('id', id)
-      .then((val) => {
-        artist = {
-          id: val[0].id,
-          artist_name: val[0].artist_name,
-          spotify_id: val[0].spotify_id,
-          image_urls: {
-            large: val[0].image_urls.large,
-            medium: val[0].image_urls.medium,
-            small: val[0].image_urls.small
-          },
-          genres: val[0].genres.genres_array
-        }
-      })
-      .then(() => {
-        callback(artist)
-      })
-      .catch(() => {
-        console.log(`There was an error retrieving ${id} from the database`)
-      })
-
+  function getArtistByID(id) {
+    return new Promise(function(resolve, reject) {
+      let artist = {}
+      knex('artists').where('id', id)
+        .then((val) => {
+          artist = {
+            id: val[0].id,
+            artist_name: val[0].artist_name,
+            spotify_id: val[0].spotify_id,
+            image_urls: {
+              large: val[0].image_urls.large,
+              medium: val[0].image_urls.medium,
+              small: val[0].image_urls.small
+            },
+            genres: val[0].genres.genres_array
+          }
+        })
+        .then(() => {
+          resolve(artist)
+        })
+        .catch(() => {
+          console.log(`There was an error retrieving ${id} from the database`)
+        })
+    })
   }
 
   // getArtistByID(1, function(response) {
@@ -92,7 +97,8 @@ module.exports = (knex) => {
   //   WHERE artists.id = 1
   //   ORDER BY track_name desc;
 
-  function getArtistTracks(id, callback) {
+  function getArtistTracks(id) {
+    return new Promise(function(resolve, reject) {
     knex.from('tracks')
       .innerJoin('artist_tracks', 'track_id', 'tracks.id')
       .innerJoin('artists', 'artist_id', 'artists.id')
@@ -103,11 +109,12 @@ module.exports = (knex) => {
         val.forEach((track => {
           tracks.push(track)
         }))
-        callback(tracks)
+        resolve(tracks)
       })
       .catch(() => {
         console.log(`There was an error retrieving tracks by ${id} from the database`)
       })
+    })
   }
 
   // getArtistTracks(1, function(response) {
@@ -116,7 +123,8 @@ module.exports = (knex) => {
 
 
 
-  function getArtistBySpotifyID(id, callback) {
+  function getArtistBySpotifyID(id) {
+    return new Promise(function(resolve, reject) {
     let artist = {}
     knex('artists').where('spotify_id', id)
       .then((val) => {
@@ -133,12 +141,12 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        callback(true, artist)
+        resolve(true, artist)
       })
       .catch(() => {
-        callback(false, {})
+        reject(false, {})
       })
-
+    })
   }
 
 

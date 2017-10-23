@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router  = express.Router();
+const fetch = require('fetch');
 let request = require('request') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
@@ -135,18 +136,31 @@ module.exports = (DataHelpers) => {
 
   return router
 
-  function dataStash(spotifyReqHeader, myAccount) {
+  function dataStash(spotifyReqHeader, body) {
 
-    DataHelpers.userHelpers.getUserBySpotifyID(myAccount.id, function(found, response) {
+    console.log(body.id)
+    // add user to database, if not already there
+    DataHelpers.userHelpers.getUserBySpotifyID(body.id, function(found, response) {
+      console.log(found, response);
       if (!found) {
-        DataHelpers.userHelpers.addUser(myAccount.display_name, myAccount.id, myAccount.images[0].url)
+        DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
       } else {
-        console.log(`Welcome back, ${myAccount.display_name}`)
+        console.log(`Welcome back, ${body.display_name}`)
       }
-    })
 
+      // make API request for user's top tracks
+      // fetch.fetchUrl("https://api.spotify.com/v1/me/top/tracks?limit=20", {
+      //   headers: {
+      //     Authorization: "Bearer " + body.access_token
+      //   }
+      // }).then((response) => {
+      //     if(response.status >= 400){
+      //       console.log(`error. no tracks for you.`)
 
-
+      //     }
+      //     console.log(response.json())
+      //   })
+      })
   }
 }
 
