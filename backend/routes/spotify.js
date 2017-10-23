@@ -7,6 +7,7 @@ let request = require('request') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
 require('dotenv')
+let Promise = require("bluebird");
 
 
 let client_id = process.env.clientID // Your client id
@@ -85,7 +86,7 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            // dataStash(options.headers, body, access_token)
+            dataStash(options.headers, body, access_token)
           });
 
           console.log('redirecting...', app_uri +
@@ -136,81 +137,98 @@ module.exports = (DataHelpers) => {
 
   return router
 
-  // function dataStash(spotifyReqHeader, body) {
+  function dataStash(spotifyReqHeader, body) {
 
-  //   // add user to database, if not already there
-  //   DataHelpers.userHelpers.getUserBySpotifyID(body.id)
-  //     .then((response) => {
-  //       console.log(`Welcome, ${response.display_name}`)
-  //     })
-  //     .catch((e) => {
-  //       if (e === 'user not found') {
-  //         DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
-  //           .then((response) => {
-  //             console.log(response)
-  //           })
-  //           .catch((e) => {
-  //             console.log(e)
-  //           })
-  //       }
-  //     })
+    // add user to database, if not already there
+    DataHelpers.userHelpers.getUserBySpotifyID(body.id)
+      .then((response) => {
+        console.log(`Welcome, ${response.display_name}`)
+      })
+      .catch((e) => {
+        if (e === 'user not found') {
+          DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
+            .then((response) => {
+              console.log(response)
+            })
+            .catch((e) => {
+              console.log(e)
+            })
+        }
+      })
 
-  //     // make API request for user's top tracks
-  //     let trackReq = {
-  //       url: "https://api.spotify.com/v1/me/top/tracks?limit=20",
-  //       headers: spotifyReqHeader,
-  //       json: true
-  //     };
+      // make API request for user's top tracks
+      let trackReq = {
+        url: "https://api.spotify.com/v1/me/top/tracks?limit=20",
+        headers: spotifyReqHeader,
+        json: true
+      };
 
-  //     request.get(trackReq, function(error, response, body) {
-  //       parseTracks(body)
-  //     });
+      request.get(trackReq, function(error, response, body) {
+        parseTracks(body)
+
+        //once we have artists, there may be duplicates in the array. eliminate them by
+        // looking for their spotify id in DB before adding them to the database.
+        // takes longer, but only way i know how
+      });
 
 
-  // }
+  }
 
 
-  //     function parseTracks(tracks) {
-  //      // find what tracks and artists aren't already in database
-  //      let tracksToAdd = []
-  //      let artistsToAdd = []
+      function parseTracks(tracks) {
+       // find what tracks and artists aren't already in database
+       let tracksToAdd = []
+       let artistsToAdd = []
 
-  //      tracks.items.forEach((track, index) => {
-  //         let cleanTrack = {
-  //            temp_id: index,
-  //            track_name: track.name,
-  //            spotify_id: track.id,
-  //            image_urls: {
-  //               large: track.album.images[0].url,
-  //               medium: track.album.images[1].url,
-  //               small: track.album.images[2].url
-  //            }
-  //         }
-  //         let cleanArtist = {
-  //            temp_id: index,
-  //            artist_name: track.artists[0].name,
-  //            spotify_id: track.artists[0].id
-  //         }
+       Promise.all([
+        tracks.items.forEach((track, index) => {
+          let cleanTrack = {
+             temp_id: index,
+             track_name: track.name,
+             spotify_id: track.id,
+             image_urls: {
+                large: track.album.images[0].url,
+                medium: track.album.images[1].url,
+                small: track.album.images[2].url
+             }
+          }
+          let cleanArtist = {
+             temp_id: index,
+             artist_name: track.artists[0].name,
+             spotify_id: track.artists[0].id
+          }
 
-  //         DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id)
-  //           .then((response) => {
-  //             console.log(`${cleanTrack.track_name} is already in database`)
-  //           })
-  //           .catch((e) => {
-  //             tracksToAdd.push(cleanTrack)
-  //             if (index === tracks.items.length ) {}
-  //           })
+          Promise.all([
+            DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id)
+              .then((response) => {
+                console.log(`${cleanTrack.track_name} is already in database`)
+              })
+              .catch((e) => {
+                tracksToAdd.push(cleanTrack)
+                if (index === tracks.items.length - 1) {
+                  console.log(tracksToAdd)
+                }
+              }),
 
-  //         DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id)
-  //           .then((response) => {
-  //             console.log(`${cleanArtist.artist_name} is already in the database`)
-  //           })
-  //           .catch((e) => {
-  //             artistsToAdd.push(cleanArtist)
-  //           })
-
-  //       })
-  //   }
+            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id)
+              .then((response) => {
+                console.log(`${cleanArtist.artist_name} is already in the database`)
+              })
+              .catch((e) => {
+                if (index === tracks.items.length - 1) {
+                  console.log(artistsToAdd)
+                }
+              })
+          ])
+        })
+        ])
+        .then(() => {
+          console.log(tracksToAdd)
+        })
+        .catch((e) => {
+          console.log('there was an error!')
+        })
+    }
 
 
 
