@@ -3,7 +3,7 @@ h1 {
 }
 body {
   color:white;
-  padding:5px;
+  // padding:5px;
   height: 100vh;
   overflow: auto;
   overflow-y: hidden;
@@ -24,6 +24,7 @@ body {
 {
   background: $spotify-green;
   overflow: auto;
+}
 
 $spotifyGreen: #1ED760;
 $topDivGradient: -webkit-gradient(
@@ -50,9 +51,8 @@ $headerText: 'Work Sans', sans-serif;
   position: absolute;
   width:100% !important;
   height: 6em;
-  opacity: 0.7;
-  border-radius: 0;
   display: inline-block;
+  border-radius: 0;
   vertical-align: top;
   margin-bottom: 0;
 }
