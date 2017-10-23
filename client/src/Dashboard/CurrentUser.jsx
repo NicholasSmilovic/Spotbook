@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 
-
 import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import Navbar from '../partials/Navbar.jsx'
@@ -30,16 +29,14 @@ class CurrentUser extends Component {
 
   getChartData(){
     // Ajax calls here
-    this.setState({
-      chartData:SampleData()
-    });
+    this.setState({ chartData:SampleData() });
   }
 
   makeChartPretty(){
     // Make copy of state, change copy of state, then make state the edited version of itself.
     let data = this.state.chartData;
-    data.datasets[0]["backgroundColor"] = Palette().cool;
-    this.setState({chartData:data});
+    data.datasets[0]["backgroundColor"] = Palette().cool_10;
+    this.setState({ chartData:data });
   }
 
 
@@ -51,16 +48,15 @@ class CurrentUser extends Component {
       alert(`INDEX: ${index} => ${label}`);
     }
   }
-
   // *** Charts Requires Stuff Above
 
   render (){
-
+    // <UserProfile />
+    // <UserMatchSidebar />
     return(
 
         <div>
-          <UserProfile />
-          <UserMatchSidebar />
+
 
           <BarChart
           chartData={this.state.chartData}
