@@ -48,7 +48,7 @@ $headerText: 'Work Sans', sans-serif;
   font-family: $headerText;
   background-color: black;
   z-index: 9999;
-  position: absolute;
+  position: fixed;
   width:100% !important;
   height: 6em;
   display: inline-block;
@@ -76,5 +76,3 @@ $headerText: 'Work Sans', sans-serif;
   color: $spotifyGreen;
   text-decoration: none;
 }
-
-

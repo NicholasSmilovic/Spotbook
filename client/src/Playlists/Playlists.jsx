@@ -14,7 +14,8 @@ class Playlists extends Component{
 
   componentDidMount() {
     let accessToken = this.props.accessToken
-    fetch ("https://api.spotify.com/v1/users/nicholas_smilovic/playlists", {
+    let currentUser = this.props.currentUser
+    fetch ("https://api.spotify.com/v1/users/" + currentUser + "/playlists", {
       headers: {
         Authorization: "Bearer " + accessToken
       }
