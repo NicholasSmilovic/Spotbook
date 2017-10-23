@@ -9,13 +9,6 @@ class BarChart extends Component{
     }
   }
 
-  static defaultProps = {
-    displayTitle:true,
-    displayLegend: true,
-    legendPosition:'right',
-    location:'City'
-  }
-
   render(){
     return (
       <div className="chart">
@@ -25,32 +18,37 @@ class BarChart extends Component{
           getElementAtEvent = {this.props.handleClick}
           options={{
             title:{
-              display:this.props.displayTitle,
-              text:this.props.text+this.props.location,
+              display: true,
+              text:this.props.title,
               fontSize:25
             },
-            legend:{
-              display:false,
-              position:this.props.legendPosition
-            },
+
+            legend:{ display: false },
 
             scales: {
               yAxes: [{
+                gridLines:{
+                  display: false,
+                  drawBorder: false
+                },
                 scaleLabel: {
                   display: true,
-                  labelString: 'THIS IS THE Y-AXIS'
+                  labelString: this.props.y_label
                 },
                 ticks: {
-                  callback: function(label, index, labels) {
-                    return '$' + label;
-                  },
+                  display: false,
                   beginAtZero: true
                 }
               }],
               xAxes: [{
+                gridLines:{
+                  display: false,
+                  drawBorder: true,
+                  color: '#FFF'
+                   },
                 scaleLabel: {
                   display: true,
-                  labelString: 'THIS IS THE X-AXIS'
+                  labelString: this.props.x_label
                 }
               }]
             },

@@ -4,9 +4,10 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import Navbar from '../partials/Navbar.jsx'
 
+import Prettiness from '../Charts/Prettiness.jsx'
 import SampleData from '../Charts/SampleChartData.jsx'
 import Palette from '../Charts/Palette.jsx'
-import BarChart from '../Charts/Bar.jsx'
+import BarChart from '../Charts/_Bar.jsx'
 
 
 class CurrentUser extends Component {
@@ -34,9 +35,8 @@ class CurrentUser extends Component {
 
   makeChartPretty(){
     // Make copy of state, change copy of state, then make state the edited version of itself.
-    let data = this.state.chartData;
-    data.datasets[0]["backgroundColor"] = Palette().cool_10;
-    this.setState({ chartData:data });
+    let prettyData = Prettiness( this.state.chartData, Palette().cool_10 );
+    this.setState({ chartData: prettyData });
   }
 
 
@@ -59,10 +59,14 @@ class CurrentUser extends Component {
 
 
           <BarChart
-          chartData={this.state.chartData}
-          text="Bar Chart in "
-          location="Spotcheck"
-          handleClick={ event => this.handleClickElement(event) }/>
+            chartData={this.state.chartData}
+
+            title="Spotcheck"
+            y_label=""
+            x_label=""
+
+            handleClick={ event => this.handleClickElement(event) }
+          />
         </div>
       )
   }
