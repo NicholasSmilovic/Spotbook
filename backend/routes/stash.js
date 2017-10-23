@@ -1,3 +1,20 @@
+require('dotenv').config({path: './../.env'})
+
+
+var knexConfig = {
+  client: 'pg',
+  connection: {
+    host     : process.env.DB_HOST,
+    user     : process.env.DB_USER,
+    password : process.env.DB_PASS,
+    database : process.env.DB_NAME
+  }
+};
+
+
+var knex = require("knex")(knexConfig);
+
+
 let tracks = {
   "items" : [ {
     "album" : {
@@ -273,6 +290,126 @@ let tracks = {
   "next" : "https://api.spotify.com/v1/me/top/tracks?limit=5&offset=5"
 }
 
+
+function getTrackBySpotifyID(id, callback) {
+  let track = {}
+  knex('tracks').where('spotify_id', id)
+    .then((val) => {
+      track = {
+        id: val[0].id,
+        track_name: val[0].track_name,
+        spotify_id: val[0].spotify_id,
+        image_urls: {
+          large: val[0].image_urls.large,
+          medium: val[0].image_urls.medium,
+          small: val[0].image_urls.small,
+        },
+        danceability: val[0].danceability,
+        energy: val[0].energy,
+        key: val[0].key,
+        loudness: val[0].loudness,
+        mode: val[0].mode,
+        speechiness: val[0].speechiness,
+        acousticness: val[0].acousticness,
+        instrumentalness: val[0].instrumentalness,
+        liveness: val[0].liveness,
+        valence: val[0].valence,
+        tempo: val[0].tempo
+      }
+    })
+    .then(() => {
+      callback(true, track)
+    })
+    .catch(() => {
+      callback(false, {})
+    })
+
+}
+
+
+
+function getArtistBySpotifyID(id, callback) {
+  let artist = {}
+  knex('artists').where('spotify_id', id)
+    .then((val) => {
+      artist = {
+        id: val[0].id,
+        artist_name: val[0].artist_name,
+        spotify_id: val[0].spotify_id,
+        image_urls: {
+          large: val[0].image_urls.large,
+          medium: val[0].image_urls.medium,
+          small: val[0].image_urls.small
+        },
+        genres: val[0].genres.genres_array
+      }
+    })
+    .then(() => {
+      callback(true, artist)
+    })
+    .catch(() => {
+      callback(false, {})
+    })
+
+}
+
+function addTrack(trackName, spotifyID, imageURLs, audioFeatures) {
+  let newTrack = {
+    track_name: trackName,
+    spotify_id: spotifyID,
+    image_urls: {
+      large: imageURLs[0].url,
+      medium: imageURLs[1].url,
+      small: imageURLs[2].url,
+    },
+    danceability: audioFeatures.danceability,
+    energy: audioFeatures.energy,
+    key: audioFeatures.key,
+    loudness: audioFeatures.loudness,
+    mode: audioFeatures.mode,
+    speechiness: audioFeatures.speechiness,
+    acousticness: audioFeatures.acousticness,
+    instrumentalness: audioFeatures.instrumentalness,
+    liveness: audioFeatures.liveness,
+    valence: audioFeatures.valence,
+    tempo: audioFeatures.tempo
+  }
+
+  knex('tracks').insert(newTrack)
+    .then(() => {
+      console.log(`${trackName} was added to the database`)
+    })
+    .catch (() => {
+      console.log(`There was an error adding ${trackName} to the database`)
+    })
+
+}
+
+function addArtist(artistName, spotifyID, imageURLs, genresArray) {
+  let newArtist = {
+    artist_name: artistName,
+    spotify_id: spotifyID,
+    image_urls: {
+      large: imageURLs[0].url,
+      medium: imageURLs[1].url,
+      small: imageURLs[2].url
+    },
+    genres: {
+      genres_array: genresArray
+    }
+  }
+
+  knex('artists').insert(newArtist)
+    .then(() => {
+      console.log(`${artistName} has beeen added to the database`)
+    })
+    .catch(() => {
+      console.log(`There was an error adding ${artistName} to the database`)
+    })
+}
+
+
+
 /* PROCESS FOR DATA DUMP
 
 1) spotify API request - top 200 tracks
@@ -314,10 +451,11 @@ parseTracks(tracks)
 //assume we have the data
 
 function parseTracks(tracks) {
+   // STAGE 1: what tracks and artists aren't already in database?
    let tracksToAdd = []
    let artistsToAdd = []
    let i = 1
-   tracks.items.forEach(track => {
+   tracks.items.forEach((track, index) => {
       let cleanTrack = {
          temp_id: i,
          track_name: track.name,
@@ -333,21 +471,37 @@ function parseTracks(tracks) {
          artist_name: track.artists[0].name,
          spotify_id: track.artists[0].id
       }
+      let trackInDB = false
+      let artistInDB = false
 
-   tracksToAdd.push(cleanTrack)
-   artistsToAdd.push(cleanArtist)
+
+      getTrackBySpotifyID(cleanTrack.spotify_id, function(found, response) {
+         if (!found) {
+            console.log('track not found. add to db')
+            tracksToAdd.push(cleanTrack)
+         }
+         if (index === tracks.items.length - 1) {
+            // API request for additional track information
+            console.log(tracksToAdd)
+         }
+      })
+
+      getArtistBySpotifyID(cleanArtist.spotify_id, function (found, response) {
+         if (!found) {
+            console.log('artist not found. add to db')
+            artistsToAdd.push(cleanArtist)
+         }
+         if (index === tracks.items.length - 1) {
+            // API request for additional artist information
+            console.log(artistsToAdd)
+         }
+      })
+
    i++
 
    })
-   // look at first track id
-   // is it in the tracks database?
-   // if it is, move on
-   // else, add it to the list for further API call
-   // do this for every track in tracks
-   //make API call for audio features for tracks
 
-   console.log(tracksToAdd)
-   console.log(artistsToAdd)
+
 }
 
 
@@ -356,11 +510,7 @@ function parseTracks(tracks) {
 
 
 
-
-
-
-
-
+knex.destroy()
 
 
 
