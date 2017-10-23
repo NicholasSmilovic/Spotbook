@@ -23,7 +23,7 @@ class Playlist extends Component{
     }
     return(
         <div>
-          <header className="panel panel-info playlist-header row text-center sticky-block">
+          <header className="playlist-header row text-center sticky-block">
                     <div className='col-xl-6 text-center'>
                       <h1>{this.props.playlist.name}</h1>
                     </div>
