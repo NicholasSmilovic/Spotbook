@@ -37,6 +37,7 @@ function addUser(displayName, spotifyID, imageURL) {
 //   })
 
 
+
 function removeUser(id) {
   return new Promise(function(resolve, reject) {
     knex('users').where('id', id).del()

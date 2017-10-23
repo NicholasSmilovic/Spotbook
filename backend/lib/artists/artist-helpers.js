@@ -141,10 +141,10 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        resolve(true, artist)
+        resolve(artist)
       })
       .catch(() => {
-        reject(false, {})
+        reject('artist not found')
       })
     })
   }

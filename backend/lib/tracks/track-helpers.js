@@ -174,10 +174,10 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-        resolve(true, track)
+        resolve(track)
       })
       .catch(() => {
-        reject(false, {})
+        reject('track not found')
       })
     })
   }
