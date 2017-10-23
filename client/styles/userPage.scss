@@ -1,0 +1,43 @@
+.user-sidebar {
+  color: white;
+  background-color: black;
+  position: fixed;
+  width: 20em;
+  overflow-y: scroll;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.user-profile {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  position: fixed;
+  color: white;
+  height: 20em;
+  background-image:
+    $topDivGradient;
+}
+
+.user-profile h1 {
+  font-family: $headerText;
+  font-size: 550%;
+  float:left;
+  color: white;
+  margin-top: 1.4em;
+  margin-left: 0.8em;
+}
+
+
+.user-profile img {
+  float: left;
+  border-radius: 50%;
+  margin-left: 2.5em;
+  margin-top: 1em;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+}
+
+
+

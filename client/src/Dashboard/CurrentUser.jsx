@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
+import UserMatchSidebar from './UserMatchSidebar.jsx';
+import UserProfile from './UserProfile.jsx';
+import Navbar from '../partials/Navbar.jsx'
 
 class CurrentUser extends Component {
   render (){
     return(
-        <div id="user-profile">
-          Inside user-profile div
+        <div>
+          <UserProfile />
+          <UserMatchSidebar />
         </div>
       )
   }

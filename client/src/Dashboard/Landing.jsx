@@ -7,7 +7,7 @@ class Landing extends Component{
   render (){
     return(
       <div>
-        < SpotifyLogin />
+        <SpotifyLogin />
       </div>
       )
   }
