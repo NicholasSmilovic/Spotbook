@@ -24,6 +24,7 @@ body {
 {
   background: $spotify-green;
   overflow: auto;
+}
 
 $spotifyGreen: #1ED760;
 $topDivGradient: -webkit-gradient(
@@ -47,7 +48,7 @@ $headerText: 'Work Sans', sans-serif;
   font-family: $headerText;
   background-color: black;
   z-index: 9999;
-  position: absolute;
+  position: fixed;
   width:100% !important;
   height: 6em;
   opacity: 0.7;
@@ -76,5 +77,3 @@ $headerText: 'Work Sans', sans-serif;
   color: $spotifyGreen;
   text-decoration: none;
 }
-
-

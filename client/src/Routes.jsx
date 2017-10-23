@@ -21,6 +21,7 @@ class Routes extends React.Component {
           <Playlists
             refreshAccessToken={this.props.refreshAccessTokens}
             accessToken = {this.props.accessToken}
+            currentUser = {this.props.currentUser}
             />
         )
     }
