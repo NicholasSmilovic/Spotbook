@@ -43,8 +43,8 @@ let track1 = {
 }
 
 let track2 = {
-  track_name: "In My Life",
-  spotify_id: "3KfbEIOC7YIv90FIfNSZpo",
+  track_name: "track2",
+  spotify_id: "3Kf",
   image_urls: {
     large: 'https://i.scdn.co/image/e26910fd9e7bb1671213cb9ed06a855077ddd79f',
     medium: 'https://i.scdn.co/image/7da8f3c2b2e002853864b6986f78e8cb7933d020',
@@ -65,8 +65,8 @@ let track2 = {
 
 
 let track3 = {
-  track_name: "Finish Line / Drown (feat. T-Pain, Kirk Franklin, Eryn Allen Kane & Noname)",
-  spotify_id: "2AgnbuzvnfPvq1sAYNB4pj",
+  track_name: "track3",
+  spotify_id: "2Agnbuzvn",
   image_urls: {
     large: 'https://i.scdn.co/image/717290460ec646ffa372c7f483835eaacfea34f7',
     medium: 'https://i.scdn.co/image/4df3b334d17428ba101ac867e6f97a0196af1635',
@@ -87,8 +87,8 @@ let track3 = {
 
 
 let track4 = {
-  track_name: "29 #Strafford APTS",
-  spotify_id: "4VZM71F8XAoLRuNyNLxwWS",
+  track_name: "track4",
+  spotify_id: "4VZM7",
   image_urls: {
     large: 'https://i.scdn.co/image/3a3fc1256e0b30ebedd13dee5d3071744163cd63',
     medium: 'https://i.scdn.co/image/52abd9c07908386d56681b87a3c22b54bc904ed6',
@@ -109,8 +109,8 @@ let track4 = {
 
 
 let track5 = {
-  track_name: "This Must Be The Place",
-  spotify_id: "6nRenEga4WTc8Da7kigrBO",
+  track_name: "track5",
+  spotify_id: "6nRen",
   image_urls: {
     large: 'https://i.scdn.co/image/732d604860b0dbeb652d6a4bc4e10531a15f5310',
     medium: 'https://i.scdn.co/image/a7156e9d16b0da604d15ccd08c136236edb1e30c',
@@ -131,8 +131,8 @@ let track5 = {
 
 
 let artist1 = {
-  artist_name: "The Beatles",
-  spotify_id: "3WrFJ7ztbogyGnTHbHJFl2",
+  artist_name: "artist1",
+  spotify_id: "3WrFJ7",
   image_urls: {
     large: "https://i.scdn.co/image/197cff807611777427c93258f0a1ccdf6b013b09",
     medium: "https://i.scdn.co/image/2a80bb1f1da720b80ce29e7eff73a0b13d6a5c88",
@@ -144,8 +144,8 @@ let artist1 = {
 }
 
 let artist2 = {
-  artist_name: "Chance The Rapper",
-  spotify_id: "1anyVhU62p31KFi8MEzkbf",
+  artist_name: "artist2",
+  spotify_id: "1anyVhU62p",
   image_urls: {
     large: "https://i.scdn.co/image/f5aceffb43876273fa72b7c3c002d7e3218075fd",
     medium: "https://i.scdn.co/image/5e4a5edf6132eb41bc71dd04cc9c92f30e256171",
@@ -157,8 +157,8 @@ let artist2 = {
 }
 
 let artist3 = {
-  artist_name: "Bon Iver",
-  spotify_id: "4LEiUm1SRbFMgfqnQTwUbQ",
+  artist_name: "artist3",
+  spotify_id: "4LEiUm",
   image_urls: {
     large: "https://i.scdn.co/image/e759e8e517c8936035d6fb8a7535286937cf4e23",
     medium: "https://i.scdn.co/image/0739e045db56b6d047c6b34063ff4e3aca21b4a0",
@@ -170,8 +170,8 @@ let artist3 = {
 }
 
 let artist4 = {
-  artist_name: "Iron & Wine",
-  spotify_id: "4M5nCE77Qaxayuhp3fVn4V",
+  artist_name: "artist4",
+  spotify_id: "4M5nC",
   image_urls: {
     large: "https://i.scdn.co/image/d1747efbc1b7c82865ba4c45ec1e9524d84d1f2b",
     medium: "https://i.scdn.co/image/efc2832c6777956982bb89a1940000800a8d6ff6",
@@ -183,14 +183,14 @@ let artist4 = {
 }
 
 let playlist1 = {
-  playlist_name: "PB&J Studies",
-  spotify_playlist_id: "4oL6CnruPrTroHt918zUx3",
+  playlist_name: "playlist1",
+  spotify_playlist_id: "4oL6Cn",
   spotify_owner_id: 1
 }
 
 let playlist2 = {
-  playlist_name: "Through the Iron Curtain",
-  spotify_playlist_id: "6ErxSxOFygXe5RDwst7HYv",
+  playlist_name: "playlist2",
+  spotify_playlist_id: "6Erx",
   spotify_owner_id: 2
 }
 
@@ -259,14 +259,14 @@ let user_tracks7 = {
 
 
 let absolute_artist1 = {
-  artist_name: "Talking Heads",
+  artist_name: "abs1",
   genres: {
     genres_array: [ "rock", "new wave" ]
   }
 }
 
 let absolute_artist2 = {
-  artist_name: "Led Zeppelin",
+  artist_name: "abs2",
   genres: {
     genres_array: [ "classic rock", "rock" ]
   }

@@ -33,7 +33,7 @@ module.exports = (DataHelpers) => {
     let state = generateRandomString(16);
     res.cookie(stateKey, state);
 
-    let scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private';
+    let scope = 'user-top-read user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private';
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',
@@ -85,7 +85,7 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            dataStash(options.headers, body)
+            dataStash(options.headers, body, access_token)
           });
 
           console.log('redirecting...', app_uri +
@@ -139,10 +139,12 @@ module.exports = (DataHelpers) => {
   function dataStash(spotifyReqHeader, body) {
 
     // add user to database, if not already there
-    DataHelpers.userHelpers.getUserBySpotifyID(body)
+    DataHelpers.userHelpers.getUserBySpotifyID(body.id)
       .then((response) => {
-        console.log(response)
-        if (response === 'user not found') {
+        console.log(`Welcome, ${response.display_name}`)
+      })
+      .catch((e) => {
+        if (e === 'user not found') {
           DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
             .then((response) => {
               console.log(response)
@@ -150,34 +152,61 @@ module.exports = (DataHelpers) => {
             .catch((e) => {
               console.log(e)
             })
-        } else {
-          console.log(`Welcome back, ${body.display_name}`)
         }
       })
-      .catch((e) => {
-        console.log(e)
-      })
-      // console.log(found, response);
-      // if (!found) {
-      //   DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
-      // } else {
-      //   console.log(`Welcome back, ${body.display_name}`)
-      // }
 
       // make API request for user's top tracks
-      // fetch.fetchUrl("https://api.spotify.com/v1/me/top/tracks?limit=20", {
-      //   headers: {
-      //     Authorization: "Bearer " + body.access_token
-      //   }
-      // }).then((response) => {
-      //     if(response.status >= 400){
-      //       console.log(`error. no tracks for you.`)
+      let trackReq = {
+        url: "https://api.spotify.com/v1/me/top/tracks?limit=20",
+        headers: spotifyReqHeader,
+        json: true
+      };
 
-      //     }
-      //     console.log(response.json())
-      //   })
-      // }
+      request.get(trackReq, function(error, response, body) {
+        parseTracks(body)
+      });
+
+
   }
+
+
+      function parseTracks(tracks) {
+       // STAGE 1: what tracks and artists aren't already in database?
+       let tracksToAdd = []
+       let artistsToAdd = []
+       let i = 1
+       tracks.items.forEach((track, index) => {
+          let cleanTrack = {
+             temp_id: i,
+             track_name: track.name,
+             spotify_id: track.id,
+             image_urls: {
+                large: track.album.images[0].url,
+                medium: track.album.images[1].url,
+                small: track.album.images[2].url
+             }
+          }
+          let cleanArtist = {
+             temp_id: i,
+             artist_name: track.artists[0].name,
+             spotify_id: track.artists[0].id
+          }
+          let trackInDB = false
+          let artistInDB = false
+
+          tracksToAdd.push(cleanTrack)
+          artistsToAdd.push(cleanArtist)
+
+           i++
+
+        })
+      console.log(tracksToAdd)
+      console.log(artistsToAdd)
+    }
+
+
+
+
 }
 
 
