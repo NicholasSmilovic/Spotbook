@@ -39,10 +39,10 @@ class Playlists extends Component{
     })
     return(
       <div className="row">
-        <div className="col-sm-2">
-          <StickySideBar />
+        <div className="col-md-2 col-xs-6 text-center">
+          <StickySideBar accessToken={this.props.accessToken}/>
         </div>
-        <div className="col-sm-10 search-bar-container">{renderPlaylists}</div>
+        <div className="col-md-10 col-xs-6 sticky-container">{renderPlaylists}</div>
       </div>
     )
 }

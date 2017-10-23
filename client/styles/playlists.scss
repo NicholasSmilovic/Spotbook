@@ -9,21 +9,29 @@ body {
 .playlist-header{
   background-color: #2E302D;
   vertical-align: middle;
-  position: sticky;
-  top: 0px
 }
 
-.page-container{
+.search-bar{
 }
 
-.search-bar-container{
+.search-bar-query{
+  background-color:black;
+  padding: 0;
+  width:80%;
+}
+
+.search-bar-query:focus{
+  outline-color: $spotify-green;
+}
+
+.sticky-container{
   height: 100vh;
   overflow: auto;
 }
 
-.search-bar-query{
+.sticky-block{
   position: sticky;
-  top:20px
+  top: 0px;
 }
 
 .button{
