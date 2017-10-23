@@ -51,6 +51,9 @@ console.log(DataHelpers.userHelpers.addUser)
 const spotifyRoutes = require("./routes/spotify");
 app.use("/spotify", spotifyRoutes(DataHelpers));
 
+// const userRoutes = require("./routes/users");
+// app.use("/users", userRoutes(DataHelpers));
+
 app.listen(PORT, () => { //listen on the port 8080 and let node know server started running
   console.log(`Example listening on port ${PORT}`);
 });
