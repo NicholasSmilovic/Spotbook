@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 // import PieChart from '../Charts/Pie.jsx';
 import BarChart from '../Charts/Bar.jsx';
+import Palette from '../Charts/Palette.jsx'
 
 class CurrentUser extends Component {
 
@@ -8,24 +9,7 @@ class CurrentUser extends Component {
     super();
     this.state = {
       chartData:{},
-      palette: {
-        cool: [
-        '#59F64B',
-        '#6200EA',
-        '#0CE486',
-        '#4E9CF5',
-        '#B2FF59',
-        '#9CF1E0',
-        ],
-        warm: [
-        '#AB2593',
-        '#EC192C',
-        '#ED30A0',
-        '#FE3A25',
-        '#C67B52',
-        '#FAE527',
-        ]
-      }
+
     }
   }
 
@@ -41,7 +25,7 @@ class CurrentUser extends Component {
         datasets:[{
           label:'Stuff',
           data:[50,80,70,100,110,20],
-          backgroundColor:this.state.palette.cool,
+          backgroundColor: Palette().warm,
         }]
       }
     });
