@@ -1,6 +1,6 @@
 let user1 = {
-  display_name: "Brandon Day",
-  spotify_id: "brandontday",
+  display_name: "ExampleUser1",
+  spotify_id: "ex1",
   image_urls: {
     image: 'https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/5418_1048965638480046_5792373902737592201_n.jpg?oh=a7efc6820caaa05da0878c3cce749114&oe=5A7F413F'
   },
@@ -10,8 +10,8 @@ let user1 = {
 }
 
 let user2 = {
-  display_name: "Bryce Walter Parker",
-  spotify_id: "12181208318",
+  display_name: "ExampleUser2",
+  spotify_id: "ex2",
   image_urls: {
     image: 'https://scontent.xx.fbcdn.net/v/t1.0-1/s200x200/13775793_10153610171132687_1785877468594627692_n.jpg?oh=1c88fcbb62a8d746c544b6bbed9b8f9e&oe=5A775134'
   },
@@ -22,8 +22,8 @@ let user2 = {
 
 
 let track1 = {
-  track_name: "Oh, Darling!",
-  spotify_id: "2mxByJWOajjiVsLWjNXvDJ",
+  track_name: "track1",
+  spotify_id: "1234",
   image_urls: {
     large: 'https://i.scdn.co/image/c429243cd056974175abe72a3142d3dccffc166a',
     medium: 'https://i.scdn.co/image/31327f9fe6b6e0bd6e431a4add681397e95c6329',

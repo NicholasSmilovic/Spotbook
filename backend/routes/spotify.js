@@ -29,7 +29,6 @@ module.exports = (DataHelpers) => {
 
   router.get('/login', function(req, res) {
     console.log("got to login")
-    console.log(DataHelpers.userHelpers.addUser)
     let state = generateRandomString(16);
     res.cookie(stateKey, state);
 
@@ -85,6 +84,7 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
+            dataStash(options.headers, body)
           });
 
           console.log('redirecting...', app_uri +
@@ -97,6 +97,9 @@ module.exports = (DataHelpers) => {
               access_token: access_token,
               refresh_token: refresh_token
             }));
+
+
+
         } else {
           res.redirect(app_uri +
             querystring.stringify({
@@ -131,4 +134,21 @@ module.exports = (DataHelpers) => {
   });
 
   return router
+
+  function dataStash(spotifyReqHeader, myAccount) {
+
+    DataHelpers.userHelpers.getUserBySpotifyID(myAccount.id, function(found, response) {
+      if (!found) {
+        DataHelpers.userHelpers.addUser(myAccount.display_name, myAccount.id, myAccount.images[0].url)
+      } else {
+        console.log(`Welcome back, ${myAccount.display_name}`)
+      }
+    })
+
+
+
+  }
 }
+
+
+
