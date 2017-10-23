@@ -1,0 +1,29 @@
+require('dotenv').config({path: './../.env'})
+
+
+var knexConfig = {
+  client: 'pg',
+  connection: {
+    host     : process.env.DB_HOST,
+    user     : process.env.DB_USER,
+    password : process.env.DB_PASS,
+    database : process.env.DB_NAME
+  }
+};
+
+
+var knex = require("knex")(knexConfig);
+
+
+
+
+
+knex.destroy()
+
+
+
+
+
+
+
+
