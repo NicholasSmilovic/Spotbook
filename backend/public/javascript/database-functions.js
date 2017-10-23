@@ -344,6 +344,52 @@ function getTrackByID(id, callback) {
 // })
 
 
+function getTrackBySpotifyID(id, callback) {
+  let track = {}
+  knex('tracks').where('spotify_id', id)
+    .then((val) => {
+      track = {
+        id: val[0].id,
+        track_name: val[0].track_name,
+        spotify_id: val[0].spotify_id,
+        image_urls: {
+          large: val[0].image_urls.large,
+          medium: val[0].image_urls.medium,
+          small: val[0].image_urls.small,
+        },
+        danceability: val[0].danceability,
+        energy: val[0].energy,
+        key: val[0].key,
+        loudness: val[0].loudness,
+        mode: val[0].mode,
+        speechiness: val[0].speechiness,
+        acousticness: val[0].acousticness,
+        instrumentalness: val[0].instrumentalness,
+        liveness: val[0].liveness,
+        valence: val[0].valence,
+        tempo: val[0].tempo
+      }
+    })
+    .then(() => {
+      callback(true, track)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving ${id} from the database`)
+      callback(false, {})
+    })
+
+}
+
+// getTrackBySpotifyID('2mxByJWOajjiVsLWjNXvDJ', function(found, response) {
+//    if (found) {
+//       console.log(`Track found! ${response}`)
+//    } else {
+//       console.log(`Track not found!`)
+//    }
+// })
+
+
+
 // SELECT users.id FROM users
 //   JOIN user_tracks ON users.id = user_id
 //   JOIN tracks ON tracks.id = track_id
@@ -487,6 +533,44 @@ function getArtistByID(id, callback) {
 // getArtistByID(1, function(response) {
 //     console.log(response)
 // })
+
+
+
+function getArtistBySpotifyID(id, callback) {
+  let artist = {}
+  knex('artists').where('spotify_id', id)
+    .then((val) => {
+      artist = {
+        id: val[0].id,
+        artist_name: val[0].artist_name,
+        spotify_id: val[0].spotify_id,
+        image_urls: {
+          large: val[0].image_urls.large,
+          medium: val[0].image_urls.medium,
+          small: val[0].image_urls.small
+        },
+        genres: val[0].genres.genres_array
+      }
+    })
+    .then(() => {
+      callback(true, artist)
+    })
+    .catch(() => {
+      console.log(`There was an error retrieving ${id} from the database`)
+      callback(false, {})
+    })
+
+}
+
+// getArtistBySpotifyID('1anyVhU62p31KFi8MEzkbf', function(found, response) {
+//   if (found) {
+//     console.log(`Artist found! ${response.id}`)
+//   }
+//   else {
+//     console.log('Artist not found :(')
+//   }
+// })
+
 
 
 function getAbsArtistByID(id, callback) {
