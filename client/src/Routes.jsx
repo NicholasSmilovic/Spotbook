@@ -27,7 +27,6 @@ class Routes extends React.Component {
       <Router>
         <div>
           <Navbar />
-          <br></br>
           <Route  exact path="/"
                   component={currentUser}
                   refreshAccessToken={this.props.refreshAccessTokens}
