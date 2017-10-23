@@ -31,7 +31,9 @@ class TrackQuery extends Component{
         }
         return response.json()
       })
+
       .then((data) => {
+        debugger
         this.setState({ queryResults: data.tracks.items})
       })
   }
