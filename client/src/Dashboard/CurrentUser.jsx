@@ -36,9 +36,9 @@ class CurrentUser extends Component {
   }
 
   makeChartPretty(){
+    // Make copy of state, change copy of state, then make state the edited version of itself.
     let data = this.state.chartData;
     data.datasets[0]["backgroundColor"] = Palette().cool;
-
     this.setState({chartData:data});
   }
 
