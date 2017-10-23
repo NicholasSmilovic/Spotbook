@@ -40,8 +40,8 @@ class CurrentUser extends Component {
         labels: ['Carlo', 'Nich', 'Brandon', 'Bryce', 'Dummy_1', 'Dummy_2'],
         datasets:[{
           label:'Stuff',
-          data:[50,30,70,100,110,20],
-          backgroundColor:this.state.palette.warm,
+          data:[50,80,70,100,110,20],
+          backgroundColor:this.state.palette.cool,
         }]
       }
     });
