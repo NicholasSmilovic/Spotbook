@@ -51,12 +51,12 @@ class CurrentUser extends Component {
   // *** Charts Requires Stuff Above
 
   render (){
-    // <UserProfile />
-    // <UserMatchSidebar />
     return(
 
         <div>
 
+          <UserProfile />
+          <UserMatchSidebar />
 
           <BarChart
             chartData={this.state.chartData}
