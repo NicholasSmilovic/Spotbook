@@ -172,11 +172,11 @@ module.exports = (DataHelpers) => {
              associated_artist: track.artists[0].id,
              track_name: track.name,
              spotify_id: track.id,
-             image_urls: {
-                large: track.album.images[0].url,
-                medium: track.album.images[1].url,
-                small: track.album.images[2].url
-             }
+             image_urls: [
+                {url: track.album.images[0].url},
+                {url: track.album.images[1].url},
+                {url: track.album.images[2].url}
+             ]
           }
 
           let cleanArtist = {
@@ -187,75 +187,159 @@ module.exports = (DataHelpers) => {
           DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
             .then((response) => {
               console.log(`${cleanArtist.artist_name} is already in the database`)
+              if (index === body.items.length - 1 && artistsToAdd) {
+                stashArtists(artistsToAdd, spotifyReqHeader)
+              }
             })
             .catch((responseArtist) => {
-              if (!artistsToAdd.includes(cleanArtist)) {
-                artistsToAdd.push(responseArtist)
-              }
-              if (index === body.items.length - 1) {
-                // make my API call with array items
-                let ids = ''
-                for (let index in artistsToAdd) {
-                  ids += artistsToAdd[index].spotify_id
-                  ids += ','
-                }
-                ids = ids.slice(0, -1) // take off last comma
-
-                let artistReq = {
-                  url: "https://api.spotify.com/v1/artists?ids=" + ids,
-                  headers: spotifyReqHeader,
-                  json: true
-                };
-
-                request.get(artistReq, function(error, response, body) {
-                  //inside here, clean artists and add to DB
-                  body.artists.forEach(artist => {
-                    let name = artist.name
-                    let spotifyID = artist.id
-                    let imageURLs = [
-                    {url: artist.images[0].url},
-                    {url: artist.images[1].url},
-                    {url: artist.images[2].url}
-                    ]
-                    let genresArray = artist.genres
-
-                    DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
-                      .then((response) => {
-                        console.log(response)
-                      })
-                      .catch((e) => {
-                        console.log(`Error: ${e}`)
-                      })
-                  })
-                })
-
+              artistsToAdd.push(responseArtist)
+              if (index === body.items.length - 1 && artistsToAdd) {
+                stashArtists(artistsToAdd, spotifyReqHeader)
               }
             })
 
           DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
             .then((response) => {
               console.log(`${cleanTrack.track_name} is already in database`)
-            })
-            .catch((responseTrack) => {
-              // tracksToAdd.push(responseTrack)
-              if (index === body.items.length - 1) {
-                console.log(tracksToAdd)
-                // make my API call with array items
+             if (index === body.items.length - 1) {
+                stashTracks(tracksToAdd, spotifyReqHeader)
               }
             })
+            .catch((responseTrack) => {
+              tracksToAdd.push(responseTrack)
+              if (index === body.items.length - 1) {
+                stashTracks(tracksToAdd, spotifyReqHeader)
+              }
+            })
+          })
+
+        });
+
+    }
+
+    function removeDuplicates(artistsToAdd) {
+      artistsToAdd.forEach((artist, index) => {
+        for (let j = index + 1; j < artistsToAdd.length; j++) {
+          if (artistsToAdd[j].spotify_id === artist.spotify_id) {
+            artistsToAdd.splice(j,1)
+          }
+        }
+      })
+      return artistsToAdd
+    }
 
 
+    function stashTracks(tracksToAdd, spotifyReqHeader) {
+      if (tracksToAdd.length === 0) {
+        return
+      }
+
+      // make my API call with array items
+      let APILimit = 4
+      let loops = Math.ceil(tracksToAdd.length/APILimit)
+      let totalLoops = loops
+
+      while (loops) {
+        let bottom = APILimit*(totalLoops - loops)
+        let top = bottom + APILimit - 1
+        if (top > tracksToAdd.length - 1) {
+          top = bottom + (tracksToAdd.length - 1)%APILimit
+        }
+
+        let ids = ''
+        for (let index = bottom; index < top; index++) {
+          ids += tracksToAdd[index].spotify_id
+          ids += ','
+        }
+        ids = ids.slice(0, -1) // take off last comma
+
+        let audioFeaturesReq = {
+          url: "https://api.spotify.com/v1/audio-features?ids=" + ids,
+          headers: spotifyReqHeader,
+          json: true
+        };
+
+        request.get(audioFeaturesReq, function(error, response, body) {
+          // inside here, clean artists and add to DB
+
+          body.audio_features.forEach((track, index) => {
+            tracksToAdd[index].features = {
+              danceability: track.danceability,
+              energy: track.energy,
+              key: track.key,
+              loudness: track.loudness,
+              mode: track.mode,
+              speechiness: track.speechiness,
+              acousticness: track.acousticness,
+              instrumentalness: track.instrumentalness,
+              liveness: track.liveness,
+              valence: track.valence,
+              tempo: track.tempo
+            }
+
+          DataHelpers.trackHelpers.addTrack(
+            tracksToAdd[index].track_name,
+            tracksToAdd[index].spotify_id,
+            tracksToAdd[index].image_urls,
+            tracksToAdd[index].features
+            )
+            .then((response) => {
+              console.log(response)
+            })
+            .catch((e) => {
+              console.log(e)
+            })
+          })
 
         })
-
-      });
-
-
-  }
+        loops -= 1
+      }
+    }
 
 
+    function stashArtists(artistsToAdd, spotifyReqHeader) {
+      artistsToAdd = removeDuplicates(artistsToAdd)
+      if (artistsToAdd.length === 0) {
+        return
+      }
 
+      // make my API call with array items
+      let ids = ''
+      for (let index in artistsToAdd) {
+        ids += artistsToAdd[index].spotify_id
+        ids += ','
+      }
+      ids = ids.slice(0, -1) // take off last comma
 
+      let artistReq = {
+        url: "https://api.spotify.com/v1/artists?ids=" + ids,
+        headers: spotifyReqHeader,
+        json: true
+      };
+
+      request.get(artistReq, function(error, response, body) {
+
+        // inside here, clean artists and add to DB
+        body.artists.forEach(artist => {
+          let name = artist.name
+          let spotifyID = artist.id
+          let imageURLs = [
+          {url: artist.images[0].url},
+          {url: artist.images[1].url},
+          {url: artist.images[2].url}
+          ]
+          let genresArray = artist.genres
+
+          DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
+            .then((response) => {
+              console.log(response)
+            })
+            .catch((e) => {
+              console.log(`Error: ${e}`)
+            })
+        })
+      })
+    }
 
 
 
