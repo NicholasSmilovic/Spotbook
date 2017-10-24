@@ -55,11 +55,11 @@ class CurrentUser extends Component {
           </div>
           <div className='col-md-3'>
           </div>
-        <div>
+        </div>
 
-          <UserProfile />
           <UserMatchSidebar />
 
+        <div>
           <BarChart
             chartData={this.state.chartData}
 
@@ -71,7 +71,6 @@ class CurrentUser extends Component {
           />
         </div>
 
-        <UserMatchSidebar />
         <UserBoxAnalytics />
       </div>
       )
