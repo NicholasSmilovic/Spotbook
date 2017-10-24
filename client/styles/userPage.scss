@@ -1,43 +1,69 @@
+// .user-page {
+//   height:100vh;
+//   overflow: scroll;
+// }
+
+.wrapper {
+  width: 183px;
+  height: 283px;
+  overflow: hidden;
+  border: 1px solid black;
+}
+
 .user-sidebar {
+  max-height: 26em;
   color: white;
+  opacity: 30;
   background-color: black;
-  position: fixed;
-  width: 20em;
-  overflow-y: scroll;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  overflow: scroll;
+  padding:0;
+  margin:0;
+}
+
+.profile {
+  padding: 0;
+  margin: 0;
 }
 
 .user-profile {
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  position: fixed;
   color: white;
-  height: 20em;
-  background-image:
-    $topDivGradient;
+  // background-image:
+  //   $topDivGradient;
+  background: transparent;
 }
 
 .user-profile h1 {
   font-family: $headerText;
-  font-size: 550%;
-  float:left;
+  text-align: center;
+  font-size: 450%;
   color: white;
-  margin-top: 1.4em;
-  margin-left: 0.8em;
+  padding-bottom: 2em;
 }
-
 
 .user-profile img {
-  float: left;
+  display: block;
+  margin: auto;
+  margin-top: 5em;
   border-radius: 50%;
-  margin-left: 2.5em;
-  margin-top: 1em;
   box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
 }
+
+.analytic {
+  text-align: center;
+  padding-left: 4em;
+  padding-top: 3em;
+}
+
+.userMatchProfile {
+  padding:0.2em;
+}
+
+.top-matches-text {
+  text-align: center;
+}
+
+
+
 
 
 
