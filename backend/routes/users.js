@@ -39,6 +39,17 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  // router.get('/getUserBySpotifyID/:id', (req, res) => {
+  //   let spotify_id = req.params.id;
+
+  //   DataHelpers.userHelpers.getUserBySpotifyID(spotify_id)
+  //   .then((user) => {
+  //     res.send(user)
+  //   })
+  //   .catch((e) => {
+  //     console.error(e);
+  //   });
+  // });
 
 
   return router;

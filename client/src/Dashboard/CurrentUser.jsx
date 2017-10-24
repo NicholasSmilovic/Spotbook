@@ -18,32 +18,27 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
-      // currentUserID:
+      currentUser:{}
     }
   }
 
   componentWillMount(){
+    this.setCurrentUser();
     this.getChartData();
   }
 
-  // setCurrentUser(){
-  //   $.get('http://localhost:3000/users/getUserbySpotifyID')
-  //   .done( result => {
-  //     this.
-  //   })
-  // }
-
-  getChartData(){
-    // $.get('http://localhost:3000/users/getUserByID/1')
+  setCurrentUser(){
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
       console.log(result);
+      this.setState({ currentUser: result })
     })
     .fail( err => {
       console.error(err);
     });
+  }
 
-    console.log(`This be the current user's Spotify ID: ${this.props.currentSpotifyID}`);
+  getChartData(){
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
@@ -56,6 +51,7 @@ class CurrentUser extends Component {
       alert(`INDEX: ${index} => ${label}`);
     }
   }
+
   // *** Charts Requires Stuff Above
 
   render (){
