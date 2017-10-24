@@ -14,8 +14,8 @@ import BarChart from '../Charts/_Bar.jsx'
 class CurrentUser extends Component {
 
   // *** Charts Requires Stuff Below
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       chartData:{},
     }
@@ -26,7 +26,8 @@ class CurrentUser extends Component {
   }
 
   getChartData(){
-    $.get('http://localhost:3000/users/getUserByID')
+    // $.get('http://localhost:3000/users/getUserByID/1') // TODO - get currentUser spotifyID into scope of this component
+    $.get('http://localhost:3000/users/getUserBySpotifyID')
     .done( result => {
       console.log(result);
     })
@@ -34,6 +35,7 @@ class CurrentUser extends Component {
       console.error(err);
     });
 
+    console.log(`This be the current user's Spotify ID: ${this.props.currentUser}`);
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
