@@ -8,8 +8,7 @@ class LoginPage extends Component{
       <div id="user-profile">
         <div className="container">
           <div id="login">
-            <h1>This is an example of the Authorization Code flow</h1>
-            <a href="http://localhost:3000/spotify/login" className="btn btn-primary">Log in with Spotify</a>
+            <a className='login-button' href="http://localhost:3000/spotify/login">Login With Spotify</a>
           </div>
         </div>
       </div>

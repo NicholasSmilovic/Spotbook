@@ -8,7 +8,7 @@ import {
 import User from './Users/User.jsx';
 import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
-import currentUser from './Dashboard/CurrentUser.jsx'
+import CurrentUser from './Dashboard/CurrentUser.jsx'
 import Navbar from './partials/Navbar.jsx'
 
 
@@ -24,12 +24,20 @@ class Routes extends React.Component {
         )
     }
 
+    const CurrentUserPage = (props) => {
+      return (
+        <CurrentUser
+        currentSpotifyID = {this.props.currentUser}
+        />
+      )
+    }
+
     return (
       <Router>
         <div>
           <Navbar />
           <Route  exact path="/"
-                  component={currentUser}
+                  component={CurrentUserPage}
                   refreshAccessToken={this.props.refreshAccessTokens}
                   accessToken = {this.props.accessToken}
                   />
