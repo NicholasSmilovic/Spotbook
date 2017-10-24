@@ -28,7 +28,7 @@ class Routes extends React.Component {
     const CurrentUserPage = (props) => {
       return (
         <CurrentUser
-        currentUser = {this.props.currentUser}
+        currentSpotifyID = {this.props.currentUser}
         />
       )
     }

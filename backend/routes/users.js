@@ -14,9 +14,10 @@ const router = express.Router();
 
 module.exports = (DataHelpers) => {
 
-  router.get('/getUserByID', (req, res) => {
+  router.get('/getUserByID/:id', (req, res) => {
+    let user_id = req.params.id;
 
-    DataHelpers.userHelpers.getUserByID(1)
+    DataHelpers.userHelpers.getUserByID(user_id)
     .then((user) => {
       res.send(user)
     })
@@ -26,10 +27,16 @@ module.exports = (DataHelpers) => {
 
   });
 
-  router.get('/getUserTopTracks', (req, res) => {
-    // DataHelpers.userHelpers.getUserTopTracks()
+  router.get('/getUserBySpotifyID/:id', (req, res) => {
+    let spotify_id = req.params.id;
 
-    // res.send();
+    DataHelpers.userHelpers.getUserBySpotifyID(spotify_id)
+    .then((user) => {
+      res.send(user)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
   });
 
 

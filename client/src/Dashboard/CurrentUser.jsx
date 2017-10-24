@@ -18,6 +18,7 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
+      // currentUserID:
     }
   }
 
@@ -25,9 +26,16 @@ class CurrentUser extends Component {
     this.getChartData();
   }
 
+  // setCurrentUser(){
+  //   $.get('http://localhost:3000/users/getUserbySpotifyID')
+  //   .done( result => {
+  //     this.
+  //   })
+  // }
+
   getChartData(){
-    // $.get('http://localhost:3000/users/getUserByID/1') // TODO - get currentUser spotifyID into scope of this component
-    $.get('http://localhost:3000/users/getUserBySpotifyID')
+    // $.get('http://localhost:3000/users/getUserByID/1')
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
       console.log(result);
     })
@@ -35,7 +43,7 @@ class CurrentUser extends Component {
       console.error(err);
     });
 
-    console.log(`This be the current user's Spotify ID: ${this.props.currentUser}`);
+    console.log(`This be the current user's Spotify ID: ${this.props.currentSpotifyID}`);
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
