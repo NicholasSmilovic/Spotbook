@@ -10,15 +10,17 @@ import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
+import TopArtistInsight from '../Insights/_TopArtist.jsx'
+
 
 class CurrentUser extends Component {
 
-  // *** Charts Requires Stuff Below
   constructor(props){
     super(props);
     this.state = {
       chartData:{},
-      currentUser:{}
+      currentUser:{},
+      insightData:'Stuff'
     }
   }
 
@@ -30,16 +32,6 @@ class CurrentUser extends Component {
 
   // can reach getUserTopTracks error message
   // can reach getUserTopAbsArtists error message
-
-  // testAddUser(){
-  //   $.get('http://localhost:3000/users/addUser/'+this.state.currentUser.id)
-  //   .done( result => {
-  //     console.log(result);
-  //   })
-  //   .fail( err => {
-  //     console.error(err);
-  //   });
-  // }
 
   testRoute(){
     $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
@@ -72,12 +64,12 @@ class CurrentUser extends Component {
     if (event[0]) {
       let index = event[0]['_index'];
       let label = this.state.chartData.labels[index];
+      let insightData = `INDEX: ${index} => ${label}`;
+      // alert(`INDEX: ${index} => ${label}`);
 
-      alert(`INDEX: ${index} => ${label}`);
+      this.setState({ insightData: insightData });
     }
   }
-
-  // *** Charts Requires Stuff Above
 
   render (){
     return(
@@ -113,15 +105,7 @@ class CurrentUser extends Component {
           </div>
 
           <div className='col-md-6'>
-            <BarChart
-              chartData={this.state.chartData}
-
-              title="Right Chart"
-              y_label="Y-AXIS"
-              x_label="X-AXIS"
-
-              handleClick={ event => this.handleClickElement(event) }
-            />
+            <TopArtistInsight insightData={this.state.insightData}/>
           </div>
         </div>
 
