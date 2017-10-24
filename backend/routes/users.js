@@ -16,10 +16,9 @@ module.exports = (DataHelpers) => {
     console.log('Hello from /users/getUserByID in /backend/routes/users.js');
 
     res.send('Hello from /users/getUserByID in /backend/routes/users.js');
-
-
-
   });
+
+
 
   return router;
 };

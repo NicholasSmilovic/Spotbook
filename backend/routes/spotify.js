@@ -84,7 +84,15 @@ module.exports = (DataHelpers) => {
           };
 
           request.get(options, function(error, response, body) {
+            console.log('***** ***** ***** ***** *****');
             console.log(body);
+            console.log('***** ***** ***** ***** *****');
+
+            let display_name = body.display_name;
+            let spotify_id = body.id;
+            let image_url = body.images[0].url;
+
+            DataHelpers.userHelpers.addUser(display_name, spotify_id, image_url);
           });
 
           console.log('redirecting...', app_uri +

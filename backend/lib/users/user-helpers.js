@@ -28,13 +28,18 @@ function addUser(displayName, spotifyID, imageURL) {
     }
   }
 
-  knex('users').insert(newUser)
-    .then(() => {
-      console.log(`${displayName} was added to the database!`)
-    })
-    .catch(() => {
-      console.log(`There was an error adding ${displayName} to the database`)
-    })
+  if ( knex('users').where('spotify_id', spotifyID) ) {
+    console.log('User already exists.');
+  } else {
+    knex('users').insert(newUser)
+      .then(() => {
+        console.log(`${displayName} was added to the database!`)
+      })
+      .catch(() => {
+        console.log(`There was an error adding ${displayName} to the database`)
+      })
+  }
+
 }
 
 // newUser('Harry Potter', 'abcdefg', 'https://static.independent.co.uk/s3fs-public/styles/story_medium/public/thumbnails/image/2015/12/04/15/harry-potter-philosophers-stone.jpg')

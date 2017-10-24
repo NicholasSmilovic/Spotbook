@@ -46,7 +46,7 @@ app.use(cookieSession({
 app.set('trust proxy', 1) // trust first proxy
 
 const DataHelpers = require("./lib/data-helpers.js")(knex);
-console.log(DataHelpers.userHelpers.addUser)
+// console.log(DataHelpers.userHelpers.addUser)
 
 const spotifyRoutes = require("./routes/spotify");
 app.use("/spotify", spotifyRoutes(DataHelpers));
