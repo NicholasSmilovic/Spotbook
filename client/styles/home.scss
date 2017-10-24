@@ -3,10 +3,10 @@ h1 {
 }
 body {
   color:white;
-  padding:5px;
+  // padding:5px;
+  background-image: linear-gradient(#c074b2,#8ab5e8);
   height: 100vh;
-  overflow: auto;
-  overflow-y: hidden;
+  overflow-y: scroll;
   overflow-x: hidden;
 }
 ::-webkit-scrollbar
@@ -31,7 +31,7 @@ $topDivGradient: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(4,3,5)),
+    color-stop(0.35, rgb(0,0,0)),
     color-stop(0.85, rgb(77, 77, 77))
 );
 $headerText: 'Work Sans', sans-serif;
@@ -45,15 +45,15 @@ $headerText: 'Work Sans', sans-serif;
 }
 
 .nav {
+  padding: 0;
   font-family: $headerText;
-  background-color: black;
+  background: transparent;
   z-index: 9999;
-  position: fixed;
+  // position: fixed;
   width:100% !important;
   height: 6em;
-  opacity: 0.7;
-  border-radius: 0;
   display: inline-block;
+  border-radius: 0;
   vertical-align: top;
   margin-bottom: 0;
 }
