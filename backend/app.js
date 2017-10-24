@@ -49,7 +49,10 @@ const DataHelpers = require("./lib/data-helpers.js")(knex);
 // console.log(DataHelpers.userHelpers.addUser)
 
 const spotifyRoutes = require("./routes/spotify");
+const userRoutes = require("./routes/users");
+
 app.use("/spotify", spotifyRoutes(DataHelpers));
+app.use("/users", userRoutes(DataHelpers));
 
 const usersRoutes = require("./routes/users");
 app.use("/users", usersRoutes(DataHelpers));
