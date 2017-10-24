@@ -99,16 +99,30 @@ class CurrentUser extends Component {
 
           <UserMatchSidebar />
 
-        <div>
-          <BarChart
-            chartData={this.state.chartData}
+        <div className='row'>
+          <div className='col-md-6'>
+            <BarChart
+              chartData={this.state.chartData}
 
-            title="Spotcheck"
-            y_label="Y-AXIS"
-            x_label="X-AXIS"
+              title="Left Chart"
+              y_label="Y-AXIS"
+              x_label="X-AXIS"
 
-            handleClick={ event => this.handleClickElement(event) }
-          />
+              handleClick={ event => this.handleClickElement(event) }
+            />
+          </div>
+
+          <div className='col-md-6'>
+            <BarChart
+              chartData={this.state.chartData}
+
+              title="Right Chart"
+              y_label="Y-AXIS"
+              x_label="X-AXIS"
+
+              handleClick={ event => this.handleClickElement(event) }
+            />
+          </div>
         </div>
 
         <UserBoxAnalytics />
