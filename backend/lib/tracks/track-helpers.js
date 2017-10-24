@@ -24,11 +24,13 @@ module.exports = (knex) => {
       }
 
       knex('tracks').insert(newTrack)
-        .then(() => {
+        .then((response) => {
           console.log(`${trackName} was added to the database`)
+          resolve()
         })
         .catch (() => {
           console.log(`There was an error adding ${trackName} to the database`)
+          reject()
         })
     })
   }

@@ -230,24 +230,15 @@ module.exports = (DataHelpers) => {
 
 
     function stashTracks(tracksToAdd, spotifyReqHeader) {
+      console.log('header', spotifyReqHeader)
       if (tracksToAdd.length === 0) {
         return
       }
 
       // make my API call with array items
-      let APILimit = 4
-      let loops = Math.ceil(tracksToAdd.length/APILimit)
-      let totalLoops = loops
-
-      while (loops) {
-        let bottom = APILimit*(totalLoops - loops)
-        let top = bottom + APILimit - 1
-        if (top > tracksToAdd.length - 1) {
-          top = bottom + (tracksToAdd.length - 1)%APILimit
-        }
 
         let ids = ''
-        for (let index = bottom; index < top; index++) {
+        for (let index in tracksToAdd) {
           ids += tracksToAdd[index].spotify_id
           ids += ','
         }
@@ -277,23 +268,45 @@ module.exports = (DataHelpers) => {
               tempo: track.tempo
             }
 
-          DataHelpers.trackHelpers.addTrack(
-            tracksToAdd[index].track_name,
-            tracksToAdd[index].spotify_id,
-            tracksToAdd[index].image_urls,
-            tracksToAdd[index].features
-            )
-            .then((response) => {
-              console.log(response)
-            })
-            .catch((e) => {
-              console.log(e)
-            })
           })
 
+          tracksToAdd.forEach(track => {
+            DataHelpers.trackHelpers.addTrack(
+              track.track_name,
+              track.spotify_id,
+              track.image_urls,
+              track.features
+              )
+              .then(() => {
+                console.log('added track')
+                DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
+                  .then((responseArtist) => {
+                    DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                      .then((responseTrack) => {
+                        DataHelpers.artistTrackHelpers.joinArtistToTrack(responseArtist.id, responseTrack.id)
+                          .then((response) => {
+                            console.log('we did it!')
+                          })
+                          .catch((e) => {
+                            console.log('Join error', e)
+                          })
+
+                      })
+                      .catch((e) => {
+                        console.log('Track find error', e)
+                      })
+                  })
+                  .catch((e) => {
+                    console.log('Artist find error', e)
+                  })
+              })
+              .catch((e) => {
+                console.log(e)
+              })
+
+          })
         })
-        loops -= 1
-      }
+
     }
 
 
