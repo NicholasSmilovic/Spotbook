@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import Songs from './Songs.jsx';
+import Flashes from '../partials/Flashes.jsx';
 
 
 class Playlist extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      clicked: false
+      clicked: false,
+      flashMessage: false
     }
 
     this.toggleButton = () => {
@@ -16,33 +18,47 @@ class Playlist extends Component{
   }
 
   preventDefault = (event) => {
-    console.log("working")
     event.preventDefault();
   }
 
   handleDrop = (event) => {
-    debugger
     event.preventDefault();
-    console.log("over bb")
+    this.addTrackToPlaylist(event.dataTransfer.getData('trackId'))
   }
 
+  addTrackToPlaylist = (trackId) =>{
+    const message = "Added " + trackId + " to playlist " + this.props.playlist.name
+    this.setState({ flashMessage: message })
+  }
+
+  removeFlashState = () => {
+    this.setState({ flashMessage: false })
+  }
 
   render (){
     let renderSongs = null
     if(this.state.clicked){
       renderSongs = <Songs playlist={this.props.playlist} accessToken={this.props.accessToken}/>
     }
-    return(
-        <div onDragOver={this.preventDefault} onDrop={this.handleDrop}>
-          <header className="playlist-header row text-center sticky-block">
-                    <div className='col-xl-6 text-center'>
-                      <h1>{this.props.playlist.name}</h1>
-                    </div>
-                      <button className="col-xl-2 text-center btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
-          </header>
-          {renderSongs}
 
-          <hr/>
+    let flashMessage = null
+    if (this.state.flashMessage) {
+      flashMessage = <Flashes content = {this.state.flashMessage} removeFlashState={this.removeFlashState}/>
+    }
+
+    return(
+        <div>
+          {flashMessage}
+          <div onDragOver={this.preventDefault} onDrop={(event) => {this.handleDrop(event)}}>
+            <header className="playlist-header row text-center sticky-block">
+                      <div className='col-xl-6 text-center'>
+                        <h1>{this.props.playlist.name}</h1>
+                      </div>
+                        <button className="col-xl-2 text-center btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
+            </header>
+            {renderSongs}
+            <hr/>
+          </div>
         </div>
       )
   }
