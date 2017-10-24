@@ -14,19 +14,31 @@ import BarChart from '../Charts/_Bar.jsx'
 class CurrentUser extends Component {
 
   // *** Charts Requires Stuff Below
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       chartData:{},
+      currentUser:{}
     }
   }
 
   componentWillMount(){
+    this.setCurrentUser();
     this.getChartData();
   }
 
+  setCurrentUser(){
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
+    .done( result => {
+      console.log(result);
+      this.setState({ currentUser: result })
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
   getChartData(){
-    // Ajax calls here
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
@@ -39,6 +51,7 @@ class CurrentUser extends Component {
       alert(`INDEX: ${index} => ${label}`);
     }
   }
+
   // *** Charts Requires Stuff Above
 
   render (){
@@ -50,9 +63,11 @@ class CurrentUser extends Component {
         <div className='row'>
           <div className='col-md-3'>
           </div>
+
           <div className='col-md-6 top-matches-text'>
-          <h1 style={{color: 'white'}}>Your Top Musical Matches</h1>
+            <h1 style={{color: 'white'}}>Your Top Musical Matches</h1>
           </div>
+
           <div className='col-md-3'>
           </div>
         </div>
@@ -72,6 +87,7 @@ class CurrentUser extends Component {
         </div>
 
         <UserBoxAnalytics />
+
       </div>
       )
   }

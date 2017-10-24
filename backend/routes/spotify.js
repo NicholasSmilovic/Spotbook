@@ -84,7 +84,7 @@ module.exports = (DataHelpers) => {
           };
 
           request.get(options, function(error, response, body) {
-            console.log(body);
+            // console.log(body);
             // dataStash(options.headers, body, access_token)
           });
 
