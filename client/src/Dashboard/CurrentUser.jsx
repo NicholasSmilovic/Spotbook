@@ -27,7 +27,7 @@ class CurrentUser extends Component {
 
   getChartData(){
     // Ajax calls here
-    $.get('http://localhost:3000/', )
+    $.get('http://localhost:3000/users/getUserByID')
     .done( result => {
       console.log(result)
     })
