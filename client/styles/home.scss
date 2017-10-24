@@ -5,6 +5,7 @@ body {
   color:white;
   // padding:5px;
   background-image: linear-gradient(#c074b2,#8ab5e8);
+  opacity: 1;
   height: 100vh;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -50,6 +51,7 @@ $headerText: 'Work Sans', sans-serif;
   background: transparent;
   z-index: 9999;
   // position: fixed;
+  // position: sticky;
   width:100% !important;
   height: 6em;
   display: inline-block;
@@ -76,4 +78,9 @@ $headerText: 'Work Sans', sans-serif;
 .nav-link:hover {
   color: $spotifyGreen;
   text-decoration: none;
+}
+
+.flash-message{
+  text-align: center;
+  background-color: $spotify-green
 }
