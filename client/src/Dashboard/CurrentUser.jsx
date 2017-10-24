@@ -25,8 +25,33 @@ class CurrentUser extends Component {
   componentWillMount(){
     this.setCurrentUser();
     this.getChartData();
+    this.testRoute();
   }
 
+  // can reach getUserTopTracks error message
+  // can reach getUserTopAbsArtists error message
+
+  // testAddUser(){
+  //   $.get('http://localhost:3000/users/addUser/'+this.state.currentUser.id)
+  //   .done( result => {
+  //     console.log(result);
+  //   })
+  //   .fail( err => {
+  //     console.error(err);
+  //   });
+  // }
+
+  testRoute(){
+    $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
+    .done( result => {
+      console.log(result);
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
+  // this route could be executed upon logging into spotify
   setCurrentUser(){
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
@@ -74,16 +99,30 @@ class CurrentUser extends Component {
 
           <UserMatchSidebar />
 
-        <div>
-          <BarChart
-            chartData={this.state.chartData}
+        <div className='row'>
+          <div className='col-md-6'>
+            <BarChart
+              chartData={this.state.chartData}
 
-            title="Spotcheck"
-            y_label="Y-AXIS"
-            x_label="X-AXIS"
+              title="Left Chart"
+              y_label="Y-AXIS"
+              x_label="X-AXIS"
 
-            handleClick={ event => this.handleClickElement(event) }
-          />
+              handleClick={ event => this.handleClickElement(event) }
+            />
+          </div>
+
+          <div className='col-md-6'>
+            <BarChart
+              chartData={this.state.chartData}
+
+              title="Right Chart"
+              y_label="Y-AXIS"
+              x_label="X-AXIS"
+
+              handleClick={ event => this.handleClickElement(event) }
+            />
+          </div>
         </div>
 
         <UserBoxAnalytics />
