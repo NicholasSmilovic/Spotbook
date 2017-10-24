@@ -50,11 +50,15 @@ class CurrentUser extends Component {
         <div className='row'>
           <div className='col-md-3'>
           </div>
+
           <div className='col-md-6 top-matches-text'>
-          <h1 style={{color: 'white'}}>Your Top Musical Matches</h1>
+            <h1 style={{color: 'white'}}>Your Top Musical Matches</h1>
           </div>
+
           <div className='col-md-3'>
           </div>
+        </div>
+
         <div>
 
           <UserProfile />
@@ -71,8 +75,8 @@ class CurrentUser extends Component {
           />
         </div>
 
-        <UserMatchSidebar />
         <UserBoxAnalytics />
+
       </div>
       )
   }
