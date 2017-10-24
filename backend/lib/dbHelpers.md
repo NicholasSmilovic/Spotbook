@@ -6,6 +6,7 @@ anything with a * has not been fully worked out yet
 - addUser
 - removeUser
 - getUserByID
+- getUserBySpotifyID
 - getUserTopTracks
 - getUserTopAbsArtists
 - getUserTopTrackArtists
@@ -18,6 +19,7 @@ anything with a * has not been fully worked out yet
 - addTrack
 - removeTrack
 - getTrackByID
+- getTrackBySpotifyID
 - getTrackListeners
 
 ## ARTISTS
@@ -26,6 +28,7 @@ anything with a * has not been fully worked out yet
 - removeArtist
 - removeAbsArtist
 - getArtistByID
+- getArtistBySpotifyID
 - getAbsArtistByID
 - getArtistTracks
 

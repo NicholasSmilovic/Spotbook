@@ -4,7 +4,6 @@ import {
   Route,
   Link
 } from 'react-router-dom'
-import { StickyContainer, Sticky } from 'react-sticky';
 
 
 import User from './Users/User.jsx';
