@@ -34,7 +34,7 @@ module.exports = (DataHelpers) => {
     let state = generateRandomString(16);
     res.cookie(stateKey, state);
 
-    let scope = 'user-top-read user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private';
+    let scope = 'user-library-read user-top-read user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private';
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',
@@ -193,10 +193,41 @@ module.exports = (DataHelpers) => {
                 artistsToAdd.push(responseArtist)
               }
               if (index === body.items.length - 1) {
-                console.log(artistsToAdd)
                 // make my API call with array items
+                let ids = ''
+                for (let index in artistsToAdd) {
+                  ids += artistsToAdd[index].spotify_id
+                  ids += ','
+                }
+                ids = ids.slice(0, -1) // take off last comma
 
+                let artistReq = {
+                  url: "https://api.spotify.com/v1/artists?ids=" + ids,
+                  headers: spotifyReqHeader,
+                  json: true
+                };
 
+                request.get(artistReq, function(error, response, body) {
+                  //inside here, clean artists and add to DB
+                  body.artists.forEach(artist => {
+                    let name = artist.name
+                    let spotifyID = artist.id
+                    let imageURLs = [
+                    {url: artist.images[0].url},
+                    {url: artist.images[1].url},
+                    {url: artist.images[2].url}
+                    ]
+                    let genresArray = artist.genres
+
+                    DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
+                      .then((response) => {
+                        console.log(response)
+                      })
+                      .catch((e) => {
+                        console.log(`Error: ${e}`)
+                      })
+                  })
+                })
 
               }
             })
@@ -206,7 +237,7 @@ module.exports = (DataHelpers) => {
               console.log(`${cleanTrack.track_name} is already in database`)
             })
             .catch((responseTrack) => {
-              tracksToAdd.push(responseTrack)
+              // tracksToAdd.push(responseTrack)
               if (index === body.items.length - 1) {
                 console.log(tracksToAdd)
                 // make my API call with array items
