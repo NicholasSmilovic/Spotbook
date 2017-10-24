@@ -137,16 +137,16 @@ module.exports = (DataHelpers) => {
 
   return router
 
-  function dataStash(spotifyReqHeader, body) {
+  function dataStash(spotifyReqHeader, userInfo) {
 
     // add user to database, if not already there
-    DataHelpers.userHelpers.getUserBySpotifyID(body.id)
+    DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
       .then((response) => {
         console.log(`Welcome, ${response.display_name}`)
       })
       .catch((e) => {
         if (e === 'user not found') {
-          DataHelpers.userHelpers.addUser(body.display_name, body.id, body.images[0].url)
+          DataHelpers.userHelpers.addUser(userInfo.display_name, userInfo.id, userInfo.images[0].url)
             .then((response) => {
               console.log(response)
             })
@@ -202,13 +202,13 @@ module.exports = (DataHelpers) => {
             .then((response) => {
               console.log(`${cleanTrack.track_name} is already in database`)
              if (index === body.items.length - 1) {
-                stashTracks(tracksToAdd, spotifyReqHeader)
+                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
               }
             })
             .catch((responseTrack) => {
               tracksToAdd.push(responseTrack)
               if (index === body.items.length - 1) {
-                stashTracks(tracksToAdd, spotifyReqHeader)
+                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
               }
             })
           })
@@ -229,8 +229,7 @@ module.exports = (DataHelpers) => {
     }
 
 
-    function stashTracks(tracksToAdd, spotifyReqHeader) {
-      console.log('header', spotifyReqHeader)
+    function stashTracks(tracksToAdd, spotifyReqHeader, userSpotifyID) {
       if (tracksToAdd.length === 0) {
         return
       }
@@ -278,7 +277,6 @@ module.exports = (DataHelpers) => {
               track.features
               )
               .then(() => {
-                console.log('added track')
                 DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
                   .then((responseArtist) => {
                     DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
@@ -288,7 +286,7 @@ module.exports = (DataHelpers) => {
                             console.log('we did it!')
                           })
                           .catch((e) => {
-                            console.log('Join error', e)
+                            console.log('Join artist error', e)
                           })
 
                       })
@@ -300,8 +298,29 @@ module.exports = (DataHelpers) => {
                     console.log('Artist find error', e)
                   })
               })
+              .then(() => {
+                DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                  .then((responseUser) => {
+                    DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                      .then((responseTrack) => {
+                        DataHelpers.userTrackHelpers.joinUserToTrack(responseUser.id, responseTrack.id)
+                          .then((response) => {
+                            console.log('we did it!')
+                          })
+                          .catch((e) => {
+                            console.log('Join user error', e)
+                          })
+                      })
+                      .catch((e) => {
+                        console.log('Track find error', e)
+                      })
+                  })
+                  .catch((e) => {
+                    console.log('User find error', e)
+                  })
+              })
               .catch((e) => {
-                console.log(e)
+                console.log('error adding track ', e)
               })
 
           })
