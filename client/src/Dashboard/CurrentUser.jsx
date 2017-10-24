@@ -25,8 +25,33 @@ class CurrentUser extends Component {
   componentWillMount(){
     this.setCurrentUser();
     this.getChartData();
+    this.testRoute();
   }
 
+  // can reach getUserTopTracks error message
+  // can reach getUserTopAbsArtists error message
+
+  // testAddUser(){
+  //   $.get('http://localhost:3000/users/addUser/'+this.state.currentUser.id)
+  //   .done( result => {
+  //     console.log(result);
+  //   })
+  //   .fail( err => {
+  //     console.error(err);
+  //   });
+  // }
+
+  testRoute(){
+    $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
+    .done( result => {
+      console.log(result);
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
+  // this route could be executed upon logging into spotify
   setCurrentUser(){
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
