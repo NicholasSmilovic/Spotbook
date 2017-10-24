@@ -8,8 +8,11 @@ class Songs extends Component {
   }
 
   handleDragEvent = (event) => {
-    let trackId = this.props.track.id
-    event.dataTransfer.setData('trackId', trackId);
+    let message = {
+      trackURI: this.props.track.uri,
+      trackName: this.props.track.name
+    }
+    event.dataTransfer.setData('track', JSON.stringify(message));
   }
 
   render() {

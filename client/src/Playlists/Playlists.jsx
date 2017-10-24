@@ -64,7 +64,10 @@ class Playlists extends Component{
     let renderPlaylists = <div>Loading...</div>
     if(!(this.state.loading)) {
       renderPlaylists = this.state.playlists.map((playlist, index)=>{
-        return <Playlist playlist={playlist} accessToken={this.props.accessToken} key={index}/>
+        return <Playlist  currentUser = {this.props.currentUser}
+                          playlist={playlist}
+                          accessToken={this.props.accessToken}
+                          key={index}/>
       })
     }
 

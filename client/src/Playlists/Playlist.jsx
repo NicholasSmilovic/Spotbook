@@ -17,18 +17,42 @@ class Playlist extends Component{
     };
   }
 
+  encodeData = (data) => {
+    return Object.keys(data).map(function(key) {
+      return [key, data[key]].map(encodeURIComponent).join("=");
+    }).join("&");
+  }
+
   preventDefault = (event) => {
     event.preventDefault();
   }
 
   handleDrop = (event) => {
     event.preventDefault();
-    this.addTrackToPlaylist(event.dataTransfer.getData('trackId'))
+    this.addTrackToPlaylist(JSON.parse(event.dataTransfer.getData('track')))
   }
 
-  addTrackToPlaylist = (trackId) =>{
-    const message = "Added " + trackId + " to playlist " + this.props.playlist.name
-    this.setState({ flashMessage: message })
+  escapeColons = (string) => {
+    return string.split(":").join("%3A")
+  }
+
+  addTrackToPlaylist = (track) =>{
+    const message = "Added " + track.trackName + " to playlist " + this.props.playlist.name
+    const spotifyURI = this.escapeColons(track.trackURI)
+    const accessToken = this.props.accessToken
+    fetch("https://api.spotify.com/v1/users/" + this.props.currentUser + "/playlists/" + this.props.playlist.id + "/tracks?uris=" + spotifyURI,{
+      method: "POST",
+      Accept: "application/json",
+      headers: {
+        Authorization: "Bearer " + accessToken
+      }
+    })
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      this.setState({ flashMessage: message })
+    })
   }
 
   removeFlashState = () => {
