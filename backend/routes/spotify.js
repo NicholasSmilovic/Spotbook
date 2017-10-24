@@ -164,26 +164,12 @@ module.exports = (DataHelpers) => {
       };
 
       request.get(trackReq, function(error, response, body) {
-        parseTracks(body)
-
-        //once we have artists, there may be duplicates in the array. eliminate them by
-        // looking for their spotify id in DB before adding them to the database.
-        // takes longer, but only way i know how
-      });
-
-
-  }
-
-
-      function parseTracks(tracks) {
-       // find what tracks and artists aren't already in database
-       let tracksToAdd = []
-       let artistsToAdd = []
-
-       Promise.all([
-        tracks.items.forEach((track, index) => {
+        //find out which tracks need to be added to the database
+        let tracksToAdd = []
+        let artistsToAdd = []
+        body.items.forEach((track, index) => {
           let cleanTrack = {
-             temp_id: index,
+             associated_artist: track.artists[0].id,
              track_name: track.name,
              spotify_id: track.id,
              image_urls: {
@@ -192,48 +178,60 @@ module.exports = (DataHelpers) => {
                 small: track.album.images[2].url
              }
           }
+
           let cleanArtist = {
-             temp_id: index,
              artist_name: track.artists[0].name,
              spotify_id: track.artists[0].id
           }
 
-          Promise.all([
-            DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id)
-              .then((response) => {
-                console.log(`${cleanTrack.track_name} is already in database`)
-              })
-              .catch((e) => {
-                tracksToAdd.push(cleanTrack)
-                if (index === tracks.items.length - 1) {
-                  console.log(tracksToAdd)
-                }
-              }),
+          DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+            .then((response) => {
+              console.log(`${cleanArtist.artist_name} is already in the database`)
+            })
+            .catch((responseArtist) => {
+              if (!artistsToAdd.includes(cleanArtist)) {
+                artistsToAdd.push(responseArtist)
+              }
+              if (index === body.items.length - 1) {
+                console.log(artistsToAdd)
+                // make my API call with array items
 
-            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id)
-              .then((response) => {
-                console.log(`${cleanArtist.artist_name} is already in the database`)
-              })
-              .catch((e) => {
-                if (index === tracks.items.length - 1) {
-                  console.log(artistsToAdd)
-                }
-              })
-          ])
+
+
+              }
+            })
+
+          DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
+            .then((response) => {
+              console.log(`${cleanTrack.track_name} is already in database`)
+            })
+            .catch((responseTrack) => {
+              tracksToAdd.push(responseTrack)
+              if (index === body.items.length - 1) {
+                console.log(tracksToAdd)
+                // make my API call with array items
+              }
+            })
+
+
+
         })
-        ])
-        .then(() => {
-          console.log(tracksToAdd)
-        })
-        .catch((e) => {
-          console.log('there was an error!')
-        })
-    }
+
+      });
+
+
+  }
+
+
+
+
 
 
 
 
 }
+
+
 
 
 
