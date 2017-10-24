@@ -17,9 +17,13 @@ module.exports = (DataHelpers) => {
   router.get('/getUserByID', (req, res) => {
     console.log('Hello from /users/getUserByID in /backend/routes/users.js');
 
-    let user = DataHelpers.userHelpers.getUserByID('1');
-    console.log(user);
-    res.send(user);
+    DataHelpers.userHelpers.getUserByID(1)
+    .then((user) => {
+      res.send(user)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
   });
 
   router.get('/getUserTopTracks', (req, res) => {

@@ -26,7 +26,14 @@ class CurrentUser extends Component {
   }
 
   getChartData(){
-    // Ajax calls here
+    $.get('http://localhost:3000/users/getUserByID')
+    .done( result => {
+      console.log(result);
+    })
+    .fail( err => {
+      console.error(err);
+    });
+
     let chart = Prettiness(SampleData(), Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
