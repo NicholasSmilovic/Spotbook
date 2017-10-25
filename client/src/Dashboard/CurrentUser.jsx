@@ -23,6 +23,8 @@ class CurrentUser extends Component {
     this.state = {
       chartData:{},
       currentUser:{},
+      topTrackIDs:{},
+      topTracks:[],
       insightData:'Stuff'
     }
   }
@@ -41,14 +43,35 @@ class CurrentUser extends Component {
     // this.testRoute();
   }
 
-  // can reach getUserTopTracks error message
-  // can reach getUserTopAbsArtists error message
+  getTrackByID() {
+    // console.log('INSIDE GETTRACKBYID')
+    let topTrackIDs = this.state.topTrackIDs;
+    for (let i = 0; i < topTrackIDs.length; i++) {
+    console.log(topTrackIDs[i].id);
+      $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
+      .done( result => {
+        // console.log('INSIDE GETTRACKBYID');
+        console.log(result);
+        let topTracks = this.state.topTracks;
+        topTracks.push(result);
+        this.setState({ topTracks: topTracks });
+      })
+      .fail( err => {
+        console.error(err);
+      })
+    }
+  }
 
   testRoute(){
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.state.currentUser.id)
+    // $.get('http://localhost:3000/users/getUserByID/'+this.state.currentUser.id)
+    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.state.currentUser.id)
+    $.get('http://localhost:3000/users/getUserTopTracks/'+this.state.currentUser.id)
     .done( result => {
       console.log('INSIDE TEST ROUTE')
-      console.log(result)
+      // console.log(result)
+      this.setState({ topTrackIDs: result })
+      // console.log(this.state.topTrackIDs);
+      this.getTrackByID();
     })
     .fail( err => {
       console.error(err);
@@ -59,7 +82,7 @@ class CurrentUser extends Component {
   setCurrentUser(){
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
-      console.log(result);
+      // console.log(result);
       this.setState({ currentUser: result });
       this.testRoute();
     })

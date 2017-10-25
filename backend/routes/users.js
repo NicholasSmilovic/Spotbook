@@ -14,6 +14,7 @@ const router = express.Router();
 
 module.exports = (DataHelpers) => {
 
+  // confirmed working
   router.get('/getUserByID/:id', (req, res) => {
     let user_id = req.params.id;
 
@@ -27,6 +28,7 @@ module.exports = (DataHelpers) => {
 
   });
 
+  // confirmed working
   router.get('/getUserBySpotifyID/:id', (req, res) => {
     let spotify_id = req.params.id;
 
@@ -39,6 +41,7 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  // confirmed working
   router.get('/getUserTopTracks/:id', (req, res) => {
     let user_id = req.params.id;
 
