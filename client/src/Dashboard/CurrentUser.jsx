@@ -39,7 +39,7 @@ class CurrentUser extends Component {
 
   componentWillMount(){
     this.getChartData();
-    this.testRoute();
+    // this.testRoute();
   }
 
 
