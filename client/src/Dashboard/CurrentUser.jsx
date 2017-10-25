@@ -22,57 +22,40 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
-      // currentLocal:,
-      topTrackIDs:{},
       topTracks:[],
       insightData:'Stuff'
     }
   }
 
 
-  // componentDidMount() {
-  //   let { access_token } = parse(location.search)
-
-  //   if (access_token) localStorage.access_token = access_token
-
-  // }
-
   componentWillMount(){
     this.getChartData();
-    // this.testRoute();
-  }
-
-
-
-  getTrackByID() {
-    // console.log('INSIDE GETTRACKBYID')
-    let topTrackIDs = this.state.topTrackIDs;
-    for (let i = 0; i < topTrackIDs.length; i++) {
-    console.log(topTrackIDs[i].id);
-      $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
-      .done( result => {
-        // console.log('INSIDE GETTRACKBYID');
-        console.log(result);
-        let topTracks = this.state.topTracks;
-        topTracks.push(result);
-        this.setState({ topTracks: topTracks });
-      })
-      .fail( err => {
-        console.error(err);
-      })
+    if (!this.props.currentLocal) {
+      console.log('Please stand by while we get that thing that you need.')
+    } else {
+      console.log("We got it. The thing that you need immediately follows this sentence.")
+      console.log(this.props.currentLocal);
+      this.getUserTopTracks();
     }
   }
 
-  testRoute(){
+  // Grab user's top tracks
+  getUserTopTracks(){
     // $.get('http://localhost:3000/users/getUserByID/'+this.state.currentUser.id)
     // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.state.currentUser.id)
-    $.get('http://localhost:3000/users/getUserTopTracks/'+this.state.currentUser.id)
-    .done( result => {
-      console.log('INSIDE TEST ROUTE')
-      // console.log(result)
-      this.setState({ topTrackIDs: result })
-      // console.log(this.state.topTrackIDs);
-      this.getTrackByID();
+    $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
+    .done( topTrackIDs => {
+      for (let i = 0; i < topTrackIDs.length; i++) {
+        $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
+        .done( result => {
+          let topTracks = this.state.topTracks;
+          topTracks.push(result);
+          this.setState({ topTracks: topTracks });
+        })
+        .fail( err => {
+          console.error(err);
+        })
+      }
     })
     .fail( err => {
       console.error(err);

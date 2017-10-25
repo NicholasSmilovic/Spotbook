@@ -97,7 +97,6 @@ class App extends React.Component {
   setCurrentLocalUser() {
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.state.currentUser)
     .done( result => {
-      console.log(result);
       this.setState({ currentLocal: result });
     })
     .fail( err => {
