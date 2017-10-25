@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   Link,
   IndexRoute
@@ -52,6 +52,4 @@ class Routes extends React.Component {
   }
 }
 
-          //   <Route path="/users/:id" component={User}/>
-          // </Route>
 export default Routes
