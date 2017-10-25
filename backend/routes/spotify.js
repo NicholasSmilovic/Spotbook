@@ -179,6 +179,7 @@ module.exports = (DataHelpers) => {
             DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
               .then((response) => {
                 console.log(`${cleanArtist.artist_name} is already in the database`)
+                resolve(response)
               })
               .catch((responseArtist) => {
                 artistsToAdd.push(responseArtist)
@@ -217,12 +218,13 @@ module.exports = (DataHelpers) => {
 
 
         return Promise.all(artistPromises)
-          .then(stashArtists(artistsToAdd, spotifyReqHeader))
+          .then(() => {
+            stashArtists(artistsToAdd, spotifyReqHeader)
+          })
           .then(() => {
             return Promise.all(trackPromises)
               .then((response) => {
-                console.log(response)
-                // stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
               })
               .catch(() => {
                 console.log('error in track promise')
@@ -403,46 +405,50 @@ module.exports = (DataHelpers) => {
 
 
     function stashArtists(artistsToAdd, spotifyReqHeader) {
-      artistsToAdd = removeDuplicates(artistsToAdd)
-      if (artistsToAdd.length === 0) {
-        return
-      }
+      return new Promise(function(resolve, reject) {
+        artistsToAdd = removeDuplicates(artistsToAdd)
+        if (artistsToAdd.length === 0) {
+          return
+        }
 
-      // make my API call with array items
-      let ids = ''
-      for (let index in artistsToAdd) {
-        ids += artistsToAdd[index].spotify_id
-        ids += ','
-      }
-      ids = ids.slice(0, -1) // take off last comma
+        // make my API call with array items
+        let ids = ''
+        for (let index in artistsToAdd) {
+          ids += artistsToAdd[index].spotify_id
+          ids += ','
+        }
+        ids = ids.slice(0, -1) // take off last comma
 
-      let artistReq = {
-        url: "https://api.spotify.com/v1/artists?ids=" + ids,
-        headers: spotifyReqHeader,
-        json: true
-      };
+        let artistReq = {
+          url: "https://api.spotify.com/v1/artists?ids=" + ids,
+          headers: spotifyReqHeader,
+          json: true
+        };
 
-      request.get(artistReq, function(error, response, body) {
+        request.get(artistReq, function(error, response, body) {
 
-        // inside here, clean artists and add to DB
-        body.artists.forEach(artist => {
-          let name = artist.name
-          let spotifyID = artist.id
-          let imageURLs = [
-          {url: artist.images[0].url},
-          {url: artist.images[1].url},
-          {url: artist.images[2].url}
-          ]
-          let genresArray = artist.genres
+          // inside here, clean artists and add to DB
+          body.artists.forEach(artist => {
+            let name = artist.name
+            let spotifyID = artist.id
 
-          DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
-            .then((response) => {
-              console.log(response)
-            })
-            .catch((e) => {
-              console.log(`Error: ${e}`)
-            })
+            let imageURLs = [
+            {url: artist.images[0].url},
+            {url: artist.images[1].url},
+            {url: artist.images[2].url}
+            ]
+            let genresArray = artist.genres
+
+            DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
+              .then((response) => {
+                console.log(response)
+              })
+              .catch((e) => {
+                console.log(`Error: ${e}`)
+              })
+          })
         })
+
       })
     }
 
