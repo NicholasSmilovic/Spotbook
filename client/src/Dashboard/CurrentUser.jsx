@@ -10,6 +10,8 @@ import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
+import { parse } from 'query-string'
+
 
 class CurrentUser extends Component {
 
@@ -21,6 +23,13 @@ class CurrentUser extends Component {
       currentUser:{}
     }
   }
+
+  // componentDidMount() {
+  //   let { access_token } = parse(location.search)
+
+  //   if (access_token) localStorage.access_token = access_token
+
+  // }
 
   componentWillMount(){
     this.setCurrentUser();
