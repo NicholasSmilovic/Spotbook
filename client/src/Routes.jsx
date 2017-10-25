@@ -1,15 +1,18 @@
 import React from 'react'
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Route,
-  Link
+  Link,
+  IndexRoute
 } from 'react-router-dom'
 
+import UsersExplorer from './Users/UsersExplorer.jsx'
 import User from './Users/User.jsx';
 import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
 import CurrentUser from './Dashboard/CurrentUser.jsx'
 import Navbar from './partials/Navbar.jsx'
+
 
 
 class Routes extends React.Component {
@@ -35,18 +38,20 @@ class Routes extends React.Component {
     return (
       <Router>
         <div>
+
           <Navbar />
-          <Route  exact path="/"
-                  component={CurrentUserPage}
-                  refreshAccessToken={this.props.refreshAccessTokens}
-                  accessToken = {this.props.accessToken}
-                  />
-          <Route  path="/playlists" component={PlaylistsPage}/>
+          <Route exact path="/" component={CurrentUserPage} />
+          <Route path="/playlists" component={PlaylistsPage}/>
+
+          <Route exact path="/users" component={UsersExplorer}/>
           <Route path="/users/:id" component={User}/>
-          </div>
+
+        </div>
       </Router>
     )
   }
 }
 
+          //   <Route path="/users/:id" component={User}/>
+          // </Route>
 export default Routes
