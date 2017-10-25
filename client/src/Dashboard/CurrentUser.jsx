@@ -15,7 +15,7 @@ import TopArtistInsight from '../Insights/_TopArtist.jsx'
 
 class CurrentUser extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       chartData:{},
@@ -24,7 +24,7 @@ class CurrentUser extends Component {
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
     this.setCurrentUser();
     this.getChartData();
     // this.testRoute();
