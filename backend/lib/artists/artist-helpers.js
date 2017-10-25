@@ -123,7 +123,7 @@ module.exports = (knex) => {
 
 
 
-  function getArtistBySpotifyID(id) {
+  function getArtistBySpotifyID(id, artistToAdd) {
     return new Promise(function(resolve, reject) {
     let artist = {}
     knex('artists').where('spotify_id', id)
@@ -144,7 +144,8 @@ module.exports = (knex) => {
         resolve(artist)
       })
       .catch(() => {
-        reject('artist not found')
+        // reject('artist not found')
+        reject(artistToAdd)
       })
     })
   }

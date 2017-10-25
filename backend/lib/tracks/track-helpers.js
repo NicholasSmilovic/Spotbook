@@ -146,7 +146,7 @@ module.exports = (knex) => {
 
 
 
-  function getTrackBySpotifyID(id) {
+  function getTrackBySpotifyID(id, trackToAdd) {
     return new Promise(function(resolve, reject) {
     let track = {}
     knex('tracks').where('spotify_id', id)
@@ -177,7 +177,8 @@ module.exports = (knex) => {
         resolve(track)
       })
       .catch(() => {
-        reject('track not found')
+        // reject('track not found')
+        reject(trackToAdd)
       })
     })
   }
