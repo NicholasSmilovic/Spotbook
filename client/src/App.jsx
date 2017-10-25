@@ -18,6 +18,7 @@ class App extends React.Component {
     this.state = {
       userState: null,
       currentUser: null,
+      currentLocal: null,
       access_token:"",
       refresh_token:""
     }
@@ -74,6 +75,9 @@ class App extends React.Component {
             userState: "verified",
             currentUser: data.id
           })
+
+          this.setCurrentLocalUser();
+
           return true
         }
         this.setState({userState: "unverified"})
@@ -90,13 +94,26 @@ class App extends React.Component {
     this.verifyLogin()
   }
 
+  setCurrentLocalUser() {
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.state.currentUser)
+    .done( result => {
+      console.log(result);
+      this.setState({ currentLocal: result });
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
   render(){
     if(this.state.userState) {
       if(this.state.userState === "verified") {
+
         return <Routes
                   accessToken = {this.state.access_token}
                   refreshAccessToken = {this.refreshAccessToken}
                   currentUser = {this.state.currentUser}
+                  currentLocal = {this.state.currentLocal}
                   />
       }
       if(this.state.userState === "unverified") {

@@ -22,7 +22,7 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
-      currentUser:{},
+      // currentLocal:,
       topTrackIDs:{},
       topTracks:[],
       insightData:'Stuff'
@@ -38,10 +38,12 @@ class CurrentUser extends Component {
   // }
 
   componentWillMount(){
-    this.setCurrentUser();
+    // this.setCurrentUser();
     this.getChartData();
     // this.testRoute();
   }
+
+
 
   getTrackByID() {
     // console.log('INSIDE GETTRACKBYID')

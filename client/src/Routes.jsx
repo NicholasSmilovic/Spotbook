@@ -31,6 +31,7 @@ class Routes extends React.Component {
       return (
         <CurrentUser
         currentSpotifyID = {this.props.currentUser}
+        currentLocal = {this.props.currentLocal}
         />
       )
     }
