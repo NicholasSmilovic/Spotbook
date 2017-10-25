@@ -146,7 +146,12 @@ module.exports = (DataHelpers) => {
       })
       .catch((e) => {
         if (e === 'user not found') {
-          DataHelpers.userHelpers.addUser(userInfo.display_name, userInfo.id, userInfo.images[0].url)
+
+          let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
+          let id = userInfo.id
+          let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
+
+          DataHelpers.userHelpers.addUser(name, id, image)
             .then((response) => {
               console.log(response)
             })
@@ -216,7 +221,6 @@ module.exports = (DataHelpers) => {
         })
 
 
-
         return Promise.all(artistPromises)
           .then(() => {
             stashArtists(artistsToAdd, spotifyReqHeader)
@@ -234,58 +238,6 @@ module.exports = (DataHelpers) => {
             console.log('error in artist promise')
           })
 
-
-
-
-        // body.items.forEach((track, index) => {
-        //   let cleanTrack = {
-        //      associated_artist: track.artists[0].id,
-        //      track_name: track.name,
-        //      spotify_id: track.id,
-        //      image_urls: [
-        //         {url: track.album.images[0].url},
-        //         {url: track.album.images[1].url},
-        //         {url: track.album.images[2].url}
-        //      ]
-        //   }
-
-        //   let cleanArtist = {
-        //      artist_name: track.artists[0].name,
-        //      spotify_id: track.artists[0].id
-        //   }
-
-
-        //   DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
-        //     .then((response) => {
-        //       console.log(`${cleanArtist.artist_name} is already in the database`)
-        //       if (index === body.items.length - 1 && artistsToAdd) {
-        //         stashArtists(artistsToAdd, spotifyReqHeader)
-        //       }
-        //     })
-        //     .catch((responseArtist) => {
-        //       artistsToAdd.push(responseArtist)
-        //       if (index === body.items.length - 1 && artistsToAdd) {
-        //         stashArtists(artistsToAdd, spotifyReqHeader)
-        //       }
-        //     })
-
-        //     DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
-        //       .then((response) => {
-        //         console.log(`${cleanTrack.track_name} is already in database`)
-        //        if (index === body.items.length - 1) {
-        //           stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-        //         }
-        //       })
-        //       .catch((responseTrack) => {
-        //         tracksToAdd.push(responseTrack)
-        //         if (index === body.items.length - 1) {
-        //           stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-        //         }
-        //       })
-
-
-
-        //   })
 
         });
 
@@ -328,17 +280,17 @@ module.exports = (DataHelpers) => {
 
           body.audio_features.forEach((track, index) => {
             tracksToAdd[index].features = {
-              danceability: track.danceability,
-              energy: track.energy,
-              key: track.key,
-              loudness: track.loudness,
-              mode: track.mode,
-              speechiness: track.speechiness,
-              acousticness: track.acousticness,
-              instrumentalness: track.instrumentalness,
-              liveness: track.liveness,
-              valence: track.valence,
-              tempo: track.tempo
+              danceability: track ? track.danceability : 0,
+              energy: track ? track.energy : 0,
+              key: track ? track.key : 0,
+              loudness: track ? track.loudness : 0,
+              mode: track ? track.mode : 0,
+              speechiness: track ? track.speechiness : 0,
+              acousticness: track ? track.acousticness : 0,
+              instrumentalness: track ? track.instrumentalness : 0,
+              liveness: track ? track.liveness : 0,
+              valence: track ? track.valence : 0,
+              tempo: track ? track.tempo : 0
             }
 
           })
@@ -429,15 +381,20 @@ module.exports = (DataHelpers) => {
 
           // inside here, clean artists and add to DB
           body.artists.forEach(artist => {
-            let name = artist.name
-            let spotifyID = artist.id
 
-            let imageURLs = [
-            {url: artist.images[0].url},
-            {url: artist.images[1].url},
-            {url: artist.images[2].url}
-            ]
-            let genresArray = artist.genres
+              let name = artist.name ? artist.name : 'John Wasson'
+              let spotifyID = artist.name ? artist.id : 'noFollowerz'
+
+              let imageURLs = artist.images.length ? [
+              {url: artist.images[0].url},
+              {url: artist.images[1].url},
+              {url: artist.images[2].url}
+              ] : [
+              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+              ]
+              let genresArray = artist.genres.length ? artist.genres : ['Set Phasers to Stun']
 
             DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
               .then((response) => {
