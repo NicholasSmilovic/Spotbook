@@ -38,9 +38,8 @@ class CurrentUser extends Component {
   // }
 
   componentWillMount(){
-    // this.setCurrentUser();
     this.getChartData();
-    // this.testRoute();
+    this.testRoute();
   }
 
 
@@ -80,18 +79,7 @@ class CurrentUser extends Component {
     });
   }
 
-  // this route could be executed upon logging into spotify
-  setCurrentUser(){
-    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
-    .done( result => {
-      // console.log(result);
-      this.setState({ currentUser: result });
-      this.testRoute();
-    })
-    .fail( err => {
-      console.error(err);
-    });
-  }
+
 
   getChartData(){
     let chart = Prettiness(SampleData(), Palette().cool_10);
