@@ -167,7 +167,28 @@ module.exports = (DataHelpers) => {
         //find out which tracks need to be added to the database
         let tracksToAdd = []
         let artistsToAdd = []
-        body.items.forEach((track, index) => {
+
+
+        let artistPromises = body.items.map(track => {
+          let cleanArtist = {
+             artist_name: track.artists[0].name,
+             spotify_id: track.artists[0].id
+          }
+
+          return new Promise(function (resolve, reject) {
+            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+              .then((response) => {
+                console.log(`${cleanArtist.artist_name} is already in the database`)
+              })
+              .catch((responseArtist) => {
+                artistsToAdd.push(responseArtist)
+                resolve(responseArtist)
+              })
+            })
+        })
+
+
+        let trackPromises = body.items.map(track => {
           let cleanTrack = {
              associated_artist: track.artists[0].id,
              track_name: track.name,
@@ -179,43 +200,90 @@ module.exports = (DataHelpers) => {
              ]
           }
 
-          let cleanArtist = {
-             artist_name: track.artists[0].name,
-             spotify_id: track.artists[0].id
-          }
-
-
-            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+          return new Promise(function(resolve, reject) {
+            DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
               .then((response) => {
-                console.log(`${cleanArtist.artist_name} is already in the database`)
-                if (index === body.items.length - 1 && artistsToAdd) {
-                  stashArtists(artistsToAdd, spotifyReqHeader)
-                }
+                console.log(`${cleanTrack.track_name} is already in database`)
+                resolve(response)
               })
-              .catch((responseArtist) => {
-                artistsToAdd.push(responseArtist)
-                if (index === body.items.length - 1 && artistsToAdd) {
-                  stashArtists(artistsToAdd, spotifyReqHeader)
-                }
+              .catch((responseTrack) => {
+                tracksToAdd.push(responseTrack)
+                resolve(responseTrack)
               })
-
-              DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
-                .then((response) => {
-                  console.log(`${cleanTrack.track_name} is already in database`)
-                 if (index === body.items.length - 1) {
-                    stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-                  }
-                })
-                .catch((responseTrack) => {
-                  tracksToAdd.push(responseTrack)
-                  if (index === body.items.length - 1) {
-                    stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-                  }
-                })
-
-
-
           })
+
+        })
+
+
+
+        return Promise.all(artistPromises)
+          .then(stashArtists(artistsToAdd, spotifyReqHeader))
+          .then(() => {
+            return Promise.all(trackPromises)
+              .then((response) => {
+                console.log(response)
+                // stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+              })
+              .catch(() => {
+                console.log('error in track promise')
+              })
+          })
+          .catch(() => {
+            console.log('error in artist promise')
+          })
+
+
+
+
+        // body.items.forEach((track, index) => {
+        //   let cleanTrack = {
+        //      associated_artist: track.artists[0].id,
+        //      track_name: track.name,
+        //      spotify_id: track.id,
+        //      image_urls: [
+        //         {url: track.album.images[0].url},
+        //         {url: track.album.images[1].url},
+        //         {url: track.album.images[2].url}
+        //      ]
+        //   }
+
+        //   let cleanArtist = {
+        //      artist_name: track.artists[0].name,
+        //      spotify_id: track.artists[0].id
+        //   }
+
+
+        //   DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+        //     .then((response) => {
+        //       console.log(`${cleanArtist.artist_name} is already in the database`)
+        //       if (index === body.items.length - 1 && artistsToAdd) {
+        //         stashArtists(artistsToAdd, spotifyReqHeader)
+        //       }
+        //     })
+        //     .catch((responseArtist) => {
+        //       artistsToAdd.push(responseArtist)
+        //       if (index === body.items.length - 1 && artistsToAdd) {
+        //         stashArtists(artistsToAdd, spotifyReqHeader)
+        //       }
+        //     })
+
+        //     DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
+        //       .then((response) => {
+        //         console.log(`${cleanTrack.track_name} is already in database`)
+        //        if (index === body.items.length - 1) {
+        //           stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+        //         }
+        //       })
+        //       .catch((responseTrack) => {
+        //         tracksToAdd.push(responseTrack)
+        //         if (index === body.items.length - 1) {
+        //           stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+        //         }
+        //       })
+
+
+
+        //   })
 
         });
 
