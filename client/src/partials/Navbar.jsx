@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {
-  HashRouter as Router,
-  Route,
   Link
 } from 'react-router-dom';
 
@@ -12,7 +10,7 @@ class Navbar extends Component{
           <div className="navWide">
             <div className="wideDiv">
               <Link className='nav-link' to="/">Home</Link>
-              <Link className='nav-link' to="/users/1">Users</Link>
+              <Link className='nav-link' to="/users">Users</Link>
               <Link className='nav-link' to="/playlists">Playlists</Link>
             </div>
           </div>
@@ -20,7 +18,7 @@ class Navbar extends Component{
             <i className="fa fa-bars fa-2x" onClick={this.burgerToggle}></i>
             <div className="narrowLinks">
               <Link className='nav-link' to="/">Home</Link>
-              <Link className='nav-link' to="/users/1">Users</Link>
+              <Link className='nav-link' to="/users">Users</Link>
               <Link className='nav-link' to="/playlists">Playlists</Link>
             </div>
           </div>
