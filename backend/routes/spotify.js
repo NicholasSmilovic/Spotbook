@@ -184,6 +184,7 @@ module.exports = (DataHelpers) => {
              spotify_id: track.artists[0].id
           }
 
+
             DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
               .then((response) => {
                 console.log(`${cleanArtist.artist_name} is already in the database`)
