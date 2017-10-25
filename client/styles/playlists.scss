@@ -2,26 +2,24 @@
   width:auto
 }
 
-body {
-  background-color: $slightly-black;
-}
-
 .playlist-header{
-  background-color: $slightly-black;
   vertical-align: middle;
+  z-index: 2;
 }
-
+.tester{
+  z-index: 1;
+}
 .search-bar{
 }
 
 .search-bar-query{
-  background-color:black;
+  color: black;
   padding: 0;
   width:80%;
 }
 
 .search-bar-query:focus{
-  outline-color: $spotify-green;
+  outline-color: white
 }
 
 .sticky-container{

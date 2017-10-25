@@ -45,11 +45,13 @@
     "webpack-dev-server": "2.3.0"
   },
   "dependencies": {
+    "chart.js": "^2.6.0",
+    "query-string": "^5.0.1",
     "react": "15.4.2",
+    "react-chartjs-2": "^2.1.0",
     "react-dom": "15.4.2",
     "react-router-dom": "^4.2.2",
-    "react-sticky": "^6.0.1",
-    "react-chartjs-2": "^2.1.0",
-    "chart.js": "^2.6.0"
+    "react-slick": "^0.15.4",
+    "slick-carousel": "^1.8.1"
   }
 }

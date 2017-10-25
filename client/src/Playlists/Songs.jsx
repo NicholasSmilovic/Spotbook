@@ -37,7 +37,7 @@ class Songs extends Component {
     return (
       <div>
         <hr/>
-        <table className="table table-bordered">
+        <table className="table table-bordered tester">
             <thead><tr>
               <th className="col-sm-1 col-xs-6">Album Art</th>
               <th className="col-sm-4 col-xs-6">Track Name</th>

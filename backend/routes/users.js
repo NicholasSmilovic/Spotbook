@@ -14,21 +14,67 @@ const router = express.Router();
 
 module.exports = (DataHelpers) => {
 
-  router.get('/getUserByID', (req, res) => {
-    console.log('Hello from /users/getUserByID in /backend/routes/users.js');
 
-    let user = DataHelpers.userHelpers.getUserByID('1');
-    console.log(user);
-    res.send(user);
+  router.get('/getUserByID/:id', (req, res) => {
+    let user_id = req.params.id;
+
+    DataHelpers.userHelpers.getUserByID(user_id)
+    .then((user) => {
+      res.send(user)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+
   });
 
-  router.get('/getUserTopTracks', (req, res) => {
-    // DataHelpers.userHelpers.getUserTopTracks()
+  router.get('/getUserBySpotifyID/:id', (req, res) => {
+    let spotify_id = req.params.id;
 
-    // res.send();
+    DataHelpers.userHelpers.getUserBySpotifyID(spotify_id)
+    .then((user) => {
+      res.send(user)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
   });
 
+  router.get('/getUserTopTracks/:id', (req, res) => {
+    let user_id = req.params.id;
 
+    DataHelpers.userHelpers.getUserTopTracks(user_id)
+    .then((tracks) => {
+      res.send(tracks)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+  });
+
+  router.get('/getUserTopAbsArtists/:id', (req, res) => {
+    let user_id = req.params.id;
+
+    DataHelpers.userHelpers.getUserTopAbsArtists(user_id)
+    .then((artists) => {
+      res.send(artists)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+  });
+
+  router.get('/getUserPlaylists/:id', (req, res) => {
+    let user_id = req.params.id;
+
+    DataHelpers.userHelpers.getUserPlaylists(user_id)
+    .then((playlists) => {
+      res.send(playlists)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+  });
 
   return router;
 };

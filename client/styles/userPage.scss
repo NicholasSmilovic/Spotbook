@@ -2,6 +2,30 @@
 //   height:100vh;
 //   overflow: scroll;
 // }
+.login-button {
+  position:absolute;
+  left:40%;
+  top:50%;
+  margin-top:-10px; /* -1/2 height */
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.login-button:hover {
+  text-decoration: none;
+  color: white;
+}
+
+h2,h3,h4,h5 {
+  font-family: $headerText;
+}
 
 .wrapper {
   width: 183px;
@@ -11,12 +35,11 @@
 }
 
 .user-sidebar {
-  max-height: 26em;
+  // max-height: 26em;
   color: white;
-  opacity: 30;
-  background-color: black;
-  overflow: scroll;
-  padding:0;
+  background: transparent;
+  overflow: hidden;
+  padding:40px;
   margin:0;
 }
 
@@ -26,6 +49,7 @@
 }
 
 .user-profile {
+  margin-top: 6em;
   color: white;
   // background-image:
   //   $topDivGradient;
@@ -54,13 +78,20 @@
   padding-top: 3em;
 }
 
-.userMatchProfile {
-  padding:0.2em;
+.user-match-profile{
+  text-align: center;
 }
+.user-match-profile img{
+  display: block;
+  margin: auto;
+  border-radius: 50%;
 
+}
 .top-matches-text {
   text-align: center;
 }
+
+
 
 
 

@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router  = express.Router();
-const fetch = require('fetch');
 let request = require('request') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
@@ -25,7 +24,6 @@ let generateRandomString = function(length) {
 };
 
 let stateKey = 'spotify_auth_state';
-
 module.exports = (DataHelpers) => {
 
   router.get('/login', function(req, res) {
@@ -93,6 +91,7 @@ module.exports = (DataHelpers) => {
             let image_url = body.images[0].url;
 
             DataHelpers.userHelpers.addUser(display_name, spotify_id, image_url);
+
             // dataStash(options.headers, body, access_token)
 
           });

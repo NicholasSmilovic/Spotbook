@@ -14,11 +14,6 @@ class StickySideBar extends Component{
     this.setState({query:event.target.value})
   }
 
-  handleQueryKeypress = (event) => {
-
-  }
-
-
   render () {
 
     let queryResults = null
