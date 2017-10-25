@@ -75,5 +75,16 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  router.get('/getAllUsers', (req, res) => {
+    DataHelpers.userHelpers.getAllUsers()
+    .then(allUsers => {
+      console.log(allUsers)
+      res.json(allUsers)
+    })
+    .catch(e => {
+      console.error(e);
+    })
+  })
+
   return router;
 };
