@@ -302,9 +302,36 @@ function getUserTopTrackArtists(id) {
 //     console.log(e)
 //   })
 
+
+function getAllUsers() {
+  return new Promise(function(resolve, reject) {
+    let users = []
+    knex.select('display_name', 'spotify_id', 'image_urls', 'following').from('users')
+      .then((val) => {
+        resolve(val)
+      })
+      .catch((e) => {
+        console.log('there was an error retrieving all the users')
+        reject(e)
+      })
+  })
+
+}
+
+// getAllUsers()
+//   .then((response) => {
+//     console.log(response)
+//   })
+
+
+
+
+
+
   return {
     addUser: addUser,
     removeUser: removeUser,
+    getAllUsers: getAllUsers,
     getUserByID: getUserByID,
     getUserBySpotifyID: getUserBySpotifyID,
     getUserTopTracks: getUserTopTracks,
