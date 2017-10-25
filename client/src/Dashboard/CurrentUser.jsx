@@ -38,15 +38,16 @@ class CurrentUser extends Component {
   componentWillMount(){
     this.setCurrentUser();
     this.getChartData();
-    this.testRoute();
+    // this.testRoute();
   }
 
   // can reach getUserTopTracks error message
   // can reach getUserTopAbsArtists error message
 
   testRoute(){
-    $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.state.currentUser.id)
     .done( result => {
+      console.log('INSIDE TEST ROUTE')
       console.log(result)
     })
     .fail( err => {
@@ -59,7 +60,8 @@ class CurrentUser extends Component {
     $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
     .done( result => {
       console.log(result);
-      this.setState({ currentUser: result })
+      this.setState({ currentUser: result });
+      this.testRoute();
     })
     .fail( err => {
       console.error(err);
