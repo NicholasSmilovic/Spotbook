@@ -184,33 +184,36 @@ module.exports = (DataHelpers) => {
              spotify_id: track.artists[0].id
           }
 
-          DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
-            .then((response) => {
-              console.log(`${cleanArtist.artist_name} is already in the database`)
-              if (index === body.items.length - 1 && artistsToAdd) {
-                stashArtists(artistsToAdd, spotifyReqHeader)
-              }
-            })
-            .catch((responseArtist) => {
-              artistsToAdd.push(responseArtist)
-              if (index === body.items.length - 1 && artistsToAdd) {
-                stashArtists(artistsToAdd, spotifyReqHeader)
-              }
-            })
+            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+              .then((response) => {
+                console.log(`${cleanArtist.artist_name} is already in the database`)
+                if (index === body.items.length - 1 && artistsToAdd) {
+                  stashArtists(artistsToAdd, spotifyReqHeader)
+                }
+              })
+              .catch((responseArtist) => {
+                artistsToAdd.push(responseArtist)
+                if (index === body.items.length - 1 && artistsToAdd) {
+                  stashArtists(artistsToAdd, spotifyReqHeader)
+                }
+              })
 
-          DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
-            .then((response) => {
-              console.log(`${cleanTrack.track_name} is already in database`)
-             if (index === body.items.length - 1) {
-                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-              }
-            })
-            .catch((responseTrack) => {
-              tracksToAdd.push(responseTrack)
-              if (index === body.items.length - 1) {
-                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-              }
-            })
+              DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
+                .then((response) => {
+                  console.log(`${cleanTrack.track_name} is already in database`)
+                 if (index === body.items.length - 1) {
+                    stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+                  }
+                })
+                .catch((responseTrack) => {
+                  tracksToAdd.push(responseTrack)
+                  if (index === body.items.length - 1) {
+                    stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+                  }
+                })
+
+
+
           })
 
         });
@@ -296,6 +299,7 @@ module.exports = (DataHelpers) => {
                   })
                   .catch((e) => {
                     console.log('Artist find error', e)
+
                   })
               })
               .then(() => {

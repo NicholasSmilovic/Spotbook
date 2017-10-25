@@ -121,6 +121,24 @@ module.exports = (knex) => {
   //   console.log(response)
   // })
 
+//Better way of doing functions
+  // function getArtistBySpotifyID(id, artistToAdd) { //artist to add only used in data stash
+  //   return knex('artists').where('spotify_id', id)
+  //     .then((val) => {
+  //       return {
+  //         id: val[0].id,
+  //         artist_name: val[0].artist_name,
+  //         spotify_id: val[0].spotify_id,
+  //         image_urls: {
+  //           large: val[0].image_urls.large,
+  //           medium: val[0].image_urls.medium,
+  //           small: val[0].image_urls.small
+  //         },
+  //         genres: val[0].genres.genres_array
+  //       }
+  //     })
+  //     .catch(() => artistToAdd)
+  // }
 
 
   function getArtistBySpotifyID(id, artistToAdd) { //artist to add only used in data stash
