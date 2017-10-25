@@ -6,7 +6,7 @@ import SpotifyLogin from './SpotifyLogin.jsx'
 class Landing extends Component{
   render (){
     return(
-      <div>
+      <div className="dashboard">
         <SpotifyLogin />
       </div>
       )

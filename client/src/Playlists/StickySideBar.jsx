@@ -27,11 +27,12 @@ class StickySideBar extends Component{
     return(
           <div className="sticky-container">
             <div className="sticky-block panel panel-default">
-              <input  className="search-bar-query"
+              <input  type="text" className="search-bar-query"
                       onChange = {this.handleQueryChange}
                       onKeyPress = {this.handleQueryKeypress}
                       value = {this.state.query} />
             </div>
+
             {queryResults}
           </div>
       )
