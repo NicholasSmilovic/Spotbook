@@ -1,4 +1,4 @@
-zimport React, {Component} from 'react';
+import React, {Component} from 'react';
 import {Bar} from 'react-chartjs-2';
 
 class BarHandler extends Component {
