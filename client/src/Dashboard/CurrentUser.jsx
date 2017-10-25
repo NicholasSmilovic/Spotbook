@@ -20,28 +20,28 @@ class CurrentUser extends Component {
     this.state = {
       chartData:{},
       currentUser:{},
-      insightData:'Stuff'
+      insightData: 'Click bar on chart for more info!'
     }
   }
 
   componentWillMount(){
     this.setCurrentUser();
     this.getChartData();
-    this.testRoute();
+    // this.testRoute();
   }
 
   // can reach getUserTopTracks error message
   // can reach getUserTopAbsArtists error message
 
-  testRoute(){
-    $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
-    .done( result => {
-      console.log(result);
-    })
-    .fail( err => {
-      console.error(err);
-    });
-  }
+  // testRoute(){
+  //   $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
+  //   .done( result => {
+  //     console.log(result);
+  //   })
+  //   .fail( err => {
+  //     console.error(err);
+  //   });
+  // }
 
   // this route could be executed upon logging into spotify
   setCurrentUser(){

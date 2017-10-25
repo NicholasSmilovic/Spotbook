@@ -1,7 +1,17 @@
-import React, {Component} from 'react';
+zimport React, {Component} from 'react';
 import {Bar} from 'react-chartjs-2';
 
-class BarChart extends Component{
+class BarHandler extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      rawData: '' //TODO
+    }
+  }
+
+}
+
+class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -9,7 +19,7 @@ class BarChart extends Component{
     }
   }
 
-  render(){
+  render() {
 
     let fontColor = '#EEE';
 
