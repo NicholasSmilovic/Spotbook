@@ -84,7 +84,8 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            dataStash(options.headers, body, access_token)
+            dataStash(options.headers, body, 0)
+
           });
 
           console.log('redirecting...', app_uri +
@@ -135,109 +136,114 @@ module.exports = (DataHelpers) => {
 
   return router
 
-  function dataStash(spotifyReqHeader, userInfo) {
+  function dataStash(spotifyReqHeader, userInfo, trackOffset) {
+    return new Promise(function(resolve, reject) {
+      // add user to database, if not already there
+      DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+        .then((response) => {
+          console.log(`Welcome, ${response.display_name}`)
+        })
+        .catch((e) => {
+          if (e === 'user not found') {
 
-    // add user to database, if not already there
-    DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
-      .then((response) => {
-        console.log(`Welcome, ${response.display_name}`)
-      })
-      .catch((e) => {
-        if (e === 'user not found') {
+            let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
+            let id = userInfo.id
+            let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
 
-          let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
-          let id = userInfo.id
-          let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
-
-          DataHelpers.userHelpers.addUser(name, id, image)
-            .then((response) => {
-              console.log(response)
-            })
-            .catch((e) => {
-              console.log(e)
-            })
-        }
-      })
-
-      // make API request for user's top tracks
-      let trackReq = {
-        url: "https://api.spotify.com/v1/me/top/tracks?limit=20",
-        headers: spotifyReqHeader,
-        json: true
-      };
-
-      request.get(trackReq, function(error, response, body) {
-        //find out which tracks need to be added to the database
-        let tracksToAdd = []
-        let artistsToAdd = []
-
-
-        let artistPromises = body.items.map(track => {
-          let cleanArtist = {
-             artist_name: track.artists[0].name,
-             spotify_id: track.artists[0].id
-          }
-
-          return new Promise(function (resolve, reject) {
-            DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+            DataHelpers.userHelpers.addUser(name, id, image)
               .then((response) => {
-                console.log(`${cleanArtist.artist_name} is already in the database`)
-                resolve(response)
+                console.log(response)
               })
-              .catch((responseArtist) => {
-                artistsToAdd.push(responseArtist)
-                resolve(responseArtist)
+              .catch((e) => {
+                console.log(e)
               })
-            })
+          }
         })
 
+        // make API request for user's top tracks
+        let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
 
-        let trackPromises = body.items.map(track => {
-          let cleanTrack = {
-             associated_artist: track.artists[0].id,
-             track_name: track.name,
-             spotify_id: track.id,
-             image_urls: [
-                {url: track.album.images[0].url},
-                {url: track.album.images[1].url},
-                {url: track.album.images[2].url}
-             ]
-          }
+        let trackReq = {
+          url: `https://api.spotify.com/v1/me/top/tracks?limit=100${trackOffsetURL}`,
+          headers: spotifyReqHeader,
+          json: true
+        };
 
-          return new Promise(function(resolve, reject) {
-            DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
-              .then((response) => {
-                console.log(`${cleanTrack.track_name} is already in database`)
-                resolve(response)
-              })
-              .catch((responseTrack) => {
-                tracksToAdd.push(responseTrack)
-                resolve(responseTrack)
-              })
-          })
-
-        })
+        request.get(trackReq, function(error, response, body) {
+          //find out which tracks need to be added to the database
+          let tracksToAdd = []
+          let artistsToAdd = []
 
 
-        return Promise.all(artistPromises)
-          .then(() => {
-            stashArtists(artistsToAdd, spotifyReqHeader)
-          })
-          .then(() => {
-            return Promise.all(trackPromises)
-              .then((response) => {
-                stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-              })
-              .catch(() => {
-                console.log('error in track promise')
+          let artistPromises = body.items.map(track => {
+            let cleanArtist = {
+               artist_name: track.artists[0].name,
+               spotify_id: track.artists[0].id
+            }
+
+            return new Promise(function (resolve, reject) {
+              DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
+                .then((response) => {
+                  console.log(`${cleanArtist.artist_name} is already in the database`)
+                  resolve(response)
+                })
+                .catch((responseArtist) => {
+                  artistsToAdd.push(responseArtist)
+                  resolve(responseArtist)
+                })
               })
           })
-          .catch(() => {
-            console.log('error in artist promise')
+
+
+          let trackPromises = body.items.map(track => {
+            let cleanTrack = {
+               associated_artist: track.artists[0].id,
+               track_name: track.name,
+               spotify_id: track.id,
+               image_urls: [
+                  {url: track.album.images[0].url},
+                  {url: track.album.images[1].url},
+                  {url: track.album.images[2].url}
+               ]
+            }
+
+            return new Promise(function(resolve, reject) {
+              DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
+                .then((response) => {
+                  console.log(`${cleanTrack.track_name} is already in database`)
+                  resolve(response)
+                })
+                .catch((responseTrack) => {
+                  tracksToAdd.push(responseTrack)
+                  resolve(responseTrack)
+                })
+            })
+
           })
 
+          Promise.all(artistPromises)
+            .then(() => {
+              artistsToAdd = removeDuplicates(artistsToAdd)
+              stashArtists(artistsToAdd, spotifyReqHeader)
+            })
+            .then(() => {
+              Promise.all(trackPromises)
+                .then((response) => {
+                  stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+                })
+                .catch(() => {
+                  console.log('error in track promise')
+                })
+            })
+            .catch(() => {
+              console.log('error in artist promise')
+            })
 
-        });
+
+          });
+
+    })
+
 
     }
 
@@ -246,11 +252,13 @@ module.exports = (DataHelpers) => {
         for (let j = index + 1; j < artistsToAdd.length; j++) {
           if (artistsToAdd[j].spotify_id === artist.spotify_id) {
             artistsToAdd.splice(j,1)
+            j -= 1
           }
         }
       })
       return artistsToAdd
     }
+
 
 
     function stashTracks(tracksToAdd, spotifyReqHeader, userSpotifyID) {
@@ -259,7 +267,6 @@ module.exports = (DataHelpers) => {
       }
 
       // make my API call with array items
-
         let ids = ''
         for (let index in tracksToAdd) {
           ids += tracksToAdd[index].spotify_id
@@ -355,8 +362,6 @@ module.exports = (DataHelpers) => {
 
 
     function stashArtists(artistsToAdd, spotifyReqHeader) {
-      return new Promise(function(resolve, reject) {
-        artistsToAdd = removeDuplicates(artistsToAdd)
         if (artistsToAdd.length === 0) {
           return
         }
@@ -404,7 +409,6 @@ module.exports = (DataHelpers) => {
           })
         })
 
-      })
     }
 
 
