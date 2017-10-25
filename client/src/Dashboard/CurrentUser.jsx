@@ -10,7 +10,10 @@ import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
+
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
+import { parse } from 'query-string'
+
 
 
 class CurrentUser extends Component {
@@ -24,7 +27,15 @@ class CurrentUser extends Component {
     }
   }
 
-  componentWillMount() {
+
+  // componentDidMount() {
+  //   let { access_token } = parse(location.search)
+
+  //   if (access_token) localStorage.access_token = access_token
+
+  // }
+
+  componentWillMount(){
     this.setCurrentUser();
     this.getChartData();
     // this.testRoute();
