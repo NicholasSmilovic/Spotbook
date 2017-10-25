@@ -24,11 +24,13 @@ module.exports = (knex) => {
       }
 
       knex('tracks').insert(newTrack)
-        .then(() => {
+        .then((response) => {
           console.log(`${trackName} was added to the database`)
+          resolve()
         })
         .catch (() => {
           console.log(`There was an error adding ${trackName} to the database`)
+          reject()
         })
     })
   }
@@ -146,7 +148,7 @@ module.exports = (knex) => {
 
 
 
-  function getTrackBySpotifyID(id) {
+  function getTrackBySpotifyID(id, trackToAdd) { //track to add only used in data stash
     return new Promise(function(resolve, reject) {
     let track = {}
     knex('tracks').where('spotify_id', id)
@@ -177,7 +179,7 @@ module.exports = (knex) => {
         resolve(track)
       })
       .catch(() => {
-        reject('track not found')
+        reject(trackToAdd)
       })
     })
   }
