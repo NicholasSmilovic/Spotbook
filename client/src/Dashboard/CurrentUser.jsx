@@ -46,7 +46,7 @@ class CurrentUser extends Component {
   testRoute(){
     $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
     .done( result => {
-      console.log(result);
+      console.log(result)
     })
     .fail( err => {
       console.error(err);
