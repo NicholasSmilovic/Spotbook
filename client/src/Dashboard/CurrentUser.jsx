@@ -23,9 +23,12 @@ class CurrentUser extends Component {
     this.state = {
       chartData:{},
       topTracks:[],
-      insightData:'Stuff'
+      insightData:'Stuff',
+      compatibleUsers: []
     }
   }
+
+
 
 
   componentWillMount(){

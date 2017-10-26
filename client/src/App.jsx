@@ -101,9 +101,12 @@ class App extends React.Component {
     }
 
     this.userCompatibility = () => {
-      console.log(this.state.allUsers)
+      console.log(this.state.currentUser)
+      console.log(this.state.allUsers[0].spotify_id)
       this.state.allUsers.map((user) => {
-        console.log(user)
+        if (user.spotify_id !== this.state.currentUser) {
+          console.log(user)
+        }
       })
     }
 
@@ -124,14 +127,14 @@ class App extends React.Component {
 
   componentWillMount() {
     this.updateTokens()
+    this.getAllUsers().then(() => {
+      return this.userCompatibility()
+    })
     // this.userCompatibility()
   }
 
   componentDidMount() {
     this.verifyLogin()
-    this.getAllUsers().then(() => {
-      return this.userCompatibility()
-    })
   }
 
   setCurrentLocalUser() {
