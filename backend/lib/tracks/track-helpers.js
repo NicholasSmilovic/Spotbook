@@ -73,6 +73,18 @@ module.exports = (knex) => {
 
   // removeTrack(6)
 
+  function getNumberOfTracks() {
+    return new Promise(function(resolve, reject) {
+      knex('tracks').count()
+        .then((count) => {
+          resolve(count)
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
+
 
 
 

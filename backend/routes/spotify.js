@@ -227,9 +227,12 @@ module.exports = (DataHelpers) => {
               stashArtists(artistsToAdd, spotifyReqHeader)
             })
             .then(() => {
+              DataHelpers.trackHelpers.getNumberOfTracks()
+            })
+            .then((numberOfTracks) => {
               Promise.all(trackPromises)
                 .then((response) => {
-                  stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
+                  stashTracks(tracksToAdd, spotifyReqHeader, userInfo, numberOfTracks)
                 })
                 .catch(() => {
                   console.log('error in track promise')
@@ -261,7 +264,7 @@ module.exports = (DataHelpers) => {
 
 
 
-    function stashTracks(tracksToAdd, spotifyReqHeader, userSpotifyID) {
+    function stashTracks(tracksToAdd, spotifyReqHeader, userSpotify, numberOfTracks) {
       if (tracksToAdd.length === 0) {
         return
       }
@@ -331,7 +334,7 @@ module.exports = (DataHelpers) => {
                   })
               })
               .then(() => {
-                DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                DataHelpers.userHelpers.getUserBySpotifyID(userSpotify.id)
                   .then((responseUser) => {
                     DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
                       .then((responseTrack) => {
@@ -342,6 +345,9 @@ module.exports = (DataHelpers) => {
                           .catch((e) => {
                             console.log('Join user error', e)
                           })
+                        if (responseTrack.id === tracksToAdd.length + numberOfTracks) {
+                          dataStash(spotifyReqHeader, userSpotify, 100)
+                        }
                       })
                       .catch((e) => {
                         console.log('Track find error', e)
@@ -384,6 +390,7 @@ module.exports = (DataHelpers) => {
 
           // inside here, clean artists and add to DB
           body.artists.forEach(artist => {
+
 
               let name = artist.name ? artist.name : 'John Wasson'
               let spotifyID = artist.name ? artist.id : 'noFollowerz'

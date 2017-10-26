@@ -65,7 +65,25 @@ function getAllUsers() {
 //     console.log(e)
 //   })
 
-getAllUsers()
+// getAllUsers()
+//   .then((response) => {
+//     console.log(response)
+//   })
+
+
+function getNumberOfTracks() {
+  return new Promise(function(resolve, reject) {
+    knex('tracks').count('id')
+      .then((count) => {
+        resolve(count)
+      })
+      .catch((e) => {
+        reject(e)
+      })
+  })
+}
+
+getNumberOfTracks()
   .then((response) => {
     console.log(response)
   })
