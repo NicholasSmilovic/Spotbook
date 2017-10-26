@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import StickySideBar from '../StickySideBar.jsx'
 import Playlist from '../Playlist.jsx';
+import NewPlaylistForm from './NewPlaylistForm.jsx';
+import JoinPlaylist from './JoinPlaylist.jsx';
+import CurrentRoom from './CurrentRoom.jsx';
 
 const genWebSocket = require('../../Models/ActivePlaylistWebSocket.js')
 
@@ -10,6 +13,7 @@ class ActivePlaylists extends Component{
     super(props);
     this.webSocket = null;
     this.state = {
+      currentPlaylist: "",
       playlists: null,
       newPlaylistName: "",
       newPlaylistPassword: ""
@@ -17,16 +21,15 @@ class ActivePlaylists extends Component{
   }
 
   _newPlaylists = (data) => {
-    this.setState({
-      playlists: data
-    })
+    this.setState({ playlists: data })
   }
 
   _emptyNew = () => {
-    this.setState({
-      newPlaylistName: "",
-      newPlaylistPassword: ""
-    })
+    this.setState({ newPlaylistName: "", newPlaylistPassword: "" })
+  }
+
+  _joinPlaylist = (name, password) =>{
+    this.setState({ currentPlaylist: name, currentPassword: password})
   }
 
   componentDidMount() {
@@ -43,15 +46,11 @@ class ActivePlaylists extends Component{
   }
 
   handlePlaylistsNameKeyPress = (event) =>{
-    this.setState({
-      newPlaylistName: event.target.value
-    })
+    this.setState({ newPlaylistName: event.target.value })
   }
 
   handlePlaylistsPasswordKeyPress = (event) =>{
-    this.setState({
-      newPlaylistPassword: event.target.value
-    })
+    this.setState({ newPlaylistPassword: event.target.value })
   }
 
   handleFormSubmit = (event) => {
@@ -62,32 +61,28 @@ class ActivePlaylists extends Component{
   }
 
   render (){
-    let renderPlaylists = null
-    if(this.state.playlists) {
-      renderPlaylists = this.state.playlists.map((playlist, index)=>{
-        return <Playlist  currentUser = {this.props.currentUser}
-                          playlist={playlist}
-                          accessToken={this.props.accessToken}
-                          key={index}/>
-      })
+    if(!(this.state.currentPlaylist)) {
+      return(
+      <div className = "row">
+          <JoinPlaylist
+            playlists={this.state.playlists}
+            joinPlaylist={this._joinPlaylist}
+            />
+          <NewPlaylistForm
+            handleFormSubmit = {this.handleFormSubmit}
+            handleclick = {this.handleclick}
+            handlePlaylistsNameKeyPress = {this.handlePlaylistsNameKeyPress}
+            handlePlaylistsPasswordKeyPress = {this.handlePlaylistsPasswordKeyPress}
+            newPlaylistName = {this.state.newPlaylistName}
+            newPlaylistPassword = {this.state.newPlaylistPassword}
+            />
+      </div>
+      )
     }
-
     return(
-      <div className="row">
-        <div className="col-md-2 col-xs-6 text-center sticky-block">
-          <StickySideBar accessToken={this.props.accessToken}/>
-        </div>
-        <div className="col-md-10 col-xs-6 sticky-container">
-          <div className="form-group active-playlist-form">
-            <label>New Active Playlists Name</label>
-            <input className="form-control" value={this.state.newPlaylistName} onChange={this.handlePlaylistsNameKeyPress} />
-            <label>New Active Playlists Password</label>
-            <input type="password" className="form-control"value={this.state.newPlaylistPassword} onChange={this.handlePlaylistsPasswordKeyPress} />
-            <button className="btn btn-primary" onClick={() => {this.handleFormSubmit(event)}}>Submit</button>
-          </div>
-          <button className="btn btn-success" onClick={() => {this.handleclick(event)}}>ayy</button>
-          {renderPlaylists}
-        </div>
+      <div>
+        YOU HAVE JOINED A PLAYLIST ROOM
+        <CurrentRoom room = {this.state.currentPlaylist} />
       </div>
       )
   }

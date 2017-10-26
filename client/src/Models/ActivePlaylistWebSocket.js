@@ -7,6 +7,9 @@ module.exports = (stateOperations) => {
     socket.send(JSON.stringify({
       type: "test"
     }))
+    socket.send(JSON.stringify({
+      type: "getPlaylists"
+    }))
   }
 
   socket.onmessage = (event) => {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-class ActivePlaylists extends Component{
+class JoinPlaylistForm extends Component{
   constructor(props) {
     super(props);
     this.socket = new WebSocket('ws://localhost:8080');
@@ -12,10 +12,12 @@ class ActivePlaylists extends Component{
 
   render (){
     return(
-      <div className="row">
+      <div className="col-xs-6">
+
+      {this.props.playlists}
       </div>
       )
   }
 }
 
-export default ActivePlaylists;
+export default JoinPlaylistForm;
