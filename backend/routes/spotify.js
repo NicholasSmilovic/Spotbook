@@ -85,6 +85,7 @@ module.exports = (DataHelpers) => {
           request.get(options, function(error, response, body) {
             console.log(body);
             dataStash(options.headers, body, 0)
+            absoluteArtistStash(options.headers, body.id)
 
           });
 
@@ -413,43 +414,71 @@ module.exports = (DataHelpers) => {
 
 
 
-    function stashAbsolute(absArtistsToAdd, spotifyReqHeader, userSpotifyID) {
-        if (absArtistsToAdd.length === 0) {
-          return
-        }
-
-        // make my API call with array items
-        let ids = ''
-        for (let index in absArtistsToAdd) {
-          ids += absArtistsToAdd[index].spotify_id
-          ids += ','
-        }
-        ids = ids.slice(0, -1) // take off last comma
-
+    function absoluteArtistStash(spotifyReqHeader, userSpotifyID) {
+      //absolute artist is defined as an artist returned from TOP ARTISTS API call, not top tracks
+      //they are directly connected to the user via USER --> ABSOLUTE_ARTIST relationship
+      //they are to be used only in the compatibility algorithm
         let absArtistReq = {
-          url: "https://api.spotify.com/v1/artists?ids=" + ids,
+          url: `https://api.spotify.com/v1/me/top/artists?limit=50`,
           headers: spotifyReqHeader,
           json: true
         };
 
         request.get(absArtistReq, function(error, response, body) {
 
-          // inside here, clean artists and add to DB
-          body.artists.forEach(artist => {
+          let absArtistPromises = body.items.map(artist => {
+            let cleanArtist = {
+               artist_name: artist.name,
+               spotify_id: artist.id,
+               genres: artist.genres
+            }
 
-              let name = artist.name ? artist.name : 'John Wasson'
-              let spotifyID = artist.name ? artist.id : 'noFollowerz'
-              let genresArray = artist.genres.length ? artist.genres : ['Set Phasers to Stun']
+              DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
+                .then((response) => {
+                  console.log(`${cleanArtist.artist_name} is already in the aboslute artist table`)
+                  DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                    .then((responseUser) => {
+                      DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, response.id)
+                        .then((response) => {
+                        })
+                        .catch((e) => {
+                          console.log('Join user error', e)
+                        })
+                    })
+                    .catch((e) => {
+                      console.log('User find error', e)
+                    })
+                })
+                .catch(() => {
+                  DataHelpers.absArtistHelpers.addAbsArtist(cleanArtist.artist_name, cleanArtist.spotify_id, cleanArtist.genres)
+                    .then((response) => {
+                      DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                        .then((responseUser) => {
+                          DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
+                            .then((responseAbsArtist) => {
+                              DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, responseAbsArtist.id)
+                                .then((response) => {
+                                })
+                                .catch((e) => {
+                                  console.log('Join user error', e)
+                                })
+                            })
+                            .catch((e) => {
+                              console.log('Abs Artist find error', e)
+                            })
+                        })
+                        .catch((e) => {
+                          console.log('User find error', e)
+                        })
+                    })
+                    .catch((e) => {
+                      console.log(`Error: ${e}`)
+                    })
 
-            DataHelpers.absArtistHelpers.addAbsArtist(name, spotifyID, genresArray)
-              .then((response) => {
-                console.log(response)
-              })
-              .catch((e) => {
-                console.log(`Error: ${e}`)
+                })
               })
           })
-        })
+
 
 
     }
