@@ -306,7 +306,7 @@ function getUserTopTrackArtists(id) {
 function getAllUsers() {
   return new Promise(function(resolve, reject) {
     let users = []
-    knex.select('display_name', 'spotify_id', 'image_urls', 'following').from('users')
+    knex.select().table('users')
       .then((val) => {
         resolve(val)
       })
