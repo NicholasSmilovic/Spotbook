@@ -35,9 +35,9 @@ class CurrentUser extends Component {
     } else {
       console.log("We got it. The thing that you need immediately follows this sentence.")
       console.log(this.props.currentLocal);
-      this.getUserTopTracks();
+      // this.getUserTopTracks();
 // ***** ***** ***** ***** *****
-      this.testRoute();
+      // this.testRoute();
 // ***** ***** ***** ***** *****
     }
   }
@@ -96,10 +96,23 @@ class CurrentUser extends Component {
   }
 
   render (){
+    let user_img = '#'
+    let user_name = null;
+
+    if(!this.props.currentLocal) {
+      // console.log('Please wait.');
+    } else {
+      user_img = this.props.currentLocal.image_urls.image;
+      user_name = this.props.currentLocal.display_name
+    }
+
     return(
       <div>
 
-        <UserProfile />
+        <UserProfile
+        user_img = {user_img}
+        user_name = {user_name}
+        />
 
         <div className='row'>
           <div className='col-md-3'>
