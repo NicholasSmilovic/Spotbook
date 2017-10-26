@@ -22,7 +22,8 @@ class App extends React.Component {
       currentLocal: null,
       access_token:"",
       refresh_token:"",
-      allUsers: {}
+      allUsers: {},
+      compatibleUsers: []
     }
     this.dashboard = null
 
@@ -86,27 +87,51 @@ class App extends React.Component {
         return false
       })
     }
+
+    this.getAllUsers = () => {
+      return new Promise ( (resolve, reject) => {
+        fetch('http://localhost:3000/users/getAllUsers')
+          .then((response) => {
+            return response.json()
+          })
+          .then((data) => {
+            resolve(this.setState({allUsers: data}))
+          })
+      });
+    }
+
+    this.userCompatibility = () => {
+      console.log(this.state.allUsers)
+      this.state.allUsers.map((user) => {
+        console.log(user)
+      })
+    }
+
+
+
   }
 
-  getAllUsers() {
-    $.ajax({
-      method: 'GET',
-      url: 'http://localhost:3000/users/getAllUsers',
-      success: (res) => {
-        // console.log('res',res);
-        let allUsers = res;
-        this.setState({allUsers: allUsers});
-      }
-    });
-  }
+  // getAllUsers() {
+  //   $.ajax({
+  //     method: 'GET',
+  //     url: 'http://localhost:3000/users/getAllUsers',
+  //     success: (res) => {
+  //       let allUsers = res;
+  //       this.setState({allUsers: allUsers});
+  //     }
+  //   });
+  // }
 
   componentWillMount() {
-    this.getAllUsers()
     this.updateTokens()
+    // this.userCompatibility()
   }
 
   componentDidMount() {
     this.verifyLogin()
+    this.getAllUsers().then(() => {
+      return this.userCompatibility()
+    })
   }
 
   setCurrentLocalUser() {
