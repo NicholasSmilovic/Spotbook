@@ -60,25 +60,29 @@ class App extends React.Component {
     }
 
     this.verifyLogin = () => {
-      fetch("https://api.spotify.com/v1/me",{
-        headers: {
-          'Authorization': 'Bearer ' + this.state.access_token
-        }
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        if(data.id){
-          this.setState({
+      // fetch("https://api.spotify.com/v1/me",{
+      //   headers: {
+      //     'Authorization': 'Bearer ' + this.state.access_token
+      //   }
+      // })
+      // .then((response) => {
+      //   return response.json()
+      // })
+      // .then((data) => {
+      //   if(data.id){
+      //     this.setState({
+      //       userState: "verified",
+      //       currentUser: data.id
+      //     })
+      //     return true
+      //   }
+      //   this.setState({userState: "unverified"})
+      //   return false
+      // })
+      this.setState({
             userState: "verified",
-            currentUser: data.id
+            currentUser: "nicholas_smilovic"
           })
-          return true
-        }
-        this.setState({userState: "unverified"})
-        return false
-      })
     }
   }
 

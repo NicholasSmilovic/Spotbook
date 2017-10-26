@@ -1,31 +1,29 @@
-const determineMessageType = (response) => {
-  switch (response.type) {
-    case "test":
-    return;
-    default:
-    return
-  }
-}
-
 const socket = new WebSocket("ws://localhost:8080")
+const messageParse = require("./messageParse.js")
 
-module.exports = {
-  initailizeConnection: (update) => {
-    socket.onopen = () => {
-      console.log("opened server");
+module.exports = (stateOperations) => {
+  socket.onopen = () => {
+    console.log("opened server");
+    socket.send(JSON.stringify({
+      type: "test"
+    }))
+  }
+
+  socket.onmessage = (event) => {
+    messageParse(stateOperations, JSON.parse(event.data))
+  }
+
+  return {
+    talk: () => {
       socket.send(JSON.stringify({
-        type: "test"
+        type: "getPlaylists"
+      }))
+    },
+    startNewActivePlaylist: (newPlaylists) => {
+      socket.send(JSON.stringify({
+        type: "startPlaylist",
+        playlist: newPlaylists
       }))
     }
-
-    socket.onmessage = (event) => {
-      debugger
-      determineMessageType(JSON.parse(event.data))
-    }
-  },
-  talk: () =>{
-    socket.send(JSON.stringify({
-      type: "getPlaylists"
-    }))
   }
 }

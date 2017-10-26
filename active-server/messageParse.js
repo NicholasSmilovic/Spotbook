@@ -6,5 +6,13 @@ module.exports = (message, callback) =>{
     case "getPlaylists":
       callback(db.getAllPlaylists(), "all", "playlists", null)
       break;
+    case "startPlaylist":
+      db.addNewPlaylist(message.playlist, (error) => {
+    console.log("error: ", error)
+        if(!error){
+          callback(db.getAllPlaylists(), "all", "playlists", error)
+        }
+      });
+      break;
   }
 }

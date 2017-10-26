@@ -1,6 +1,7 @@
 module.exports = () => {
   let playlists ={
     "activeplaylists1":{
+      userSpotifyId: "nicholas_smilovic",
       password: "password1",
       tracks: [
       {
@@ -36,7 +37,19 @@ module.exports = () => {
     return Object.keys(playlists)
   }
 
+  const addNewPlaylist = (playlist, callback) =>{
+    if(!playlists[playlist.name]){
+      playlists[playlist.name] = {
+        name: playlist.name,
+        password: playlist.password,
+        tracks: []
+      }
+    }
+    callback(null)
+  }
+
   return {
-    getAllPlaylists: getAllPlaylists
+    getAllPlaylists: getAllPlaylists,
+    addNewPlaylist: addNewPlaylist
   }
 }
