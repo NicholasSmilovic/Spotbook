@@ -75,7 +75,7 @@ function getNumberOfTracks() {
   return new Promise(function(resolve, reject) {
     knex('tracks').count('id')
       .then((count) => {
-        resolve(count)
+        resolve(count[0].count)
       })
       .catch((e) => {
         reject(e)
@@ -83,10 +83,10 @@ function getNumberOfTracks() {
   })
 }
 
-getNumberOfTracks()
-  .then((response) => {
-    console.log(response)
-  })
+// getNumberOfTracks()
+//   .then((response) => {
+//     console.log(response)
+//   })
 
 
 

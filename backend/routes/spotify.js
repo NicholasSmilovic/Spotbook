@@ -228,14 +228,16 @@ module.exports = (DataHelpers) => {
             })
             .then(() => {
               DataHelpers.trackHelpers.getNumberOfTracks()
-            })
-            .then((numberOfTracks) => {
-              Promise.all(trackPromises)
-                .then((response) => {
-                  stashTracks(tracksToAdd, spotifyReqHeader, userInfo, numberOfTracks)
-                })
-                .catch(() => {
-                  console.log('error in track promise')
+                .then((numberOfTracks) => {
+                  console.log('***********level 1', numberOfTracks)
+                  Promise.all(trackPromises)
+                    .then((response) => {
+                      console.log('************level 2', numberOfTracks)
+                      stashTracks(tracksToAdd, spotifyReqHeader, userInfo, numberOfTracks)
+                    })
+                    .catch(() => {
+                      console.log('error in track promise')
+                    })
                 })
             })
             .catch(() => {

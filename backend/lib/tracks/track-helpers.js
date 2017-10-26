@@ -73,17 +73,23 @@ module.exports = (knex) => {
 
   // removeTrack(6)
 
-  function getNumberOfTracks() {
-    return new Promise(function(resolve, reject) {
-      knex('tracks').count()
-        .then((count) => {
-          resolve(count)
-        })
-        .catch((e) => {
-          reject(e)
-        })
-    })
-  }
+function getNumberOfTracks() {
+  return new Promise(function(resolve, reject) {
+    knex('tracks').count('id')
+      .then((count) => {
+        resolve(count[0].count)
+      })
+      .catch((e) => {
+        reject(e)
+      })
+  })
+}
+
+// getNumberOfTracks()
+//   .then((response) => {
+//     console.log(response)
+//   })
+
 
 
 
@@ -200,6 +206,7 @@ module.exports = (knex) => {
     removeTrack: removeTrack,
     getTrackByID: getTrackByID,
     getTrackListeners: getTrackListeners,
-    getTrackBySpotifyID: getTrackBySpotifyID
+    getTrackBySpotifyID: getTrackBySpotifyID,
+    getNumberOfTracks: getNumberOfTracks
   }
 }
