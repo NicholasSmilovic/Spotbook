@@ -65,11 +65,37 @@ function getAllUsers() {
 //     console.log(e)
 //   })
 
-getAllUsers()
-  .then((response) => {
-    console.log(response)
-  })
+// getAllUsers()
+//   .then((response) => {
+//     console.log(response)
+//   })
 
+
+function getAbsArtistBySpotifyID(id) { //artist to add only used in data stash
+  return new Promise(function(resolve, reject) {
+  let artist = {}
+  knex('absolute_artists').where('spotify_id', id)
+    .then((val) => {
+      artist = {
+        id: val[0].id,
+        artist_name: val[0].artist_name,
+        spotify_id: val[0].spotify_id,
+        genres: val[0].genres.genres_array
+      }
+    })
+    .then(() => {
+      resolve(artist)
+    })
+    .catch(() => {
+      reject('abs error')
+    })
+  })
+}
+
+// getAbsArtistBySpotifyID('7ySGZcqhTpH02Is5MZ0cfU')
+//   .then((response) => {
+//     console.log(response)
+//   })
 
 
 function getUserByID(id) {

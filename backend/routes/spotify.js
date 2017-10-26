@@ -85,6 +85,7 @@ module.exports = (DataHelpers) => {
           request.get(options, function(error, response, body) {
             console.log(body);
             dataStash(options.headers, body, 0)
+            absoluteArtistStash(options.headers, body.id)
 
           });
 
@@ -210,8 +211,12 @@ module.exports = (DataHelpers) => {
             return new Promise(function(resolve, reject) {
               DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
                 .then((response) => {
+                  DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+                    .then((responseUser) => {
+                      DataHelpers.userTrackHelpers.joinUserToTrack(responseUser.id, response.id)
+                      resolve(response)
+                    })
                   console.log(`${cleanTrack.track_name} is already in database`)
-                  resolve(response)
                 })
                 .catch((responseTrack) => {
                   tracksToAdd.push(responseTrack)
@@ -408,6 +413,77 @@ module.exports = (DataHelpers) => {
               })
           })
         })
+
+    }
+
+
+
+    function absoluteArtistStash(spotifyReqHeader, userSpotifyID) {
+      //absolute artist is defined as an artist returned from TOP ARTISTS API call, not top tracks
+      //they are directly connected to the user via USER --> ABSOLUTE_ARTIST relationship
+      //they are to be used only in the compatibility algorithm
+        let absArtistReq = {
+          url: `https://api.spotify.com/v1/me/top/artists?limit=50`,
+          headers: spotifyReqHeader,
+          json: true
+        };
+
+        request.get(absArtistReq, function(error, response, body) {
+
+          let absArtistPromises = body.items.map(artist => {
+            let cleanArtist = {
+               artist_name: artist.name,
+               spotify_id: artist.id,
+               genres: artist.genres
+            }
+
+              DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
+                .then((response) => {
+                  console.log(`${cleanArtist.artist_name} is already in the aboslute artist table`)
+                  DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                    .then((responseUser) => {
+                      DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, response.id)
+                        .then((response) => {
+                        })
+                        .catch((e) => {
+                          console.log('Join user error', e)
+                        })
+                    })
+                    .catch((e) => {
+                      console.log('User find error', e)
+                    })
+                })
+                .catch(() => {
+                  DataHelpers.absArtistHelpers.addAbsArtist(cleanArtist.artist_name, cleanArtist.spotify_id, cleanArtist.genres)
+                    .then((response) => {
+                      DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
+                        .then((responseUser) => {
+                          DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
+                            .then((responseAbsArtist) => {
+                              DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, responseAbsArtist.id)
+                                .then((response) => {
+                                })
+                                .catch((e) => {
+                                  console.log('Join user error', e)
+                                })
+                            })
+                            .catch((e) => {
+                              console.log('Abs Artist find error', e)
+                            })
+                        })
+                        .catch((e) => {
+                          console.log('User find error', e)
+                        })
+                    })
+                    .catch((e) => {
+                      console.log(`Error: ${e}`)
+                    })
+
+                })
+              })
+          })
+
+
 
     }
 
