@@ -413,6 +413,49 @@ module.exports = (DataHelpers) => {
 
 
 
+    function stashAbsolute(absArtistsToAdd, spotifyReqHeader, userSpotifyID) {
+        if (absArtistsToAdd.length === 0) {
+          return
+        }
+
+        // make my API call with array items
+        let ids = ''
+        for (let index in absArtistsToAdd) {
+          ids += absArtistsToAdd[index].spotify_id
+          ids += ','
+        }
+        ids = ids.slice(0, -1) // take off last comma
+
+        let absArtistReq = {
+          url: "https://api.spotify.com/v1/artists?ids=" + ids,
+          headers: spotifyReqHeader,
+          json: true
+        };
+
+        request.get(absArtistReq, function(error, response, body) {
+
+          // inside here, clean artists and add to DB
+          body.artists.forEach(artist => {
+
+              let name = artist.name ? artist.name : 'John Wasson'
+              let spotifyID = artist.name ? artist.id : 'noFollowerz'
+              let genresArray = artist.genres.length ? artist.genres : ['Set Phasers to Stun']
+
+            DataHelpers.absArtistHelpers.addAbsArtist(name, spotifyID, genresArray)
+              .then((response) => {
+                console.log(response)
+              })
+              .catch((e) => {
+                console.log(`Error: ${e}`)
+              })
+          })
+        })
+
+
+    }
+
+
+
 
 }
 
