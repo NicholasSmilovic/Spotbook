@@ -36,13 +36,28 @@ class CurrentUser extends Component {
       console.log("We got it. The thing that you need immediately follows this sentence.")
       console.log(this.props.currentLocal);
       this.getUserTopTracks();
+// ***** ***** ***** ***** *****
+      this.testRoute();
+// ***** ***** ***** ***** *****
     }
+  }
+
+  componentDidMount() {
+
+  }
+
+  testRoute() {
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    .done( topTrackArtists => {
+      console.log(topTrackArtists);
+    })
+    .fail( err => {
+      console.error(err);
+    })
   }
 
   // Grab user's top tracks
   getUserTopTracks(){
-    // $.get('http://localhost:3000/users/getUserByID/'+this.state.currentUser.id)
-    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.state.currentUser.id)
     $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
       for (let i = 0; i < topTrackIDs.length; i++) {
