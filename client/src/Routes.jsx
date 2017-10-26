@@ -38,7 +38,9 @@ class Routes extends React.Component {
 
     const RenderActivePlaylists = () => {
       return (
-        <ActivePlaylists accessToken={this.props.accessToken} />
+        <ActivePlaylists
+          accessToken={this.props.accessToken}
+          currentUser={this.props.currentUser} />
         )
     }
 

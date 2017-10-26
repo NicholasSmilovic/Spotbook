@@ -1,16 +1,24 @@
-const db = require('./ActivePlaylistsDB.js')()
+const db = require('./ActivePlaylistsDB.js')
 
-module.exports = (message, callback) =>{
+module.exports = (message, ws, callback) =>{
   console.log(message.type)
   switch(message.type){
     case "getPlaylists":
       callback(db.getAllPlaylists(), "all", "playlists", null)
       break;
     case "startPlaylist":
-      db.addNewPlaylist(message.playlist, (error) => {
+      db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error) => {
     console.log("error: ", error)
         if(!error){
-          callback(db.getAllPlaylists(), "all", "playlists", error)
+          ws.send(JSON.stringify({
+            reciever: "all",
+            type: "approvedJoin",
+            data: {
+              name: message.playlist.name
+            },
+            error: null
+          }));
+          callback(db.getAllPlaylists(), "all", "playlists", error);
         }
       });
       break;

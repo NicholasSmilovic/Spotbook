@@ -1,20 +1,23 @@
 import React, {Component} from 'react';
+import Playlist from '../Playlist.jsx';
 
 class JoinPlaylistForm extends Component{
-  constructor(props) {
-    super(props);
-    this.socket = new WebSocket('ws://localhost:8080');
-  }
-
-  // componentDidMount() {
-  //   this.props._message()
-  // }
 
   render (){
+    let renderActive = null
+    if (this.props.playlists) {
+      renderActive = this.props.playlists.map((playlist, index) => {
+        console.log(playlist.spotifyObject)
+        return <Playlist currentUser = {this.props.currentUser}
+                          playlist={playlist.spotifyObject}
+                          accessToken={this.props.accessToken}
+                          key={index}/>
+      })
+    }
     return(
       <div className="col-xs-6">
 
-      {this.props.playlists}
+      {renderActive}
       </div>
       )
   }
