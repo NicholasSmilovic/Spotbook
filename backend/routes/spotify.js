@@ -211,8 +211,12 @@ module.exports = (DataHelpers) => {
             return new Promise(function(resolve, reject) {
               DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
                 .then((response) => {
+                  DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+                    .then((responseUser) => {
+                      DataHelpers.userTrackHelpers.joinUserToTrack(responseUser.id, response.id)
+                      resolve(response)
+                    })
                   console.log(`${cleanTrack.track_name} is already in database`)
-                  resolve(response)
                 })
                 .catch((responseTrack) => {
                   tracksToAdd.push(responseTrack)
