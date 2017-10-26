@@ -1,4 +1,4 @@
-import React from 'react'
+ import React from 'react'
 import {
   HashRouter as Router,
   Route,
@@ -36,6 +36,14 @@ class Routes extends React.Component {
       )
     }
 
+    const UsersExplorerPage = (props) => {
+      return (
+        <UsersExplorer
+          allUsers= {this.props.allUsers}
+        />
+      )
+    }
+
     return (
       <Router>
         <div>
@@ -44,7 +52,7 @@ class Routes extends React.Component {
           <Route exact path="/" component={CurrentUserPage} />
           <Route path="/playlists" component={PlaylistsPage}/>
 
-          <Route exact path="/users" component={UsersExplorer}/>
+          <Route exact path="/users" component={UsersExplorerPage}/>
           <Route path="/users/:id" component={User}/>
 
         </div>
