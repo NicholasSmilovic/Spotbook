@@ -79,6 +79,11 @@ class App extends React.Component {
         this.setState({userState: "unverified"})
         return false
       })
+      this.setState({
+        userState: "verified",
+        currentUser: "nicholas_smilovic"
+      })
+      return true
     }
   }
 

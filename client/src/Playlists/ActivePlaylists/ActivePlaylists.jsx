@@ -13,7 +13,7 @@ class ActivePlaylists extends Component{
     super(props);
     this.webSocket = null;
     this.state = {
-      currentPlaylist: "",
+      currentPlaylist: "Nicholas",
       currentPassword: "",
       playlists: null
     }
@@ -26,7 +26,6 @@ class ActivePlaylists extends Component{
   _joinPlaylist = (name, password) =>{
     this.setState({ currentPlaylist: name, currentPassword: password})
   }
-
 
   handleFormSubmit = (data) => {
     this.webSocket.startNewActivePlaylist(data, this.props.accessToken, this.props.currentUser)
@@ -58,7 +57,6 @@ class ActivePlaylists extends Component{
     }
     return(
       <div>
-        YOU HAVE JOINED A PLAYLIST ROOM
         <CurrentRoom
           room = {this.state.currentPlaylist}
           leaveRoom = {this._joinPlaylist}/>
