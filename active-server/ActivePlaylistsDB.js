@@ -127,14 +127,13 @@ const escapeColons = (string) => {
 }
 
 const addSongToPlaylist =  (playlist, track, callback) => {
-  console.log(playlist, track)
   trackURI = escapeColons(track.trackURI)
   playlistOwner = playlist.owner.id
+  playlistId = playlist.id
   accessToken = playlists[playlist.name].accessToken
 
   let options = {
-    url: `https://api.spotify.com/v1/users/${playlistOwner}/
-            playlists/tracks?uris=${trackURI}`,
+    url: `https://api.spotify.com/v1/users/${playlistOwner}/playlists/${playlist.id}/tracks?uris=${trackURI}`,
     method: "POST",
     json: true,
     headers: {
@@ -146,6 +145,7 @@ const addSongToPlaylist =  (playlist, track, callback) => {
       callback(null, "bad request to spotify")
       return
     }
+    console.log("body: ", response.toJSON())
     callback(playlist.name)
   })
 

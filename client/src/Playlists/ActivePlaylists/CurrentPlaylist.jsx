@@ -15,7 +15,11 @@ class CurrentPlaylist extends Component{
 
 
   render (){
-    const renderSongs = <Songs playlist={this.props.playlist} accessToken={this.props.accessToken}/>
+    const renderSongs = <Songs
+                          playlist={this.props.playlist}
+                          accessToken={this.props.accessToken}
+                          rerendered = {this.props.rerendered}
+                          update = {this.props.update}/>
 
     return(
       <div>

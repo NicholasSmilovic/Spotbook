@@ -10,27 +10,37 @@ class Songs extends Component {
     }
   }
 
-  componentDidMount() {
+  getSong = () => {
     let accessToken = this.props.accessToken
-      fetch (this.props.playlist.tracks.href, {
+    fetch (this.props.playlist.tracks.href, {
       headers: {
         Authorization: "Bearer " + accessToken
       }
     })
-      .then((response) => {
-        if(response.status >= 400){
+    .then((response) => {
+      if(response.status >= 400){
 
-        }
-        return response.json()
-      })
-      .then((data) => {
-        this.setState({ songs: data.items})
-      })
+      }
+      return response.json()
+    })
+    .then((data) => {
+      this.setState({ songs: data.items})
+      this.props.rerendered()
+    })
+  }
 
+  componentDidMount() {
+    this.getSong()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.update) {
+      this.getSong()
+    }
   }
 
   render() {
-    let renderSongs = this.state.songs.map((song, index)=>{
+    let renderSongs = this.state.songs.slice(0).reverse().map((song, index)=>{
         return <Song song = {song} key = {index}/>
       })
 

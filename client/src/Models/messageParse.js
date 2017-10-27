@@ -10,6 +10,7 @@ module.exports = (stateOperations, response) => {
       stateOperations.joinPlaylist(response.data)
       return;
     case "update":
+      stateOperations.flashMessage("Added Song")
       stateOperations.update(response.reciever)
       break;
     default:
