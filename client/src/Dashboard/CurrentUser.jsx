@@ -103,7 +103,6 @@ class CurrentUser extends Component {
       let index = event[0]['_index'];
       let label = this.state.chartData.labels[index];
       let insightData = `INDEX: ${index} => ${label}`;
-      // alert(`INDEX: ${index} => ${label}`);
 
       this.setState({ insightData: insightData });
     }
@@ -148,7 +147,7 @@ class CurrentUser extends Component {
               chartData={this.state.chartData}
 
               title="Left Chart"
-              y_label="Y-AXIS"
+              y_label=""
               x_label="X-AXIS"
 
               handleClick={ event => this.handleClickElement(event) }
