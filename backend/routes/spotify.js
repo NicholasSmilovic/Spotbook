@@ -205,9 +205,6 @@ module.exports = (DataHelpers) => {
           }
         })
         .then((response) => {
-          if (response) {
-            console.log('Artist Add Error: ', response)
-          }
           // clean up tracks
           let dirtyTracks = parseForTracks(topTracks.items)
           return dirtyTracks
@@ -251,11 +248,24 @@ module.exports = (DataHelpers) => {
                 return 0
               }
             })
-            .then((response) => {
-              if (response) {
-                console.log('Track Add Error: ', response)
-              }
-              console.log('after?')
+            .then(() => {
+              let promises = [];
+
+              tracksToAdd.forEach(track => {
+                let trackID = 0
+                let artistID = 0
+                return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                  .then((response) => {
+                    trackID = response.id
+                    return DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
+                  })
+                  .then((response) => {
+                    artistID = response.id
+                    promises.push(DataHelpers.artistTrackHelpers.joinArtistToTrack(artistID, trackID))
+                  })
+
+              })
+              return Promise.all(promises)
             })
         })
       })
