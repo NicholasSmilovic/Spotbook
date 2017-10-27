@@ -58388,25 +58388,25 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
 
 
 
-// Function Calls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// // Function Calls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-console.log(userCompatibility(user1tracks, user2tracks, user1artists, user2artists, user1tracksFeatures, user2tracksFeatures))
-console.log(userCompatibility(user1tracks, user3tracks, user1artists, user3artists, user1tracksFeatures, user3tracksFeatures))
-console.log(userCompatibility(user1tracks, user4tracks, user1artists, user4artists, user1tracksFeatures, user4tracksFeatures))
-console.log(userCompatibility(user1tracks, user5tracks, user1artists, user5artists, user1tracksFeatures, user5tracksFeatures))
+// console.log(userCompatibility(user1tracks, user2tracks, user1artists, user2artists, user1tracksFeatures, user2tracksFeatures))
+// console.log(userCompatibility(user1tracks, user3tracks, user1artists, user3artists, user1tracksFeatures, user3tracksFeatures))
+// console.log(userCompatibility(user1tracks, user4tracks, user1artists, user4artists, user1tracksFeatures, user4tracksFeatures))
+// console.log(userCompatibility(user1tracks, user5tracks, user1artists, user5artists, user1tracksFeatures, user5tracksFeatures))
 
-console.log(userCompatibility(user2tracks, user3tracks, user2artists, user3artists, user2tracksFeatures, user3tracksFeatures))
-console.log(userCompatibility(user2tracks, user4tracks, user2artists, user4artists, user2tracksFeatures, user4tracksFeatures))
-console.log(userCompatibility(user2tracks, user5tracks, user2artists, user5artists, user2tracksFeatures, user5tracksFeatures))
+// console.log(userCompatibility(user2tracks, user3tracks, user2artists, user3artists, user2tracksFeatures, user3tracksFeatures))
+// console.log(userCompatibility(user2tracks, user4tracks, user2artists, user4artists, user2tracksFeatures, user4tracksFeatures))
+// console.log(userCompatibility(user2tracks, user5tracks, user2artists, user5artists, user2tracksFeatures, user5tracksFeatures))
 
-console.log(userCompatibility(user3tracks, user4tracks, user3artists, user4artists, user3tracksFeatures, user4tracksFeatures))
-console.log(userCompatibility(user3tracks, user5tracks, user3artists, user5artists, user3tracksFeatures, user5tracksFeatures))
+// console.log(userCompatibility(user3tracks, user4tracks, user3artists, user4artists, user3tracksFeatures, user4tracksFeatures))
+// console.log(userCompatibility(user3tracks, user5tracks, user3artists, user5artists, user3tracksFeatures, user5tracksFeatures))
 
-console.log(userCompatibility(user4tracks, user5tracks, user4artists, user5artists, user4tracksFeatures, user5tracksFeatures))
+// console.log(userCompatibility(user4tracks, user5tracks, user4artists, user5artists, user4tracksFeatures, user5tracksFeatures))
 
-// console.log(userCompatibility(user2tracks, userDummyTracks, user2artists, user2artists, user2tracksFeatures, user2tracksFeatures))
+// // console.log(userCompatibility(user2tracks, userDummyTracks, user2artists, user2artists, user2tracksFeatures, user2tracksFeatures))
 
-console.log(userCompatibility(user1tracks, user1tracks, user1artists, user1artists, user1tracksFeatures, user1tracksFeatures))
+// console.log(userCompatibility(user1tracks, user1tracks, user1artists, user1artists, user1tracksFeatures, user1tracksFeatures))
 
 
 // console.log(userAudioTrackFeaturesAverages(user1tracksFeatures))

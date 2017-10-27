@@ -10,8 +10,10 @@
   text-align: center;
   vertical-align: middle;
   z-index: 2;
-  // background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
-  background-color: $slightly-black;
+  background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
+  border-radius: 5px;
+  border: 2px solid;
+  // background-color: $slightly-black;
 }
 
 .auto-size{

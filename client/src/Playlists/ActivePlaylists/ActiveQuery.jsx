@@ -10,7 +10,7 @@ class ActiveQuery extends Component{
     return(
       <div>
         <form className="form-group">
-          <label>Active Filter</label>
+          <h4>Active Filter</h4>
           <input className="form-control" onChange = {this.handleActiveFilterKeyPress} value = {this.props.query} />
         </form>
       </div>
