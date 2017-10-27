@@ -15,10 +15,11 @@ module.exports = (knex) => {
         .catch((e) => {
           if (e.constraint === 'user_absolute_artists_pkey') {
             console.log(`User ${userID} already listens to that artist`)
+            resolve()
           } else {
             console.log(`There was an error adding this artist-user relation to the database`)
           }
-          reject()
+          reject(e)
         })
     })
   }
