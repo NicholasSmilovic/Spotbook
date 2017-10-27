@@ -85,9 +85,8 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            dataStash(options.headers, body, 0)
+            dataStash(options.headers, body)
             // absoluteArtistStash(options.headers, body.id)
-
           });
 
           console.log('redirecting...', app_uri +
@@ -153,7 +152,7 @@ module.exports = (DataHelpers) => {
     // set up API request for top tracks
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
-      url: `https://api.spotify.com/v1/me/top/tracks?limit=10${trackOffsetURL}`,
+      url: `https://api.spotify.com/v1/me/top/tracks?limit=70${trackOffsetURL}`,
       headers: spotifyReqHeader,
       json: true
     };
@@ -266,6 +265,20 @@ module.exports = (DataHelpers) => {
 
               })
               return Promise.all(promises)
+            })
+            .then(() => {
+              return DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+            })
+            .then((response) => {
+              let userID = response.id
+              tracksToAdd.forEach(track => {
+                let trackID = 0
+                return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                  .then((response) => {
+                    trackID = response.id
+                    return DataHelpers.userTrackHelpers.joinUserToTrack(userID, trackID)
+                  })
+              })
             })
         })
       })
