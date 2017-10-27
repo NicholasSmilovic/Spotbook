@@ -9,13 +9,6 @@ class PieChart extends Component{
     }
   }
 
-  static defaultProps = {
-    displayTitle:true,
-    displayLegend: true,
-    legendPosition:'right',
-    location:'City'
-  }
-
   render(){
     return (
       <div className="chart">
@@ -35,7 +28,6 @@ class PieChart extends Component{
             }
           }}
         />
-
 
       </div>
     )

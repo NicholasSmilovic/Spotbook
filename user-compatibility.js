@@ -58185,6 +58185,8 @@ var getAudioFeaturesForTracks = function(userTracks) {
 
 // console.log(getAudioFeaturesForTracks(user5tracks))
 
+module.exports  = () => {
+
 var userAudioTrackFeaturesAverages = function (user1tracksFeatures) {
   let danceability = 0
   let energy = 0
@@ -58228,9 +58230,6 @@ var userAudioTrackFeaturesAverages = function (user1tracksFeatures) {
   return userAudioTrackFeaturesAverages
 }
 
-
-// console.log(user1artists.items[0].genres.length)
-
 var getUniqueUserGenres = function(user1artists) {
   let uniqueGenres = []
   for (let i = 0; i < user1artists.items.length; i++) {
@@ -58243,15 +58242,14 @@ var getUniqueUserGenres = function(user1artists) {
   return uniqueGenres
 }
 
-
 var userCompatibility = function(user1tracks, user2tracks, user1artists, user2artists, user1tracksFeatures, user2tracksFeatures) {
   let matchesArr = []
   let percentMatch = 0
-  let trackMatch = 0.4
+  let trackMatch = 0.05
   let trackMatches = 0
-  let artistMatch = 0.1
+  let artistMatch = 0.05
   let artistMatches = 0
-  let genreMatch = 0.1
+  let genreMatch = 0.85
   let genreMatches = 0
   // let audioFeaturesMatch = 0
   // let audioFeaturesMatches = 0
@@ -58303,20 +58301,21 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
   }
 
   // console.log(trackMatches*trackMatch)
-  if (trackMatches < 0.2) {
-    trackMatch = 0.2
-    artistMatch = 0.2
-    genreMatch = 0.3
-  }
-  if (artistMatches < 0.2 && trackMatches < 0.2) {
-    trackMatch = 0.1
-    artistMatch = 0.1
-    genreMatch = 0.5
-  }
+  // if (trackMatches < 0.2) {
+  //   trackMatch = 0.2
+  //   artistMatch = 0.2
+  //   genreMatch = 0.3
+  // }
+  // if (artistMatches < 0.2 && trackMatches < 0.2) {
+  //   trackMatch = 0.025
+  //   artistMatch = 0.025
+  //   genreMatch = 0.85
+  // }
   // console.log(genreMatch)
-  console.log(`Track matches: ${trackMatches}`)
-  console.log(`Artist Matches: ${artistMatches}`)
+  // console.log(`Track matches: ${trackMatches}`)
+  // console.log(`Artist Matches: ${artistMatches}`)
   console.log(`Genre matches: ${genreMatches}`)
+  console.log(genreMatches*genreMatch)
   matchesArr.push(trackMatch*trackMatches)
   matchesArr.push(artistMatch*artistMatches)
   matchesArr.push(genreMatch*genreMatches)
@@ -58327,54 +58326,67 @@ var userCompatibility = function(user1tracks, user2tracks, user1artists, user2ar
   // console.log(user2AudioTrackFeatures)
 
   if (user1AudioTrackFeatures.danceability - user2AudioTrackFeatures.danceability < 0.05 && user1AudioTrackFeatures.danceability - user2AudioTrackFeatures.danceability > -0.05 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.energy - user2AudioTrackFeatures.energy < 0.05 && user1AudioTrackFeatures.energy - user2AudioTrackFeatures.energy > -0.05 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
-  if (user1AudioTrackFeatures.key - user2AudioTrackFeatures.key < 0.5 && user1AudioTrackFeatures.key - user2AudioTrackFeatures.key > -0.5
+  if (user1AudioTrackFeatures.key - user2AudioTrackFeatures.key < 1 && user1AudioTrackFeatures.key - user2AudioTrackFeatures.key > -1
     && user1AudioTrackFeatures.mode - user2AudioTrackFeatures.mode < 0.5 && user1AudioTrackFeatures.mode - user2AudioTrackFeatures.mode > -0.5 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.loudness - user2AudioTrackFeatures.loudness < 3 && user1AudioTrackFeatures.loudness - user2AudioTrackFeatures.loudness > -3 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.speechiness - user2AudioTrackFeatures.speechiness < 0.05 && user1AudioTrackFeatures.speechiness - user2AudioTrackFeatures.speechiness > -0.05 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.acousticness - user2AudioTrackFeatures.acousticness < 0.05 && user1AudioTrackFeatures.acousticness - user2AudioTrackFeatures.acousticness > -0.05 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.instrumentalness - user2AudioTrackFeatures.instrumentalness < 0.1 && user1AudioTrackFeatures.instrumentalness - user2AudioTrackFeatures.instrumentalness > -0.1 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.liveness - user2AudioTrackFeatures.liveness < 0.05 && user1AudioTrackFeatures.liveness - user2AudioTrackFeatures.liveness > -0.05 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.valence - user2AudioTrackFeatures.valence < 0.1 && user1AudioTrackFeatures.valence - user2AudioTrackFeatures.valence > -0.1 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
   if (user1AudioTrackFeatures.tempo - user2AudioTrackFeatures.tempo < 10 && user1AudioTrackFeatures.tempo - user2AudioTrackFeatures.tempo > -10 ) {
-    percentMatch += 0.04
+    percentMatch += 0.03
   }
 
-  console.log(`Audio Parameter Percent Increase: ${percentMatch}`)
-  // console.log(matchesArr)
+  // console.log(`Audio Parameter Percent Increase: ${percentMatch}`)
+  console.log(matchesArr)
 
-  // matchesArr.map((match) => {
-  //   return percentMatch += match
-  // })
-  // return `${Math.round(percentMatch*100)}% match!`
+  matchesArr.map((match) => {
+    return percentMatch += match
+  })
+
+  if (percentMatch > 1) {
+    percentMatch = 1
+  }
+  return `${Math.round(percentMatch*100)}% match!`
 }
+  return {
+    userAudioTrackFeaturesAverages: userAudioTrackFeaturesAverages,
+    getUniqueUserGenres: getUniqueUserGenres,
+    userCompatibility: userCompatibility
+  }
+}
+
+
+
 
 // Function Calls ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -58394,7 +58406,7 @@ console.log(userCompatibility(user4tracks, user5tracks, user4artists, user5artis
 
 // console.log(userCompatibility(user2tracks, userDummyTracks, user2artists, user2artists, user2tracksFeatures, user2tracksFeatures))
 
-// console.log(userCompatibility(user1tracks, user1tracks, user1artists, user1artists, user1tracksFeatures, user1tracksFeatures))
+console.log(userCompatibility(user1tracks, user1tracks, user1artists, user1artists, user1tracksFeatures, user1tracksFeatures))
 
 
 // console.log(userAudioTrackFeaturesAverages(user1tracksFeatures))

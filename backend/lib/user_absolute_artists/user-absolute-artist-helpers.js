@@ -10,13 +10,16 @@ module.exports = (knex) => {
       knex('user_absolute_artists').insert(newUserArtistRelationship)
         .then(() => {
           console.log(`Artist ${artistID} is now listened to by User ${userID}`)
+          resolve()
         })
         .catch((e) => {
           if (e.constraint === 'user_absolute_artists_pkey') {
             console.log(`User ${userID} already listens to that artist`)
+            resolve()
           } else {
             console.log(`There was an error adding this artist-user relation to the database`)
           }
+          reject(e)
         })
     })
   }
@@ -32,9 +35,11 @@ module.exports = (knex) => {
       }).del()
         .then(() => {
           console.log(`The relation between User ${userID} and Artist ${artistID} has been broken`)
+          resolve()
         })
         .catch(() => {
           console.log(`There was an error breaking the artist-user relation`)
+          reject()
         })
     })
   }

@@ -64,12 +64,30 @@ h2,h3,h4,h5 {
   padding-bottom: 2em;
 }
 
-.user-profile img {
-  display: block;
+.user-image {
   margin: auto;
-  margin-top: 5em;
+  // text-align: center;
+  display: block;
+  // position: relative;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
   border-radius: 50%;
-  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+  img {
+    display: block;
+    text-align: center;
+    width: auto;
+    height: 100%;
+    margin-left: -25%;
+  }
+}
+
+.user-profile {
+  display: block;
+  // margin: auto;
+  // margin-top: 5em;
+  // border-radius: 50%;
+  // box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
 }
 
 .analytic {

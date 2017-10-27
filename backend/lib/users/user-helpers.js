@@ -18,11 +18,9 @@ function addUser(displayName, spotifyID, imageURL) {
   knex('users').insert(newUser)
     .then(() => {
       console.log(`${displayName} was added to the database!`)
-      resolve(true)
     })
     .catch(() => {
       console.log(`There was an error adding ${displayName} to the database`)
-      reject(false)
     })
 
   })
@@ -293,7 +291,6 @@ function getUserTopTrackArtists(id) {
   })
 }
 
-
 // getUserTopTrackArtists(2)
 //   .then((response) => {
 //     console.log(response)
@@ -302,9 +299,36 @@ function getUserTopTrackArtists(id) {
 //     console.log(e)
 //   })
 
+
+function getAllUsers() {
+  return new Promise(function(resolve, reject) {
+    let users = []
+    knex.select().table('users')
+      .then((val) => {
+        resolve(val)
+      })
+      .catch((e) => {
+        console.log('there was an error retrieving all the users')
+        reject(e)
+      })
+  })
+
+}
+
+// getAllUsers()
+//   .then((response) => {
+//     console.log(response)
+//   })
+
+
+
+
+
+
   return {
     addUser: addUser,
     removeUser: removeUser,
+    getAllUsers: getAllUsers,
     getUserByID: getUserByID,
     getUserBySpotifyID: getUserBySpotifyID,
     getUserTopTracks: getUserTopTracks,
