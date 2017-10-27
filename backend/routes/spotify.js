@@ -149,7 +149,7 @@ module.exports = (DataHelpers) => {
         console.log(response)
       })
 
-    // topTrackStash(spotifyReqHeader, userInfo, trackOffset)
+    topTrackStash(spotifyReqHeader, userInfo, trackOffset)
     absArtistStash(spotifyReqHeader, userInfo)
 
   }
@@ -333,12 +333,12 @@ module.exports = (DataHelpers) => {
     };
 
 
-    let topTracks = ''
+    let topTracks = []
     let tracksToAdd = []
 
     rp(trackReq)
       .then((response) => {
-        topTracks = response
+        topTracks = response.items
         let dirtyArtists = parseForArtists(response.items)
         return dirtyArtists
       })
@@ -381,7 +381,7 @@ module.exports = (DataHelpers) => {
         })
         .then((response) => {
           // clean up tracks
-          let dirtyTracks = parseForTracks(topTracks.items)
+          let dirtyTracks = parseForTracks(topTracks)
           return dirtyTracks
         })
         .then((response) => {
@@ -420,6 +420,7 @@ module.exports = (DataHelpers) => {
                   )
                 }))
               } else {
+                connectUserToTracks(userInfo, topTracks)
                 return 0
               }
             })
@@ -443,19 +444,9 @@ module.exports = (DataHelpers) => {
               return Promise.all(promises)
             })
             .then(() => {
-              return DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+              connectUserToTracks(userInfo, topTracks)
             })
-            .then((response) => {
-              let userID = response.id
-              tracksToAdd.forEach(track => {
-                let trackID = 0
-                return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
-                  .then((response) => {
-                    trackID = response.id
-                    return DataHelpers.userTrackHelpers.joinUserToTrack(userID, trackID)
-                  })
-              })
-            })
+
         })
       })
       .catch((e) => {
@@ -463,9 +454,27 @@ module.exports = (DataHelpers) => {
       })
   }
 
+  function connectUserToTracks(userInfo, topTracks) {
+    DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+    .then((response) => {
+      let userID = response.id
+      topTracks.forEach(track => {
+        let trackID = 0
+        return DataHelpers.trackHelpers.getTrackBySpotifyID(track.id)
+          .then((response) => {
+            trackID = response.id
+            return DataHelpers.userTrackHelpers.joinUserToTrack(userID, trackID)
+          })
+      })
+    })
+  }
+
+  // error toptracks.foreach not a function => look at instantiation of toptracks
+  // make sure it's an array
+
 
   function absArtistStash(spotifyReqHeader, userInfo) {
-    let limit = 70
+    let limit = 50
     let absArtistReq = {
       url: `https://api.spotify.com/v1/me/top/artists?limit=${limit}`,
       headers: spotifyReqHeader,
