@@ -5,9 +5,9 @@ module.exports = (stateOperations) => {
   socket.onopen = () => {
     console.log("opened server");
   }
-    socket.send(JSON.stringify({
-      type: "getPlaylists"
-    }))
+  socket.send(JSON.stringify({
+    type: "getPlaylists"
+  }))
 
 
   socket.onmessage = (event) => {
@@ -32,6 +32,14 @@ module.exports = (stateOperations) => {
       socket.send(JSON.stringify({
         type: "joinPlaylist",
         playlist: playlist
+      }))
+    },
+    addSongToPlaylist: (credentials, playlist, track) =>{
+      socket.send(JSON.stringify({
+        type: "addSongToPlaylist",
+        credentials: credentials,
+        playlist: playlist,
+        track: track
       }))
     }
   }

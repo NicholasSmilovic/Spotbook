@@ -52,6 +52,8 @@ class Playlist extends Component{
     })
     .then((data) => {
       this.setState({ flashMessage: message })
+      this.toggleButton()
+      this.toggleButton()
     })
   }
 

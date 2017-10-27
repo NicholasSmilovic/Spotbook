@@ -29,9 +29,9 @@ class NewPlaylistForm extends Component{
 
   render (){
     return(
-      <div className="col-xs-6">
-        <h1> Create A New Room </h1>
+      <div className="col-sm-6">
         <div className="form-group active-playlist-form">
+          <h1> Create A New Room </h1>
           <label>New Active Playlists Name</label>
           <input className="form-control" value={this.state.newPlaylistName} onChange={this.handlePlaylistsNameKeyPress} />
           <label>New Active Playlists Password</label>

@@ -6,7 +6,7 @@ class Songs extends Component {
   constructor(props) {
     super(props);
   }
-
+  //swipe for mobile
   handleDragEvent = (event) => {
     let message = {
       trackURI: this.props.track.uri,

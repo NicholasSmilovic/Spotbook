@@ -24,23 +24,26 @@ class JoinPlaylistForm extends Component{
           return (
             <div>
               <ActivePlaylist
-              currentUser = {this.props.currentUser}
-              playlist={playlist}
-              accessToken={this.props.accessToken}
-              joinPlaylist = {this.props.joinPlaylist}
-              key={index}/>
+                currentUser = {this.props.currentUser}
+                playlist={playlist}
+                accessToken={this.props.accessToken}
+                attemptJoin = {this.props.attemptJoin}
+                key={index}/>
             </div>
             )
         }
       })
     }
     return(
-      <div className="col-xs-6">
-        <h1> Join a Room </h1>
-        <ActiveQuery
-          setQuery = {this._query}
-          query = {this.state.query}/>
-          {renderActive}
+      <div className="col-sm-6 sticky-container">
+        <div className="sticky-block playlist-header">
+          <h1> Join a Room </h1>
+          <ActiveQuery
+            setQuery = {this._query}
+            query = {this.state.query}/>
+          <hr />
+        </div>
+        {renderActive}
       </div>
       )
   }

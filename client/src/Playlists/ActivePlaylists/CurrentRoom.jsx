@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import CurrentPlaylist from "./CurrentPlaylist.jsx"
+import StickySideBar from "../StickySideBar.jsx"
 
 class Room extends Component{
   leaveRoom = () =>{
@@ -6,15 +8,24 @@ class Room extends Component{
   }
   render (){
     return(
-      <div className="row">
-        <div className="col-xs-6">
-          {this.props.room}
-          <button onClick={this.leaveRoom} className="btn btn-danger">Leave</button>
-        </div>
-        <div className="col-xs-6">
+      <div>
+        <div className="row">
+          <div className="col-md-2 col-xs-6 text-center sticky-block">
+            <StickySideBar accessToken={this.props.accessToken}/>
+          </div>
+          <div className="col-md-10 col-xs-6 sticky-container">
+            <button onClick={this.leaveRoom} className="btn btn-danger">Leave</button>
+            <CurrentPlaylist
+              accessToken={this.props.accessToken}
+              playlist={this.props.data}
+              currentUser = {this.props.data.owner.id}
+              addSong = {this.props.addSong}
+              rerendered = {this.props.rerendered}
+              update = {this.props.update} />
+          </div>
         </div>
       </div>
-      )
+    )
   }
 }
 

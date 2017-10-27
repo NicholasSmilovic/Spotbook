@@ -7,19 +7,24 @@ class ActivePlaylist extends Component{
       password: ""
     }
   }
+
   handleJoin = () => {
-    this.props.joinPlaylist(this.props.playlist.name, )
+    this.props.attemptJoin(this.props.playlist.name, this.state.password)
+  }
+
+  handlePasswordChange = (event) => {
+    this.setState({password: event.target.value})
   }
 
   render (){
     return(
-      <div className = "row">
-        <div className = "col-sm-5 active-list-header">
+      <div className = "row active-playlists">
+        <div className = "active-list-header">
           {this.props.playlist.name}
         </div>
-        <div className = "col-sm-7 join-active-playlist">
+        <div className = "join-active-playlist">
             <label> Password: </label>
-            <input className="form-control" value={this.state.password}/>
+            <input className="form-control" onChange={this.handlePasswordChange} value={this.state.password}/>
           <button onClick={this.handleJoin} className = "btn btn-success"> JOIN </button>
         </div>
       </div>

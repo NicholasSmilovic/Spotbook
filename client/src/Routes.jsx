@@ -33,6 +33,7 @@ class Routes extends React.Component {
         <CurrentUser
         currentSpotifyID = {this.props.currentUser}
         currentLocal = {this.props.currentLocal}
+        allUsers = {this.props.allUsers}
         />
       )
     }

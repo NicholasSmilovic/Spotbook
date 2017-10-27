@@ -23,6 +23,7 @@ class CurrentUser extends Component {
     this.state = {
       chartData:{},
       topTracks:[],
+      topArtists:[],
       insightData:'Stuff',
       compatibleUsers: []
     }
@@ -38,6 +39,7 @@ class CurrentUser extends Component {
     } else {
       console.log("We got it. The thing that you need immediately follows this sentence.")
       console.log(this.props.currentLocal);
+      this.getUserTopAbsArtists()
       // this.getUserTopTracks();
 // ***** ***** ***** ***** *****
       // this.testRoute();
@@ -78,6 +80,13 @@ class CurrentUser extends Component {
     .fail( err => {
       console.error(err);
     });
+  }
+
+  getUserTopAbsArtists() {
+    $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
+    .done(result => {
+      console.log(result)
+    })
   }
 
 
