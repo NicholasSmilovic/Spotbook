@@ -9,6 +9,7 @@ class User extends Component{
         image_urls: {}
       }
     }
+  console.log(this.props.currentLocal)
   }
   getUser = () => {
     return new Promise( (resolve, reject) => {
@@ -22,11 +23,35 @@ class User extends Component{
     })
   }
 
+  uCompleteMe = () => {
+    let you = this.state.user
+    let me = this.props.currentLocal
+    let yourTopTracks = []
+    let myTopTracks = []
+    $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
+      .done((response) => {
+        yourTopTracks = response
+      })
+      .done(() => {
+        return $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
+      })
+      .done((response) => {
+        myTopTracks = response
+      })
+      .done(() => {
+        console.log('Me: ', myTopTracks, 'You:', yourTopTracks)
+      })
+
+  }
+
   componentWillMount () {
     this.getUser().then( user => { this.setState({user}) })
   }
 
+
   render (){
+    this.uCompleteMe()
+
     return(
         <div>
           <div className='row'>
