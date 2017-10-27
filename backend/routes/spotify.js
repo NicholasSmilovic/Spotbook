@@ -167,33 +167,33 @@ module.exports = (DataHelpers) => {
         Promise.all(response.map(artist => {
           return DataHelpers.artistHelpers.getArtistBySpotifyID(artist.spotify_id, artist)
         }))
-          .then((response) => {
-              // remove all the ones we found
-              for (let i = 0; i < response.length; i++) {
-                if (response[i].genres) {
-                  response.splice(i, 1)
-                  i--
-                }
+        .then((response) => {
+            // remove all the ones we found
+            for (let i = 0; i < response.length; i++) {
+              if (response[i].genres) {
+                response.splice(i, 1)
+                i--
               }
-              // if there are remaining artists, go get them!
-              if (response.length) {
-                let artistReq = prepArtistsForSpotify(response, spotifyReqHeader)
-                rp(artistReq)
-                  .then((response) => {
-                    let artistDBInserts = insertArtists(response.artists)
-                    Promise.all(artistDBInserts.map(artist => {
-                      return DataHelpers.artistHelpers.addArtist(
-                        artist.name,
-                        artist.spotifyID,
-                        artist.imageURLs,
-                        artist.genresArray
-                      )
-                    }))
-                  })
-              } else {
-                console.log('No artists to add!')
-              }
-          })
+            }
+            // if there are remaining artists, go get them!
+            if (response.length) {
+              let artistReq = prepArtistsForSpotify(response, spotifyReqHeader)
+              rp(artistReq)
+                .then((response) => {
+                  let artistDBInserts = insertArtists(response.artists)
+                  Promise.all(artistDBInserts.map(artist => {
+                    return DataHelpers.artistHelpers.addArtist(
+                      artist.name,
+                      artist.spotifyID,
+                      artist.imageURLs,
+                      artist.genresArray
+                    )
+                  }))
+                })
+            } else {
+              console.log('No artists to add!')
+            }
+        })
       })
       .catch((e) => {
         console.log('there was an error!', e)
