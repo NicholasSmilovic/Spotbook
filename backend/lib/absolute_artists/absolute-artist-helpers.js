@@ -62,7 +62,7 @@ module.exports = (knex) => {
   // removeAbsArtist(3)
 
 
-  function getAbsArtistBySpotifyID(id) { //artist to add only used in data stash
+  function getAbsArtistBySpotifyID(id, artistToAdd) { //artist to add only used in data stash
     return new Promise(function(resolve, reject) {
     let artist = {}
     knex('absolute_artists').where('spotify_id', id)
@@ -78,7 +78,7 @@ module.exports = (knex) => {
         resolve(artist)
       })
       .catch(() => {
-        reject()
+        resolve(artistToAdd)
       })
     })
   }

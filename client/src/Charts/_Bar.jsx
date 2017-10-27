@@ -5,7 +5,8 @@ class BarHandler extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rawData: '' //TODO
+      topTracks: [],
+      fiveArtists: []
     }
   }
 
