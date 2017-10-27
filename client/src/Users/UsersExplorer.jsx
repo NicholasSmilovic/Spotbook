@@ -3,14 +3,23 @@ import {
   HashRouter as Router,
   Route,
   Link
-} from 'react-router-dom'
+} from 'react-router-dom';
+import UserShortProfile from './UserShortProfile.jsx'
+
 
 class UsersExplorer extends Component{
+
   render (){
+    console.log(this.props.allUsers)
+
+    const listUsers = this.props.allUsers.map((user, index) => {
+      return <UserShortProfile key={user.id} user={user} />
+    })
+
     return(
-      <div>
-        <h1>Hello frmm User :)</h1>
-        <Link to="/users/1">USER</Link>
+      <div className='users-explorer'>
+        <h1 className='explore'>Explore</h1><h4>Other Users Related To You</h4>
+        {listUsers}
       </div>
     )
   }

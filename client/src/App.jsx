@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import Routes from './Routes.jsx'
+import $ from 'jquery'
 
 // import User from './Users/User.jsx';
 // import Playlists from './Playlists/Playlists.jsx';
@@ -18,8 +19,11 @@ class App extends React.Component {
     this.state = {
       userState: null,
       currentUser: null,
+      currentLocal: null,
       access_token:"",
-      refresh_token:""
+      refresh_token:"",
+      allUsers: {},
+      compatibleUsers: []
     }
     this.dashboard = null
 
@@ -74,29 +78,58 @@ class App extends React.Component {
             userState: "verified",
             currentUser: data.id
           })
+
+          this.setCurrentLocalUser();
+
           return true
         }
         this.setState({userState: "unverified"})
         return false
       })
     }
+
+    this.getAllUsers = () => {
+      return new Promise ( (resolve, reject) => {
+        fetch('http://localhost:3000/users/getAllUsers')
+          .then((response) => {
+            return response.json()
+          })
+          .then((data) => {
+            resolve(this.setState({allUsers: data}))
+          })
+      });
+    }
   }
 
   componentWillMount() {
     this.updateTokens()
+    this.getAllUsers()
   }
 
   componentDidMount() {
     this.verifyLogin()
   }
 
+  setCurrentLocalUser() {
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+ this.state.currentUser)
+    .done( result => {
+      this.setState({ currentLocal: result });
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
   render(){
     if(this.state.userState) {
       if(this.state.userState === "verified") {
+
         return <Routes
                   accessToken = {this.state.access_token}
                   refreshAccessToken = {this.refreshAccessToken}
                   currentUser = {this.state.currentUser}
+                  currentLocal = {this.state.currentLocal}
+                  allUsers = {this.state.allUsers}
                   />
       }
       if(this.state.userState === "unverified") {
