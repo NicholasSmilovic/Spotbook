@@ -1,3 +1,7 @@
+.hide{
+  display:invisible
+}
+
 .table {
   width:auto
 }
@@ -36,4 +40,25 @@
 
 .button{
   margin:0px auto; //it will center them
+}
+
+.active-playlist-form{
+  max-width: 80%;
+  margin: 0 auto;
+  padding-top: 30%;
+}
+
+.join-active-playlist{
+  display: flex;
+  justify-content: space-around;
+}
+
+.active-list-header{
+  font-size: 2vmax;
+}
+
+.active-playlists {
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 100%
 }
