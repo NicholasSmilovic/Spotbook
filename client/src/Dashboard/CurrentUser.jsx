@@ -54,7 +54,8 @@ class CurrentUser extends Component {
 
 
   testRoute() {
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
     .done( topTrackArtists => {
       console.log(topTrackArtists);
     })
@@ -65,11 +66,16 @@ class CurrentUser extends Component {
 
   // Grab user's top tracks
   getUserTopTracks(){
-    $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
+    // $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
+    $.get('http://localhost:3000/users/getUserTopTracks/'+1)
     .done( topTrackIDs => {
+
+      console.log("*** inside getUserTopTracks() ***");
+      console.log( topTrackIDs );
       for (let i = 0; i < topTrackIDs.length; i++) {
         $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
+          console.log("*** inside getTrackByID() ***");
           let topTracks = this.state.topTracks;
           topTracks.push(result);
           this.setState({ topTracks: topTracks });
@@ -78,6 +84,7 @@ class CurrentUser extends Component {
           console.error(err);
         })
       }
+
     })
     .fail( err => {
       console.error(err);
@@ -85,9 +92,10 @@ class CurrentUser extends Component {
   }
 
   getUserTopAbsArtists() {
-    $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
+    // $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
+    $.get('http://localhost:3000/users/getUserTopAbsArtists/' + 1)
     .done(result => {
-      console.log(result)
+      // console.log(result)
     })
   }
 

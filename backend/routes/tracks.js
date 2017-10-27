@@ -12,8 +12,8 @@ module.exports = (DataHelpers) => {
     let track_id = req.params.id;
 
     DataHelpers.trackHelpers.getTrackByID(track_id)
-    .then((user) => {
-      res.send(user)
+    .then((track) => {
+      res.send(track)
     })
     .catch((e) => {
       console.error(e);
