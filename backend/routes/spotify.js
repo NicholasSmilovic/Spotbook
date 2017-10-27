@@ -149,13 +149,189 @@ module.exports = (DataHelpers) => {
         console.log(response)
       })
 
+    topTrackStash(spotifyReqHeader, userInfo, trackOffset)
+    absArtistStash(spotifyReqHeader, userInfo)
+
+  }
+
+
+
+
+  function establishUser(userInfo) {
+    return new Promise((resolve, reject) => {
+      DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+        .then((response) => {
+          resolve(`Welcome, ${response.display_name}`)
+        })
+        .catch((e) => {
+          if (e === 'user not found') {
+            let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
+            let id = userInfo.id
+            let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
+            return DataHelpers.userHelpers.addUser(name, id, image)
+          }
+          reject(e)
+        })
+      })
+
+  }
+
+
+
+  function parseForTracks(tracks) {
+    let cleanTracks = tracks.map(track => {
+      let cleanTrack = {
+         associated_artist: track.artists[0].id,
+         track_name: track.name,
+         spotify_id: track.id,
+         image_urls: [
+            {url: track.album.images[0].url},
+            {url: track.album.images[1].url},
+            {url: track.album.images[2].url}
+         ]
+      }
+      return cleanTrack
+    })
+
+    return cleanTracks
+  }
+
+
+
+  function parseForArtists(tracks) {
+    let artists = tracks.map(track => {
+      let cleanArtist = {
+        artist_name: track.artists[0].name,
+        spotify_id: track.artists[0].id
+      }
+      return cleanArtist
+    })
+
+    return removeDuplicates(artists)
+  }
+
+
+
+  function parseForAbsArtists(artists) {
+    let absArtists = artists.map(artist => {
+      let cleanArtist = {
+        artist_name: artist.name,
+        spotify_id: artist.id,
+        genres: artist.genres
+      }
+      return cleanArtist
+    })
+
+    return absArtists
+  }
+
+
+    function removeDuplicates(artistsToAdd) {
+      artistsToAdd.forEach((artist, index) => {
+        for (let j = index + 1; j < artistsToAdd.length; j++) {
+          if (artistsToAdd[j].spotify_id === artist.spotify_id) {
+            artistsToAdd.splice(j,1)
+            j -= 1
+          }
+        }
+      })
+      return artistsToAdd
+    }
+
+    function prepSpotifyRequest(elements, spotifyReqHeader) {
+      let ids = ''
+      elements.forEach(element => {
+        ids += element.spotify_id
+        ids += ','
+      })
+      ids = ids.slice(0, -1) // take off last comma
+
+
+      let url = ''
+      if (elements[0].track_name) {
+        url = "https://api.spotify.com/v1/audio-features?ids="
+      } else {
+        url = "https://api.spotify.com/v1/artists?ids="
+      }
+
+      let APIReq = {
+        url: url + ids,
+        headers: spotifyReqHeader,
+        json: true
+      }
+
+      return APIReq
+    }
+
+
+    function insertReadyTracks(tracksToAdd, features) {
+      features.forEach((track, index) => {
+        tracksToAdd[index].features = {
+          danceability: track ? track.danceability : 0,
+          energy: track ? track.energy : 0,
+          key: track ? track.key : 0,
+          loudness: track ? track.loudness : 0,
+          mode: track ? track.mode : 0,
+          speechiness: track ? track.speechiness : 0,
+          acousticness: track ? track.acousticness : 0,
+          instrumentalness: track ? track.instrumentalness : 0,
+          liveness: track ? track.liveness : 0,
+          valence: track ? track.valence : 0,
+          tempo: track ? track.tempo : 0
+        }
+      })
+
+      return tracksToAdd
+    }
+
+    function insertReadyArtists(artists) {
+      let insertReady = artists.map(artist => {
+        return {
+          name: artist.name ? artist.name : 'John Wasson',
+          spotifyID: artist.id ? artist.id : 'noFollowerz',
+          imageURLs: artist.images.length ? [
+            {url: artist.images[0].url},
+            {url: artist.images[1].url},
+            {url: artist.images[2].url}
+            ] : [
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            ],
+          genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
+        }
+
+      })
+
+      return insertReady
+    }
+
+
+    function insertReadyAbsArtists(artists) {
+      let insertReady = artists.map(artist => {
+        return {
+          name: artist.artist_name ? artist.artist_name : 'John Wasson',
+          spotifyID: artist.spotify_id ? artist.spotify_id : 'noFollowerz',
+          genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
+        }
+
+      })
+
+      return insertReady
+    }
+
+  function topTrackStash(spotifyReqHeader, userInfo, trackOffset) {
+
     // set up API request for top tracks
+    let limit = 50
+
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
-      url: `https://api.spotify.com/v1/me/top/tracks?limit=70${trackOffsetURL}`,
+      url: `https://api.spotify.com/v1/me/top/tracks?limit=${limit}${trackOffsetURL}`,
       headers: spotifyReqHeader,
       json: true
     };
+
 
     let topTracks = ''
     let tracksToAdd = []
@@ -285,145 +461,81 @@ module.exports = (DataHelpers) => {
       .catch((e) => {
         console.log('there was an error!', e)
       })
+  }
+
+
+  function absArtistStash(spotifyReqHeader, userInfo) {
+    let limit = 50
+    let absArtistReq = {
+      url: `https://api.spotify.com/v1/me/top/artists?limit=${limit}`,
+      headers: spotifyReqHeader,
+      json: true
+    };
+
+    let artistsToAdd = []
+
+    rp(absArtistReq)
+      .then((response) => {
+        let dirtyArtists = parseForAbsArtists(response.items)
+        return dirtyArtists
+      })
+      .then((response) => {
+        Promise.all(response.map(artist => {
+          return DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(artist.spotify_id, artist)
+        }))
+          .then((response) => {
+            //remove all the ones we found
+            for (let i = 0; i < response.length; i++) {
+              if (response[i].id) {
+                response.splice(i, 1)
+                i--
+              }
+            }
+            artistsToAdd = response
+            return response
+          })
+          .then((response) => {
+            // add them to the db
+            if (response.length) {
+              let insertReady = insertReadyAbsArtists(response)
+              return insertReady
+            } else {
+              return 0
+            }
+          })
+          .then((response) => {
+            return Promise.all(response.map(artist => {
+              return DataHelpers.absArtistHelpers.addAbsArtist(
+                artist.name,
+                artist.spotifyID,
+                artist.genresArray
+              )
+            }))
+          })
+          .then(() => {
+            return DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+          })
+          .then((response) => {
+            let userID = response.id
+            artistsToAdd.forEach(artist => {
+              let artistID = 0
+              return DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(artist.spotify_id)
+                .then((response) => {
+                  artistID = response.id
+                  return DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(userID, artistID)
+                })
+            })
+          })
+      })
+      .catch(() => {
+        console.log('there was an error in absolute artists!')
+      })
+
+
 
   }
 
 
-
-
-  function establishUser(userInfo) {
-    return new Promise((resolve, reject) => {
-      DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
-        .then((response) => {
-          resolve(`Welcome, ${response.display_name}`)
-        })
-        .catch((e) => {
-          if (e === 'user not found') {
-            let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
-            let id = userInfo.id
-            let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
-            return DataHelpers.userHelpers.addUser(name, id, image)
-          }
-          reject(e)
-        })
-      })
-
-  }
-
-
-
-  function parseForTracks(tracks) {
-    let cleanTracks = tracks.map(track => {
-      let cleanTrack = {
-         associated_artist: track.artists[0].id,
-         track_name: track.name,
-         spotify_id: track.id,
-         image_urls: [
-            {url: track.album.images[0].url},
-            {url: track.album.images[1].url},
-            {url: track.album.images[2].url}
-         ]
-      }
-      return cleanTrack
-    })
-
-    return cleanTracks
-  }
-
-
-
-  function parseForArtists(tracks) {
-    let artists = tracks.map(track => {
-      let cleanArtist = {
-        artist_name: track.artists[0].name,
-        spotify_id: track.artists[0].id
-      }
-      return cleanArtist
-    })
-
-    return removeDuplicates(artists)
-  }
-
-
-    function removeDuplicates(artistsToAdd) {
-      artistsToAdd.forEach((artist, index) => {
-        for (let j = index + 1; j < artistsToAdd.length; j++) {
-          if (artistsToAdd[j].spotify_id === artist.spotify_id) {
-            artistsToAdd.splice(j,1)
-            j -= 1
-          }
-        }
-      })
-      return artistsToAdd
-    }
-
-    function prepSpotifyRequest(elements, spotifyReqHeader) {
-      let ids = ''
-      elements.forEach(element => {
-        ids += element.spotify_id
-        ids += ','
-      })
-      ids = ids.slice(0, -1) // take off last comma
-
-
-      let url = ''
-      if (elements[0].track_name) {
-        url = "https://api.spotify.com/v1/audio-features?ids="
-      } else {
-        url = "https://api.spotify.com/v1/artists?ids="
-      }
-
-      let APIReq = {
-        url: url + ids,
-        headers: spotifyReqHeader,
-        json: true
-      }
-
-      return APIReq
-    }
-
-
-    function insertReadyTracks(tracksToAdd, features) {
-      features.forEach((track, index) => {
-        tracksToAdd[index].features = {
-          danceability: track ? track.danceability : 0,
-          energy: track ? track.energy : 0,
-          key: track ? track.key : 0,
-          loudness: track ? track.loudness : 0,
-          mode: track ? track.mode : 0,
-          speechiness: track ? track.speechiness : 0,
-          acousticness: track ? track.acousticness : 0,
-          instrumentalness: track ? track.instrumentalness : 0,
-          liveness: track ? track.liveness : 0,
-          valence: track ? track.valence : 0,
-          tempo: track ? track.tempo : 0
-        }
-      })
-
-      return tracksToAdd
-    }
-
-    function insertReadyArtists(artists) {
-      let insertReady = artists.map(artist => {
-        return {
-          name: artist.name ? artist.name : 'John Wasson',
-          spotifyID: artist.name ? artist.id : 'noFollowerz',
-          imageURLs: artist.images.length ? [
-            {url: artist.images[0].url},
-            {url: artist.images[1].url},
-            {url: artist.images[2].url}
-            ] : [
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
-            ],
-          genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
-        }
-
-      })
-
-      return insertReady
-    }
 
 
 
