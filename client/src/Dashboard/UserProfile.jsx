@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
 import UserMatchSidebar from './UserMatchSidebar.jsx';
 
-
-
 class UserProfile extends Component{
+
+  constructor(props) {
+    super(props);
+  }
+
   render (){
     return(
         <div className='row'>
           <div className='col-md-12 user-profile'>
-          <img src='https://scontent.xx.fbcdn.net/v/t1.0-1/s200x200/13775793_10153610171132687_1785877468594627692_n.jpg?oh=1c88fcbb62a8d746c544b6bbed9b8f9e&oe=5A775134' />
-          <h1>Bryce Walter Parker</h1>
+          <img src={this.props.user_img} />
+          <h1>{this.props.user_name}</h1>
           </div>
         </div>
       )

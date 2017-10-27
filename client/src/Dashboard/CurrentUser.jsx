@@ -18,52 +18,69 @@ import { parse } from 'query-string'
 
 class CurrentUser extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       chartData:{},
-      currentUser:{},
-      insightData:'Stuff'
+      topTracks:[],
+      insightData:'Stuff',
+      compatibleUsers: []
     }
   }
 
-  // componentDidMount() {
-  //   let { access_token } = parse(location.search)
 
-  //   if (access_token) localStorage.access_token = access_token
 
-  // }
 
   componentWillMount(){
-    this.setCurrentUser();
     this.getChartData();
-    this.testRoute();
+    if (!this.props.currentLocal) {
+      console.log('Please stand by while we get that thing that you need.')
+    } else {
+      console.log("We got it. The thing that you need immediately follows this sentence.")
+      console.log(this.props.currentLocal);
+      // this.getUserTopTracks();
+// ***** ***** ***** ***** *****
+      // this.testRoute();
+// ***** ***** ***** ***** *****
+    }
   }
 
-  // can reach getUserTopTracks error message
-  // can reach getUserTopAbsArtists error message
+  componentDidMount() {
 
-  testRoute(){
-    $.get('http://localhost:3000/users/getUserTopAbsArtists/'+this.state.currentUser.id)
-    .done( result => {
-      console.log(result);
+  }
+
+  testRoute() {
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    .done( topTrackArtists => {
+      console.log(topTrackArtists);
+    })
+    .fail( err => {
+      console.error(err);
+    })
+  }
+
+  // Grab user's top tracks
+  getUserTopTracks(){
+    $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
+    .done( topTrackIDs => {
+      for (let i = 0; i < topTrackIDs.length; i++) {
+        $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
+        .done( result => {
+          let topTracks = this.state.topTracks;
+          topTracks.push(result);
+          this.setState({ topTracks: topTracks });
+        })
+        .fail( err => {
+          console.error(err);
+        })
+      }
     })
     .fail( err => {
       console.error(err);
     });
   }
 
-  // this route could be executed upon logging into spotify
-  setCurrentUser(){
-    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.props.currentSpotifyID)
-    .done( result => {
-      console.log(result);
-      this.setState({ currentUser: result })
-    })
-    .fail( err => {
-      console.error(err);
-    });
-  }
+
 
   getChartData(){
     let chart = Prettiness(SampleData(), Palette().cool_10);
@@ -82,10 +99,23 @@ class CurrentUser extends Component {
   }
 
   render (){
+    let user_img = '#'
+    let user_name = null;
+
+    if(!this.props.currentLocal) {
+      // console.log('Please wait.');
+    } else {
+      user_img = this.props.currentLocal.image_urls.image;
+      user_name = this.props.currentLocal.display_name
+    }
+
     return(
       <div>
 
-        <UserProfile />
+        <UserProfile
+        user_img = {user_img}
+        user_name = {user_name}
+        />
 
         <div className='row'>
           <div className='col-md-3'>

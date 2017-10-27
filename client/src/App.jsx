@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import Routes from './Routes.jsx'
+import $ from 'jquery'
 
 // import User from './Users/User.jsx';
 // import Playlists from './Playlists/Playlists.jsx';
@@ -18,8 +19,11 @@ class App extends React.Component {
     this.state = {
       userState: null,
       currentUser: null,
+      currentLocal: null,
       access_token:"",
-      refresh_token:""
+      refresh_token:"",
+      allUsers: {},
+      compatibleUsers: []
     }
     this.dashboard = null
 
@@ -60,47 +64,104 @@ class App extends React.Component {
     }
 
     this.verifyLogin = () => {
-      // fetch("https://api.spotify.com/v1/me",{
-      //   headers: {
-      //     'Authorization': 'Bearer ' + this.state.access_token
-      //   }
-      // })
-      // .then((response) => {
-      //   return response.json()
-      // })
-      // .then((data) => {
-      //   if(data.id){
-      //     this.setState({
-      //       userState: "verified",
-      //       currentUser: data.id
-      //     })
+      fetch("https://api.spotify.com/v1/me",{
+        headers: {
+          'Authorization': 'Bearer ' + this.state.access_token
+        }
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        if(data.id){
+          this.setState({
+            userState: "verified",
+            currentUser: data.id
+          })
+          return true
+        }
+        this.setState({userState: "unverified"})
+        return false
+      })
+    }
+
+      //     this.setCurrentLocalUser();
+
       //     return true
       //   }
       //   this.setState({userState: "unverified"})
       //   return false
       // })
-      this.setState({
-            userState: "verified",
-            currentUser: "nicholas_smilovic"
+
+    this.getAllUsers = () => {
+      return new Promise ( (resolve, reject) => {
+        fetch('http://localhost:3000/users/getAllUsers')
+          .then((response) => {
+            return response.json()
           })
+          .then((data) => {
+            resolve(this.setState({allUsers: data}))
+          })
+      });
     }
+
+    this.userCompatibility = () => {
+      console.log(this.state.currentUser)
+      console.log(this.state.allUsers[0].spotify_id)
+      this.state.allUsers.map((user) => {
+        if (user.spotify_id !== this.state.currentUser) {
+          console.log(user)
+        }
+      })
+    }
+
+
+
   }
+
+  // getAllUsers() {
+  //   $.ajax({
+  //     method: 'GET',
+  //     url: 'http://localhost:3000/users/getAllUsers',
+  //     success: (res) => {
+  //       let allUsers = res;
+  //       this.setState({allUsers: allUsers});
+  //     }
+  //   });
+  // }
 
   componentWillMount() {
     this.updateTokens()
+    this.getAllUsers().then(() => {
+      return this.userCompatibility()
+    })
+    // this.userCompatibility()
   }
 
   componentDidMount() {
     this.verifyLogin()
   }
 
+  setCurrentLocalUser() {
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.state.currentUser)
+    .done( result => {
+      this.setState({ currentLocal: result });
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
   render(){
     if(this.state.userState) {
       if(this.state.userState === "verified") {
+
         return <Routes
                   accessToken = {this.state.access_token}
                   refreshAccessToken = {this.refreshAccessToken}
                   currentUser = {this.state.currentUser}
+                  currentLocal = {this.state.currentLocal}
+                  allUsers = {this.state.allUsers}
                   />
       }
       if(this.state.userState === "unverified") {

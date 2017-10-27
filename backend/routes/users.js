@@ -4,16 +4,9 @@
 const express = require('express');
 const router = express.Router();
 
-
-// router.get('/getUserByID', function(req, res) {
-//   console.log('GET USER BY ID!!!');
-//   res.send();
-// });
-
-// module.exports = router;
-
 module.exports = (DataHelpers) => {
 
+  // confirmed working
   router.get('/getUserByID/:id', (req, res) => {
     let user_id = req.params.id;
 
@@ -27,6 +20,7 @@ module.exports = (DataHelpers) => {
 
   });
 
+  // confirmed working
   router.get('/getUserBySpotifyID/:id', (req, res) => {
     let spotify_id = req.params.id;
 
@@ -39,12 +33,25 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  // confirmed working
   router.get('/getUserTopTracks/:id', (req, res) => {
     let user_id = req.params.id;
 
     DataHelpers.userHelpers.getUserTopTracks(user_id)
     .then((tracks) => {
       res.send(tracks)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+  });
+
+  router.get('/getUserTopTrackArtists/:id', (req, res) => {
+    let user_id = req.params.id;
+
+    DataHelpers.userHelpers.getUserTopTrackArtists(user_id)
+    .then((artists) => {
+      res.send(artists)
     })
     .catch((e) => {
       console.error(e);
@@ -74,6 +81,17 @@ module.exports = (DataHelpers) => {
       console.error(e);
     });
   });
+
+  router.get('/getAllUsers', (req, res) => {
+    DataHelpers.userHelpers.getAllUsers()
+    .then(allUsers => {
+      console.log(allUsers)
+      res.json(allUsers)
+    })
+    .catch(e => {
+      console.error(e);
+    })
+  })
 
   return router;
 };

@@ -50,9 +50,11 @@ const DataHelpers = require("./lib/data-helpers.js")(knex);
 
 const spotifyRoutes = require("./routes/spotify");
 const userRoutes = require("./routes/users");
+const trackRoutes = require("./routes/tracks");
 
 app.use("/spotify", spotifyRoutes(DataHelpers));
 app.use("/users", userRoutes(DataHelpers));
+app.use("/tracks", trackRoutes(DataHelpers));
 
 app.listen(PORT, () => { //listen on the port 8080 and let node know server started running
   console.log(`Example listening on port ${PORT}`);
