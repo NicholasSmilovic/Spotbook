@@ -112,6 +112,11 @@ class App extends React.Component {
         if (user.spotify_id !== this.state.currentUser) {
           console.log(user)
         }
+          })
+          return true
+        }
+        this.setState({userState: "unverified"})
+        return false
       })
     }
 

@@ -32,7 +32,8 @@ module.exports = (DataHelpers) => {
     let state = generateRandomString(16);
     res.cookie(stateKey, state);
 
-    let scope = 'user-library-read user-top-read user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private';
+
+    let scope = 'user-top-read user-read-private user-read-email user-read-currently-playing user-read-playback-state playlist-read-private playlist-modify-private playlist-modify-public';
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',
