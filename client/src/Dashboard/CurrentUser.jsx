@@ -45,7 +45,6 @@ class CurrentUser extends Component {
       let tempo = 0
 
       for (let track in topTracks) {
-        // console.log(topTracks[track])
         danceability += topTracks[track].danceability
         energy += topTracks[track].energy
         key += topTracks[track].key
@@ -59,17 +58,52 @@ class CurrentUser extends Component {
         tempo += topTracks[track].tempo
       }
 
+      key = Math.round(key/topTracks.length)
+      mode = Math.round(mode/topTracks.length)
+
+      let musicalKeys = {
+        1: 'C',
+        2: 'C#/Db',
+        3: 'D',
+        4: 'D#/Eb',
+        5: 'E',
+        6: 'F',
+        7: 'F#/Gb',
+        8: 'G',
+        9: 'G#/Ab',
+        10: 'A',
+        11: 'A#/Bb',
+        12: 'B'
+      }
+
+      let keyString = ''
+
+      for (let musicalKey in musicalKeys) {
+        if (musicalKey == key) {
+          keyString = musicalKeys[musicalKey]
+        }
+      }
+
+      let modeString = ''
+
+      if (mode == 1) {
+        modeString = 'Maj'
+      } else {
+        modeString = 'Min'
+      }
+
+
       let userAudioTrackFeaturesAverages = { danceability: danceability/topTracks.length,
                                              energy: energy/topTracks.length,
-                                             key: key/topTracks.length,
-                                             loudness: loudness/topTracks.length,
-                                             mode: mode/topTracks.length,
+                                             key: keyString,
+                                             loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
+                                             mode: modeString,
                                              speechiness: speechiness/topTracks.length,
                                              acousticness: acousticness/topTracks.length,
                                              instrumentalness: instrumentalness/topTracks.length,
                                              liveness: liveness/topTracks.length,
                                              valence: valence/topTracks.length,
-                                             tempo: tempo/topTracks.length
+                                             tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
                                             }
       return userAudioTrackFeaturesAverages
     }
@@ -87,9 +121,7 @@ class CurrentUser extends Component {
       // console.log("We got it. The thing that you need immediately follows this sentence.")
       // console.log(this.props.currentLocal);
       this.getUserTopAbsArtists()
-      this.getUserTopTracks().then(() => {
-        return this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
-      })
+      this.getUserTopTracks()
 // ***** ***** ***** ***** *****
       // this.testRoute();
 // ***** ***** ***** ***** *****
@@ -121,6 +153,7 @@ class CurrentUser extends Component {
           let topTracks = this.state.topTracks;
           topTracks.push(result);
           this.setState({ topTracks: topTracks });
+          this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
         })
         .fail( err => {
           console.error(err);
@@ -172,7 +205,6 @@ class CurrentUser extends Component {
   }
 
   render (){
-    console.log(compatibilityFunctions.userAudioTrackFeaturesAverages)
     let user_img = '#'
     let user_name = null;
 
@@ -223,7 +255,7 @@ class CurrentUser extends Component {
           </div>
         </div>
 
-        <UserBoxAnalytics />
+        <UserBoxAnalytics userAudioTrackFeatures={this.state.userAudioTrackFeatures} />
 
       </div>
       )
