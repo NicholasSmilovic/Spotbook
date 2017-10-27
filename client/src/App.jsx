@@ -99,38 +99,11 @@ class App extends React.Component {
           })
       });
     }
-
-    this.userCompatibility = () => {
-      console.log(this.state.currentUser)
-      console.log(this.state.allUsers[0].spotify_id)
-      this.state.allUsers.map((user) => {
-        if (user.spotify_id !== this.state.currentUser) {
-          console.log(user)
-        }
-      })
-    }
-
-
-
   }
-
-  // getAllUsers() {
-  //   $.ajax({
-  //     method: 'GET',
-  //     url: 'http://localhost:3000/users/getAllUsers',
-  //     success: (res) => {
-  //       let allUsers = res;
-  //       this.setState({allUsers: allUsers});
-  //     }
-  //   });
-  // }
 
   componentWillMount() {
     this.updateTokens()
-    this.getAllUsers().then(() => {
-      return this.userCompatibility()
-    })
-    // this.userCompatibility()
+    this.getAllUsers()
   }
 
   componentDidMount() {
@@ -138,7 +111,7 @@ class App extends React.Component {
   }
 
   setCurrentLocalUser() {
-    $.get('http://localhost:3000/users/getUserBySpotifyID/'+this.state.currentUser)
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+ this.state.currentUser)
     .done( result => {
       this.setState({ currentLocal: result });
     })

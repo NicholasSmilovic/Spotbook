@@ -82,6 +82,7 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  // Confirmed functional
   router.get('/getAllUsers', (req, res) => {
     DataHelpers.userHelpers.getAllUsers()
     .then(allUsers => {
