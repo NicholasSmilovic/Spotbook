@@ -133,8 +133,8 @@ class CurrentUser extends Component {
 
 
   testRoute() {
-    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
     .done( topTrackArtists => {
       console.log(topTrackArtists);
     })
@@ -145,8 +145,8 @@ class CurrentUser extends Component {
 
   // Grab user's top tracks
   getUserTopTracks(){
-    return $.get('http://localhost:3000/users/getUserTopTracks/'+1)
-    // return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
+    // return $.get('http://localhost:3000/users/getUserTopTracks/'+1)
+    return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
 
       for (let i = 0; i < topTrackIDs.length; i++) {
@@ -170,8 +170,8 @@ class CurrentUser extends Component {
 
   getUserTopAbsArtists() {
 
-    return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + 1)
-    // return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
+    // return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + 1)
+    return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
     .done(absArtistIDs => {
       // console.log(absArtistIDs)
       for(let i = 0; i < absArtistIDs.length; i++) {
