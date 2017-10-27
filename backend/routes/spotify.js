@@ -322,7 +322,7 @@ module.exports = (DataHelpers) => {
   function topTrackStash(spotifyReqHeader, userInfo, trackOffset) {
 
     // set up API request for top tracks
-    let limit = 70
+    let limit = 50
 
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
@@ -473,7 +473,7 @@ module.exports = (DataHelpers) => {
 
 
   function absArtistStash(spotifyReqHeader, userInfo) {
-    let limit = 60
+    let limit = 50
     let absArtistReq = {
       url: `https://api.spotify.com/v1/me/top/artists?limit=${limit}`,
       headers: spotifyReqHeader,
