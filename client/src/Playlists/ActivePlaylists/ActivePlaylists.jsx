@@ -13,7 +13,7 @@ class ActivePlaylists extends Component{
     super(props);
     this.webSocket = null;
     this.state = {
-      currentPlaylist: "Nicholas",
+      currentPlaylist: "",
       currentPassword: "",
       playlists: null
     }

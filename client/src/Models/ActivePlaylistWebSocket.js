@@ -4,10 +4,10 @@ const messageParse = require("./messageParse.js")
 module.exports = (stateOperations) => {
   socket.onopen = () => {
     console.log("opened server");
+  }
     socket.send(JSON.stringify({
       type: "getPlaylists"
     }))
-  }
 
 
   socket.onmessage = (event) => {
