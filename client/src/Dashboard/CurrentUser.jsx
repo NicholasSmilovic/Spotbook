@@ -35,12 +35,12 @@ class CurrentUser extends Component {
   componentWillMount(){
     this.getChartData();
     if (!this.props.currentLocal) {
-      console.log('Please stand by while we get that thing that you need.')
+      // console.log('Please stand by while we get that thing that you need.')
     } else {
-      console.log("We got it. The thing that you need immediately follows this sentence.")
-      console.log(this.props.currentLocal);
+      // console.log("We got it. The thing that you need immediately follows this sentence.")
+      // console.log(this.props.currentLocal);
       this.getUserTopAbsArtists()
-      // this.getUserTopTracks();
+      this.getUserTopTracks();
 // ***** ***** ***** ***** *****
       // this.testRoute();
 // ***** ***** ***** ***** *****
