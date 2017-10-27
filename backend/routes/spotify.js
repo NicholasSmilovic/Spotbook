@@ -149,7 +149,7 @@ module.exports = (DataHelpers) => {
         console.log(response)
       })
 
-    topTrackStash(spotifyReqHeader, userInfo, trackOffset)
+    // topTrackStash(spotifyReqHeader, userInfo, trackOffset)
     absArtistStash(spotifyReqHeader, userInfo)
 
   }
@@ -465,7 +465,7 @@ module.exports = (DataHelpers) => {
 
 
   function absArtistStash(spotifyReqHeader, userInfo) {
-    let limit = 50
+    let limit = 70
     let absArtistReq = {
       url: `https://api.spotify.com/v1/me/top/artists?limit=${limit}`,
       headers: spotifyReqHeader,
@@ -473,9 +473,11 @@ module.exports = (DataHelpers) => {
     };
 
     let artistsToAdd = []
+    let topArtists = []
 
     rp(absArtistReq)
       .then((response) => {
+        topArtists = response.items
         let dirtyArtists = parseForAbsArtists(response.items)
         return dirtyArtists
       })
@@ -500,37 +502,46 @@ module.exports = (DataHelpers) => {
               let insertReady = insertReadyAbsArtists(response)
               return insertReady
             } else {
+              connectUserToArtists(userInfo, topArtists)
               return 0
             }
           })
           .then((response) => {
-            return Promise.all(response.map(artist => {
-              return DataHelpers.absArtistHelpers.addAbsArtist(
-                artist.name,
-                artist.spotifyID,
-                artist.genresArray
-              )
-            }))
+            if (response) {
+              return Promise.all(response.map(artist => {
+                return DataHelpers.absArtistHelpers.addAbsArtist(
+                  artist.name,
+                  artist.spotifyID,
+                  artist.genresArray
+                )
+              }))
+            }
           })
           .then(() => {
-            return DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
-          })
-          .then((response) => {
-            let userID = response.id
-            artistsToAdd.forEach(artist => {
-              let artistID = 0
-              return DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(artist.spotify_id)
-                .then((response) => {
-                  artistID = response.id
-                  return DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(userID, artistID)
-                })
-            })
+            connectUserToArtists(userInfo, topArtists)
           })
       })
       .catch(() => {
         console.log('there was an error in absolute artists!')
       })
 
+
+
+  }
+
+  function connectUserToArtists(userInfo, topArtists) {
+      DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
+      .then((response) => {
+        let userID = response.id
+        topArtists.forEach(artist => {
+          let artistID = 0
+          return DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(artist.id)
+            .then((response) => {
+              artistID = response.id
+              return DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(userID, artistID)
+            })
+        })
+      })
 
 
   }
