@@ -28,9 +28,9 @@ module.exports = (knex) => {
           console.log(`${trackName} was added to the database`)
           resolve()
         })
-        .catch (() => {
+        .catch ((e) => {
           console.log(`There was an error adding ${trackName} to the database`)
-          reject()
+          reject(e)
         })
     })
   }
@@ -179,7 +179,7 @@ module.exports = (knex) => {
         resolve(track)
       })
       .catch(() => {
-        reject(trackToAdd)
+        resolve(trackToAdd)
       })
     })
   }

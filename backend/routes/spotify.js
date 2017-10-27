@@ -153,15 +153,19 @@ module.exports = (DataHelpers) => {
     // set up API request for top tracks
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
-      url: `https://api.spotify.com/v1/me/top/tracks?limit=100${trackOffsetURL}`,
+      url: `https://api.spotify.com/v1/me/top/tracks?limit=10${trackOffsetURL}`,
       headers: spotifyReqHeader,
       json: true
     };
 
+    let topTracks = ''
+    let tracksToAdd = []
+
     rp(trackReq)
       .then((response) => {
-        let artistsToAdd = parseForArtists(response.items)
-        return artistsToAdd
+        topTracks = response
+        let dirtyArtists = parseForArtists(response.items)
+        return dirtyArtists
       })
       .then((response) => {
         Promise.all(response.map(artist => {
@@ -177,22 +181,82 @@ module.exports = (DataHelpers) => {
             }
             // if there are remaining artists, go get them!
             if (response.length) {
-              let artistReq = prepArtistsForSpotify(response, spotifyReqHeader)
-              rp(artistReq)
-                .then((response) => {
-                  let artistDBInserts = insertArtists(response.artists)
-                  Promise.all(artistDBInserts.map(artist => {
-                    return DataHelpers.artistHelpers.addArtist(
-                      artist.name,
-                      artist.spotifyID,
-                      artist.imageURLs,
-                      artist.genresArray
-                    )
-                  }))
-                })
+              let artistReq = prepSpotifyRequest(response, spotifyReqHeader)
+              return rp(artistReq)
             } else {
               console.log('No artists to add!')
+              return 0
             }
+        })
+        .then((response) => {
+          // if there are artists to add, do it, otherwise, skip this step
+          if (response) {
+            let artistDBInserts = insertReadyArtists(response.artists)
+            return Promise.all(artistDBInserts.map(artist => {
+              return DataHelpers.artistHelpers.addArtist(
+                artist.name,
+                artist.spotifyID,
+                artist.imageURLs,
+                artist.genresArray
+              )
+            }))
+          } else {
+            return 0
+          }
+        })
+        .then((response) => {
+          if (response) {
+            console.log('Artist Add Error: ', response)
+          }
+          // clean up tracks
+          let dirtyTracks = parseForTracks(topTracks.items)
+          return dirtyTracks
+        })
+        .then((response) => {
+          // check if tracks in database already
+          Promise.all(response.map(track => {
+            return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id, track)
+          }))
+            .then((response) => {
+              // remove all the ones we found
+              for (let i = 0; i < response.length; i++) {
+                if (response[i].energy) {
+                  response.splice(i, 1)
+                  i--
+                }
+              }
+
+              // if there are remaining artists, go get them!
+              if (response.length) {
+                tracksToAdd = response
+                let trackReq = prepSpotifyRequest(response, spotifyReqHeader)
+                return rp(trackReq)
+              } else {
+                console.log('No tracks to add!')
+                return 0
+              }
+            })
+            .then((response) => {
+              if (response) {
+                let trackDBInserts = insertReadyTracks(tracksToAdd, response.audio_features)
+                return Promise.all(trackDBInserts.map(track => {
+                  return DataHelpers.trackHelpers.addTrack(
+                    track.track_name,
+                    track.spotify_id,
+                    track.image_urls,
+                    track.features
+                  )
+                }))
+              } else {
+                return 0
+              }
+            })
+            .then((response) => {
+              if (response) {
+                console.log('Track Add Error: ', response)
+              }
+              console.log('after?')
+            })
         })
       })
       .catch((e) => {
@@ -225,6 +289,26 @@ module.exports = (DataHelpers) => {
 
 
 
+  function parseForTracks(tracks) {
+    let cleanTracks = tracks.map(track => {
+      let cleanTrack = {
+         associated_artist: track.artists[0].id,
+         track_name: track.name,
+         spotify_id: track.id,
+         image_urls: [
+            {url: track.album.images[0].url},
+            {url: track.album.images[1].url},
+            {url: track.album.images[2].url}
+         ]
+      }
+      return cleanTrack
+    })
+
+    return cleanTracks
+  }
+
+
+
   function parseForArtists(tracks) {
     let artists = tracks.map(track => {
       let cleanArtist = {
@@ -250,24 +334,53 @@ module.exports = (DataHelpers) => {
       return artistsToAdd
     }
 
-    function prepArtistsForSpotify(artists, spotifyReqHeader) {
+    function prepSpotifyRequest(elements, spotifyReqHeader) {
       let ids = ''
-      artists.forEach(artist => {
-        ids += artist.spotify_id
+      elements.forEach(element => {
+        ids += element.spotify_id
         ids += ','
       })
       ids = ids.slice(0, -1) // take off last comma
 
-      let artistReq = {
-        url: "https://api.spotify.com/v1/artists?ids=" + ids,
+
+      let url = ''
+      if (elements[0].track_name) {
+        url = "https://api.spotify.com/v1/audio-features?ids="
+      } else {
+        url = "https://api.spotify.com/v1/artists?ids="
+      }
+
+      let APIReq = {
+        url: url + ids,
         headers: spotifyReqHeader,
         json: true
       }
 
-      return artistReq
+      return APIReq
     }
 
-    function insertArtists(artists) {
+
+    function insertReadyTracks(tracksToAdd, features) {
+      features.forEach((track, index) => {
+        tracksToAdd[index].features = {
+          danceability: track ? track.danceability : 0,
+          energy: track ? track.energy : 0,
+          key: track ? track.key : 0,
+          loudness: track ? track.loudness : 0,
+          mode: track ? track.mode : 0,
+          speechiness: track ? track.speechiness : 0,
+          acousticness: track ? track.acousticness : 0,
+          instrumentalness: track ? track.instrumentalness : 0,
+          liveness: track ? track.liveness : 0,
+          valence: track ? track.valence : 0,
+          tempo: track ? track.tempo : 0
+        }
+      })
+
+      return tracksToAdd
+    }
+
+    function insertReadyArtists(artists) {
       let insertReady = artists.map(artist => {
         return {
           name: artist.name ? artist.name : 'John Wasson',
@@ -288,6 +401,7 @@ module.exports = (DataHelpers) => {
 
       return insertReady
     }
+
 
 
 }
