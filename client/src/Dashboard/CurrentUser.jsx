@@ -22,7 +22,7 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
-      insightData: 'Click bar on chart for more info!'
+      insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
       compatibleUsers: []
