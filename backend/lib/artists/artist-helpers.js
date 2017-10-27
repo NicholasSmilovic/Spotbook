@@ -121,6 +121,7 @@ module.exports = (knex) => {
   //   console.log(response)
   // })
 
+
 //Better way of doing functions with promises, something to think about
   // function getArtistBySpotifyID(id, artistToAdd) { //artist to add only used in data stash
   //   return knex('artists').where('spotify_id', id)
@@ -142,6 +143,7 @@ module.exports = (knex) => {
 
 
   function getArtistBySpotifyID(id, artistToAdd) { //artist to add only used in data stash
+
     return new Promise(function(resolve, reject) {
     let artist = {}
     knex('artists').where('spotify_id', id)
@@ -162,6 +164,7 @@ module.exports = (knex) => {
         resolve(artist)
       })
       .catch(() => {
+
         reject(artistToAdd)
       })
     })

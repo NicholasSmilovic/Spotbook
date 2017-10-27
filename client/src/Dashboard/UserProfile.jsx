@@ -11,7 +11,9 @@ class UserProfile extends Component{
     return(
         <div className='row'>
           <div className='col-md-12 user-profile'>
-          <img src={this.props.user_img} />
+            <div className='user-image'>
+              <img src={this.props.user_img} />
+            </div>
           <h1>{this.props.user_name}</h1>
           </div>
         </div>

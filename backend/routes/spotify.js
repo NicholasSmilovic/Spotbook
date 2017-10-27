@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router  = express.Router();
+const fetch = require('fetch');
 let request = require('request') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
@@ -25,6 +26,7 @@ let generateRandomString = function(length) {
 };
 
 let stateKey = 'spotify_auth_state';
+
 module.exports = (DataHelpers) => {
 
   router.get('/login', function(req, res) {
@@ -84,6 +86,7 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
+
             dataStash(options.headers, body, 0)
             absoluteArtistStash(options.headers, body.id)
 
@@ -136,6 +139,7 @@ module.exports = (DataHelpers) => {
   });
 
   return router
+
 
   function dataStash(spotifyReqHeader, userInfo, trackOffset) {
     return new Promise(function(resolve, reject) {
@@ -257,6 +261,7 @@ module.exports = (DataHelpers) => {
         for (let j = index + 1; j < artistsToAdd.length; j++) {
           if (artistsToAdd[j].spotify_id === artist.spotify_id) {
             artistsToAdd.splice(j,1)
+
             j -= 1
           }
         }
@@ -272,6 +277,7 @@ module.exports = (DataHelpers) => {
       }
 
       // make my API call with array items
+
         let ids = ''
         for (let index in tracksToAdd) {
           ids += tracksToAdd[index].spotify_id
@@ -290,6 +296,7 @@ module.exports = (DataHelpers) => {
 
           body.audio_features.forEach((track, index) => {
             tracksToAdd[index].features = {
+
               danceability: track ? track.danceability : 0,
               energy: track ? track.energy : 0,
               key: track ? track.key : 0,
@@ -367,6 +374,7 @@ module.exports = (DataHelpers) => {
 
 
     function stashArtists(artistsToAdd, spotifyReqHeader) {
+
         if (artistsToAdd.length === 0) {
           return
         }

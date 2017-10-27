@@ -23,6 +23,7 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
+      insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
@@ -79,16 +80,16 @@ class CurrentUser extends Component {
 
   componentWillMount(){
     this.getChartData();
+
     if (!this.props.currentLocal) {
-      console.log('Please stand by while we get that thing that you need.')
+      // console.log('Please stand by while we get that thing that you need.')
     } else {
-      console.log("We got it. The thing that you need immediately follows this sentence.")
-      console.log(this.props.currentLocal);
+      // console.log("We got it. The thing that you need immediately follows this sentence.")
+      // console.log(this.props.currentLocal);
       this.getUserTopAbsArtists()
       this.getUserTopTracks().then(() => {
         return this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
       })
-
 // ***** ***** ***** ***** *****
       // this.testRoute();
 // ***** ***** ***** ***** *****
@@ -98,6 +99,7 @@ class CurrentUser extends Component {
   componentDidMount() {
 
   }
+
 
   testRoute() {
     $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)

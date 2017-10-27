@@ -148,6 +148,7 @@ module.exports = (knex) => {
 
 
 
+
   function getTrackBySpotifyID(id, trackToAdd) { //track to add only used in data stash
     return new Promise(function(resolve, reject) {
     let track = {}
@@ -179,6 +180,7 @@ module.exports = (knex) => {
         resolve(track)
       })
       .catch(() => {
+
         reject(trackToAdd)
       })
     })

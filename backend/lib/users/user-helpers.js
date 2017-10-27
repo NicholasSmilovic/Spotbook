@@ -293,7 +293,6 @@ function getUserTopTrackArtists(id) {
   })
 }
 
-
 // getUserTopTrackArtists(2)
 //   .then((response) => {
 //     console.log(response)
