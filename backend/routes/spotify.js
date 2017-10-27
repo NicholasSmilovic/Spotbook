@@ -3,6 +3,7 @@
 const express = require('express');
 const router  = express.Router();
 let request = require('request') // "Request" library
+let rp = require('request-promise') // "Request" library
 let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
 require('dotenv')
@@ -85,7 +86,7 @@ module.exports = (DataHelpers) => {
           request.get(options, function(error, response, body) {
             console.log(body);
             dataStash(options.headers, body, 0)
-            absoluteArtistStash(options.headers, body.id)
+            // absoluteArtistStash(options.headers, body.id)
 
           });
 
@@ -137,120 +138,105 @@ module.exports = (DataHelpers) => {
 
   return router
 
+
+
+
+
   function dataStash(spotifyReqHeader, userInfo, trackOffset) {
-    return new Promise(function(resolve, reject) {
-      // add user to database, if not already there
+
+    // establish user that signed in, add to DB if necessary
+    establishUser(userInfo)
+      .then((response) => {
+        console.log(response)
+      })
+
+    // set up API request for top tracks
+    let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
+    let trackReq = {
+      url: `https://api.spotify.com/v1/me/top/tracks?limit=100${trackOffsetURL}`,
+      headers: spotifyReqHeader,
+      json: true
+    };
+
+    rp(trackReq)
+      .then((response) => {
+        let artistsToAdd = parseForArtists(response.items)
+        return artistsToAdd
+      })
+      .then((response) => {
+        Promise.all(response.map(artist => {
+          return DataHelpers.artistHelpers.getArtistBySpotifyID(artist.spotify_id, artist)
+        }))
+          .then((response) => {
+              // remove all the ones we found
+              for (let i = 0; i < response.length; i++) {
+                if (response[i].genres) {
+                  response.splice(i, 1)
+                  i--
+                }
+              }
+              // if there are remaining artists, go get them!
+              if (response.length) {
+                let artistReq = prepArtistsForSpotify(response, spotifyReqHeader)
+                rp(artistReq)
+                  .then((response) => {
+                    let artistDBInserts = insertArtists(response.artists)
+                    Promise.all(artistDBInserts.map(artist => {
+                      return DataHelpers.artistHelpers.addArtist(
+                        artist.name,
+                        artist.spotifyID,
+                        artist.imageURLs,
+                        artist.genresArray
+                      )
+                    }))
+                  })
+              } else {
+                console.log('No artists to add!')
+              }
+          })
+      })
+      .catch((e) => {
+        console.log('there was an error!', e)
+      })
+
+  }
+
+
+
+
+  function establishUser(userInfo) {
+    return new Promise((resolve, reject) => {
       DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
         .then((response) => {
-          console.log(`Welcome, ${response.display_name}`)
+          resolve(`Welcome, ${response.display_name}`)
         })
         .catch((e) => {
           if (e === 'user not found') {
-
             let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
             let id = userInfo.id
             let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
-
-            DataHelpers.userHelpers.addUser(name, id, image)
-              .then((response) => {
-                console.log(response)
-              })
-              .catch((e) => {
-                console.log(e)
-              })
+            return DataHelpers.userHelpers.addUser(name, id, image)
           }
+          reject(e)
         })
+      })
 
-        // make API request for user's top tracks
-        let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
-
-        let trackReq = {
-          url: `https://api.spotify.com/v1/me/top/tracks?limit=100${trackOffsetURL}`,
-          headers: spotifyReqHeader,
-          json: true
-        };
-
-        request.get(trackReq, function(error, response, body) {
-          //find out which tracks need to be added to the database
-          let tracksToAdd = []
-          let artistsToAdd = []
+  }
 
 
-          let artistPromises = body.items.map(track => {
-            let cleanArtist = {
-               artist_name: track.artists[0].name,
-               spotify_id: track.artists[0].id
-            }
 
-            return new Promise(function (resolve, reject) {
-              DataHelpers.artistHelpers.getArtistBySpotifyID(cleanArtist.spotify_id, cleanArtist)
-                .then((response) => {
-                  console.log(`${cleanArtist.artist_name} is already in the database`)
-                  resolve(response)
-                })
-                .catch((responseArtist) => {
-                  artistsToAdd.push(responseArtist)
-                  resolve(responseArtist)
-                })
-              })
-          })
-
-
-          let trackPromises = body.items.map(track => {
-            let cleanTrack = {
-               associated_artist: track.artists[0].id,
-               track_name: track.name,
-               spotify_id: track.id,
-               image_urls: [
-                  {url: track.album.images[0].url},
-                  {url: track.album.images[1].url},
-                  {url: track.album.images[2].url}
-               ]
-            }
-
-            return new Promise(function(resolve, reject) {
-              DataHelpers.trackHelpers.getTrackBySpotifyID(cleanTrack.spotify_id, cleanTrack)
-                .then((response) => {
-                  DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
-                    .then((responseUser) => {
-                      DataHelpers.userTrackHelpers.joinUserToTrack(responseUser.id, response.id)
-                      resolve(response)
-                    })
-                  console.log(`${cleanTrack.track_name} is already in database`)
-                })
-                .catch((responseTrack) => {
-                  tracksToAdd.push(responseTrack)
-                  resolve(responseTrack)
-                })
-            })
-
-          })
-
-          Promise.all(artistPromises)
-            .then(() => {
-              artistsToAdd = removeDuplicates(artistsToAdd)
-              stashArtists(artistsToAdd, spotifyReqHeader)
-            })
-            .then(() => {
-              Promise.all(trackPromises)
-                .then((response) => {
-                  stashTracks(tracksToAdd, spotifyReqHeader, userInfo.id)
-                })
-                .catch(() => {
-                  console.log('error in track promise')
-                })
-            })
-            .catch(() => {
-              console.log('error in artist promise')
-            })
-
-
-          });
-
+  function parseForArtists(tracks) {
+    let artists = tracks.map(track => {
+      let cleanArtist = {
+        artist_name: track.artists[0].name,
+        spotify_id: track.artists[0].id
+      }
+      return cleanArtist
     })
 
+    return removeDuplicates(artists)
+  }
 
-    }
 
     function removeDuplicates(artistsToAdd) {
       artistsToAdd.forEach((artist, index) => {
@@ -264,230 +250,44 @@ module.exports = (DataHelpers) => {
       return artistsToAdd
     }
 
+    function prepArtistsForSpotify(artists, spotifyReqHeader) {
+      let ids = ''
+      artists.forEach(artist => {
+        ids += artist.spotify_id
+        ids += ','
+      })
+      ids = ids.slice(0, -1) // take off last comma
 
-
-    function stashTracks(tracksToAdd, spotifyReqHeader, userSpotifyID) {
-      if (tracksToAdd.length === 0) {
-        return
+      let artistReq = {
+        url: "https://api.spotify.com/v1/artists?ids=" + ids,
+        headers: spotifyReqHeader,
+        json: true
       }
 
-      // make my API call with array items
-        let ids = ''
-        for (let index in tracksToAdd) {
-          ids += tracksToAdd[index].spotify_id
-          ids += ','
-        }
-        ids = ids.slice(0, -1) // take off last comma
-
-        let audioFeaturesReq = {
-          url: "https://api.spotify.com/v1/audio-features?ids=" + ids,
-          headers: spotifyReqHeader,
-          json: true
-        };
-
-        request.get(audioFeaturesReq, function(error, response, body) {
-          // inside here, clean artists and add to DB
-
-          body.audio_features.forEach((track, index) => {
-            tracksToAdd[index].features = {
-              danceability: track ? track.danceability : 0,
-              energy: track ? track.energy : 0,
-              key: track ? track.key : 0,
-              loudness: track ? track.loudness : 0,
-              mode: track ? track.mode : 0,
-              speechiness: track ? track.speechiness : 0,
-              acousticness: track ? track.acousticness : 0,
-              instrumentalness: track ? track.instrumentalness : 0,
-              liveness: track ? track.liveness : 0,
-              valence: track ? track.valence : 0,
-              tempo: track ? track.tempo : 0
-            }
-
-          })
-
-          tracksToAdd.forEach(track => {
-            DataHelpers.trackHelpers.addTrack(
-              track.track_name,
-              track.spotify_id,
-              track.image_urls,
-              track.features
-              )
-              .then(() => {
-                DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
-                  .then((responseArtist) => {
-                    DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
-                      .then((responseTrack) => {
-                        DataHelpers.artistTrackHelpers.joinArtistToTrack(responseArtist.id, responseTrack.id)
-                          .then((response) => {
-                            console.log('we did it!')
-                          })
-                          .catch((e) => {
-                            console.log('Join artist error', e)
-                          })
-
-                      })
-                      .catch((e) => {
-                        console.log('Track find error', e)
-                      })
-                  })
-                  .catch((e) => {
-                    console.log('Artist find error', e)
-
-                  })
-              })
-              .then(() => {
-                DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
-                  .then((responseUser) => {
-                    DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
-                      .then((responseTrack) => {
-                        DataHelpers.userTrackHelpers.joinUserToTrack(responseUser.id, responseTrack.id)
-                          .then((response) => {
-                            console.log('we did it!')
-                          })
-                          .catch((e) => {
-                            console.log('Join user error', e)
-                          })
-                      })
-                      .catch((e) => {
-                        console.log('Track find error', e)
-                      })
-                  })
-                  .catch((e) => {
-                    console.log('User find error', e)
-                  })
-              })
-              .catch((e) => {
-                console.log('error adding track ', e)
-              })
-
-          })
-        })
-
+      return artistReq
     }
 
-
-    function stashArtists(artistsToAdd, spotifyReqHeader) {
-        if (artistsToAdd.length === 0) {
-          return
+    function insertArtists(artists) {
+      let insertReady = artists.map(artist => {
+        return {
+          name: artist.name ? artist.name : 'John Wasson',
+          spotifyID: artist.name ? artist.id : 'noFollowerz',
+          imageURLs: artist.images.length ? [
+            {url: artist.images[0].url},
+            {url: artist.images[1].url},
+            {url: artist.images[2].url}
+            ] : [
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            ],
+          genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
         }
 
-        // make my API call with array items
-        let ids = ''
-        for (let index in artistsToAdd) {
-          ids += artistsToAdd[index].spotify_id
-          ids += ','
-        }
-        ids = ids.slice(0, -1) // take off last comma
+      })
 
-        let artistReq = {
-          url: "https://api.spotify.com/v1/artists?ids=" + ids,
-          headers: spotifyReqHeader,
-          json: true
-        };
-
-        request.get(artistReq, function(error, response, body) {
-
-          // inside here, clean artists and add to DB
-          body.artists.forEach(artist => {
-
-              let name = artist.name ? artist.name : 'John Wasson'
-              let spotifyID = artist.name ? artist.id : 'noFollowerz'
-
-              let imageURLs = artist.images.length ? [
-              {url: artist.images[0].url},
-              {url: artist.images[1].url},
-              {url: artist.images[2].url}
-              ] : [
-              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-              {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
-              ]
-              let genresArray = artist.genres.length ? artist.genres : ['Set Phasers to Stun']
-
-            DataHelpers.artistHelpers.addArtist(name, spotifyID, imageURLs, genresArray)
-              .then((response) => {
-                console.log(response)
-              })
-              .catch((e) => {
-                console.log(`Error: ${e}`)
-              })
-          })
-        })
-
+      return insertReady
     }
-
-
-
-    function absoluteArtistStash(spotifyReqHeader, userSpotifyID) {
-      //absolute artist is defined as an artist returned from TOP ARTISTS API call, not top tracks
-      //they are directly connected to the user via USER --> ABSOLUTE_ARTIST relationship
-      //they are to be used only in the compatibility algorithm
-        let absArtistReq = {
-          url: `https://api.spotify.com/v1/me/top/artists?limit=50`,
-          headers: spotifyReqHeader,
-          json: true
-        };
-
-        request.get(absArtistReq, function(error, response, body) {
-
-          let absArtistPromises = body.items.map(artist => {
-            let cleanArtist = {
-               artist_name: artist.name,
-               spotify_id: artist.id,
-               genres: artist.genres
-            }
-
-              DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
-                .then((response) => {
-                  console.log(`${cleanArtist.artist_name} is already in the aboslute artist table`)
-                  DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
-                    .then((responseUser) => {
-                      DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, response.id)
-                        .then((response) => {
-                        })
-                        .catch((e) => {
-                          console.log('Join user error', e)
-                        })
-                    })
-                    .catch((e) => {
-                      console.log('User find error', e)
-                    })
-                })
-                .catch(() => {
-                  DataHelpers.absArtistHelpers.addAbsArtist(cleanArtist.artist_name, cleanArtist.spotify_id, cleanArtist.genres)
-                    .then((response) => {
-                      DataHelpers.userHelpers.getUserBySpotifyID(userSpotifyID)
-                        .then((responseUser) => {
-                          DataHelpers.absArtistHelpers.getAbsArtistBySpotifyID(cleanArtist.spotify_id)
-                            .then((responseAbsArtist) => {
-                              DataHelpers.userAbsArtistHelpers.joinUserToAbsArtist(responseUser.id, responseAbsArtist.id)
-                                .then((response) => {
-                                })
-                                .catch((e) => {
-                                  console.log('Join user error', e)
-                                })
-                            })
-                            .catch((e) => {
-                              console.log('Abs Artist find error', e)
-                            })
-                        })
-                        .catch((e) => {
-                          console.log('User find error', e)
-                        })
-                    })
-                    .catch((e) => {
-                      console.log(`Error: ${e}`)
-                    })
-
-                })
-              })
-          })
-
-
-
-    }
-
-
 
 
 }

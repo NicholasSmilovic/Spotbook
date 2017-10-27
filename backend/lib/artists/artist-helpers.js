@@ -162,7 +162,7 @@ module.exports = (knex) => {
         resolve(artist)
       })
       .catch(() => {
-        reject(artistToAdd)
+        resolve(artistToAdd)
       })
     })
   }

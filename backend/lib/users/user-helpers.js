@@ -18,11 +18,9 @@ function addUser(displayName, spotifyID, imageURL) {
   knex('users').insert(newUser)
     .then(() => {
       console.log(`${displayName} was added to the database!`)
-      resolve(true)
     })
     .catch(() => {
       console.log(`There was an error adding ${displayName} to the database`)
-      reject(false)
     })
 
   })
