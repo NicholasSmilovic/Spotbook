@@ -26,20 +26,28 @@ class BarChart extends Component {
     // }
   }
 
-  // get all top tracks artists
-  getUserTopTrackArtists() {
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-    .done( artists => {
-      // for(let i = 0; i < artists.length; i++) {
-      //   $.get('http://localhost:3000/users/get')
-      // }
-      console.log(artists);
-    })
-    .fail( err => {
-      console.error(err);
-    })
+  /*
+  1. GET ALL TOP TRACK IDS
+  2. GET ALL ARTIST IDS ASSOCIATED WITH TRACK IDS
+  3. CREATE OBJECT OF KEYS ASSOCIATED WITH ARRAY VALUES
+    - EACH ARTIST ID IS A KEY VALUE, AND THE KEY IS ASSOCIATED
+  4.
+  */
 
-  }
+  // get all top tracks artists
+  // getUserTopTrackArtists() {
+  //   $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+  //   .done( artists => {
+  //     // for(let i = 0; i < artists.length; i++) {
+  //     //   $.get('http://localhost:3000/users/get')
+  //     // }
+  //     console.log(artists);
+  //   })
+  //   .fail( err => {
+  //     console.error(err);
+  //   })
+
+  // }
   // determine top 5 artists with most tracks
 
   // get all tracks of these artists
