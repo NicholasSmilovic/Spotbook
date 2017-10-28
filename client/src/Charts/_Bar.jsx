@@ -5,7 +5,7 @@ class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      topTracks: [],
+      topTracks: this.props.topTracks,
       topArtists: [],
       // chartData:props.chartData
       chartData: {
@@ -14,7 +14,7 @@ class BarChart extends Component {
           label: 'Track Count',
           data: []
         }]
-      };
+      }
     }
   }
 

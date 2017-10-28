@@ -4,7 +4,7 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-import SampleData from '../Charts/SampleChartData.jsx'
+// import SampleData from '../Charts/SampleChartData.jsx'
 
 import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
@@ -23,7 +23,7 @@ class CurrentUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chartData:{},
+      // chartData:{},
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
