@@ -24,11 +24,11 @@ class BarChart extends Component {
 
 
   componentWillMount() {
-    console.log(this.state.topTracks)
-    console.log(this.state.topTracks.length)
-    console.log(typeof(this.state.topTracks))
+    // console.log(this.state.topTracks)
+    // console.log(this.state.topTracks.length)
+    // console.log(typeof(this.state.topTracks))
 
-    this.getArtistsFromTrackIDs();
+    // this.getArtistsFromTrackIDs();
     // console.log(this.props.topTracks)
     // if(!this.props.topTracks) {
       // console.log(this.props.topTracks, this.props.topTracks[0]);
@@ -59,19 +59,19 @@ class BarChart extends Component {
   6. GET INFO OF TRACKS IN ARRAYS ASSOCIATED WITH TOP 5 ARTISTS AND STORE IN STATE
   */
 
-  getArtistsFromTrackIDs() {
-    let artistIDs = [];
+  // getArtistsFromTrackIDs() {
+  //   let artistIDs = [];
 
-    for (let i = 0; i < this.state.topTracks.length; i++) {
-      $.get('http://localhost:3000/tracks/getArtistFromTrackID/'+this.props.topTracks[i].id)
-      .done( artist => {
-        console.log(artist);
-      })
-      .fail (err => {
-        console.error(err);
-      })
-    }
-  }
+  //   for (let i = 0; i < this.state.topTracks.length; i++) {
+  //     $.get('http://localhost:3000/tracks/getArtistFromTrackID/'+this.props.topTracks[i].id)
+  //     .done( artist => {
+  //       console.log(artist);
+  //     })
+  //     .fail (err => {
+  //       console.error(err);
+  //     })
+  //   }
+  // }
 
   // get all top tracks artists
   // getUserTopTrackArtists() {

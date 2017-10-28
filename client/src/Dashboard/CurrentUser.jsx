@@ -156,22 +156,9 @@ class CurrentUser extends Component {
     })
 
 
-// ***** ***** ***** ***** *****
-      // DataHandler();
-// ***** ***** ***** ***** *****
     }
   }
 
-  testRoute() {
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
-    .done( topTrackArtists => {
-      console.log(topTrackArtists);
-    })
-    .fail( err => {
-      console.error(err);
-    })
-  }
 
 
 
@@ -180,7 +167,11 @@ class CurrentUser extends Component {
     return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
 
+      let artistIDs = [];
+
       for (let i = 0; i < topTrackIDs.length; i++) {
+
+// GET TRACK DETAILS BY TRACK_ID
         $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
           let currentUserTopTracks = this.state.topTracks;
@@ -192,11 +183,37 @@ class CurrentUser extends Component {
           console.error(err);
         })
 
+// GET ARTIST_ID BY TRACK_ID
+        $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        .done( result => {
+          artistIDs.push(result.id);
+          // console.log(result.id)
+        })
+        .fail( err => {
+          console.error(err);
+        })
       }
+// SORTING BY ARTIST_ID
+      console.log(artistIDs)
+      // console.log(artistIDs[99])
+      // if(artistIDs.length > 0)
+      //   this.sortArtists(artistIDs);
+
+
     })
     .fail( err => {
       console.error(err);
     });
+  }
+
+  sortArtists(rawArtistIDs) {
+    console.log(rawArtistIDs);
+    console.log(rawArtistIDs.length);
+    // let artistIDs = [];
+    // for(let i = 0; i < rawArtistIDs.length; i++) {
+    //   artistIDs.push(rawArtistIDs[i].id);
+    // }
+    // console.log(artistIDs);
   }
 
 
