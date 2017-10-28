@@ -27,6 +27,10 @@ class CurrentUser extends Component {
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
+      allUsersTopTracks: [],
+      allUsersTopArtists: [],
+      allUsersAudioTrackFeatures: {},
+      allUsersComparisonData: [],
       insightData:'Stuff',
       compatibleUsers: []
     }
@@ -107,10 +111,24 @@ class CurrentUser extends Component {
                                             }
       return userAudioTrackFeaturesAverages
     }
+
+    this.userCompatibility = () => {
+
+
+      for (let user in this.props.allUsers) {
+        this.getUserTopAbsArtists(this.props.allUsers[user].id).then(() => {
+          return this.getUserTopTracks(this.props.allUsers[user].id)
+        }).then(() => {
+        let allUsersComparisonDat = this.state.allUsersComparisonData
+        this.setState({allUsersComparisonData: allUsersComparisonDat.push({id: this.props.allUsers[user].id,
+                                     topTracks: this.state.allUsersTopTracks,
+                                     topArtists: this.state.allUsersTopArtists,
+                                     audioTrackFeatures: this.state.allUsersAudioTrackFeatures})
+        })
+      })
+    }
+    }
   }
-
-
-
 
   componentWillMount(){
     this.getChartData();
@@ -120,8 +138,14 @@ class CurrentUser extends Component {
     } else {
       // console.log("We got it. The thing that you need immediately follows this sentence.")
       // console.log(this.props.currentLocal);
-      this.getUserTopAbsArtists()
-      this.getUserTopTracks()
+    // this.setState({allUsersComparisonData: this.props.allUsers.map(u => ({id: u.id}))})
+    this.setCurrentUserTopAbsArtists(),
+    this.setCurrentUserTopTracks().then(()=> {
+      return this.userCompatibility()
+
+    })
+
+
 // ***** ***** ***** ***** *****
       // this.testRoute();
 // ***** ***** ***** ***** *****
@@ -143,16 +167,16 @@ class CurrentUser extends Component {
     })
   }
 
-  // Grab user's top tracks
-  getUserTopTracks(){
+  // CURRENT USER
+  setCurrentUserTopTracks = () => {
     return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
       for (let i = 0; i < topTrackIDs.length; i++) {
         $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
-          let topTracks = this.state.topTracks;
-          topTracks.push(result);
-          this.setState({ topTracks: topTracks });
+          let currentUserTopTracks = this.state.topTracks;
+          currentUserTopTracks.push(result);
+          this.setState({ topTracks: currentUserTopTracks });
           this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
         })
         .fail( err => {
@@ -165,7 +189,7 @@ class CurrentUser extends Component {
     });
   }
 
-  getUserTopAbsArtists() {
+  setCurrentUserTopAbsArtists = () => {
     return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
     .done(absArtistIDs => {
       // console.log(absArtistIDs)
@@ -175,6 +199,52 @@ class CurrentUser extends Component {
           let topArtists = this.state.topArtists
           topArtists.push(artist)
           this.setState({topArtists})
+        })
+        .fail(err => {
+          console.error(err)
+        })
+      }
+    })
+    .fail(err => {
+      console.error(err)
+    })
+  }
+
+
+  //ALL OTHER USERS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  getUserTopTracks(id){
+    $.get('http://localhost:3000/users/getUserTopTracks/'+ id)
+    .done( topTrackIDs => {
+      for (let i = 0; i < topTrackIDs.length; i++) {
+        $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
+        .done( result => {
+          let topTracksArray = this.state.allUsersTopTracks
+          topTracksArray.push(result);
+
+          this.setState({ allUsersTopTracks: topTracksArray });
+          this.setState({allUsersAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.allUsersTopTracks)})
+        })
+        .fail( err => {
+          console.error(err);
+        })
+      }
+    })
+    .fail( err => {
+      console.error(err);
+    })
+    // console.log(userAudioTrackFeatures)
+  }
+
+  getUserTopAbsArtists(id) {
+    return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + id)
+    .done(absArtistIDs => {
+      // console.log(absArtistIDs)
+      for(let i = 0; i < absArtistIDs.length; i++) {
+        $.get('http://localhost:3000/absArtists/getAbsArtistByID/' + absArtistIDs[i].id)
+        .done(artist => {
+          let allUsersTopArtists = this.state.allUsersTopArtists
+          allUsersTopArtists.push(artist)
+          this.setState({allUsersTopArtists})
         })
         .fail(err => {
           console.error(err)
