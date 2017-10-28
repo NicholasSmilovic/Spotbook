@@ -9,11 +9,12 @@ module.exports = (DataHelpers) => {
 
   router.get('/getAbsArtistByID/:id', (req, res) => {
 
-    let artist_id = req.params.id;
 
-    DataHelpers.absArtistHelpers.getAbsArtistByID(artist_id)
-    .then((track) => {
-      res.send(track)
+    let artistID = req.params.id;
+
+    DataHelpers.absArtistHelpers.getAbsArtistByID(artistID)
+    .then((artist) => {
+      res.send(artist)
     })
     .catch((e) => {
       console.error(e);

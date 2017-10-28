@@ -155,7 +155,7 @@ function getUserTopTracks(id) {
 
 function getUserTopFullTracks(id) {
   return new Promise(function(resolve, reject) {
-    knex.select('tracks').from('tracks')
+    knex.select('tracks.id','track_name','spotify_id','danceability','energy','key','loudness').from('tracks')
       .innerJoin('user_tracks', 'tracks.id', 'track_id')
       .innerJoin('users', 'users.id', 'user_id')
       .where('users.id', id)
