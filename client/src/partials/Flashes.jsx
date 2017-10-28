@@ -2,16 +2,21 @@ import React, {Component} from 'react';
 
 class Flashes extends Component{
 
-  componentDidMount() {
-    setTimeout(this.props.removeFlashState, 5000);
-  }
-
+  // componentWillUnmount() {
+  //   this.props.removeFlashState
+  // }
   render () {
+    setTimeout(this.props.removeFlashState, 5000);
     const message = this.props.content;
-
+    const error = this.props.error;
     return(
-      <div className="flash-message">
-        {message}
+      <div>
+        <div className="flash-message-success">
+          {message}
+        </div>
+        <div className="flash-message-error">
+          {error}
+        </div>
       </div>
       )
   }

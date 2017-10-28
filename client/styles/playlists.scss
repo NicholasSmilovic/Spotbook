@@ -1,21 +1,29 @@
+.hide{
+  display:invisible
+}
+
 .table {
   width:auto
 }
 
 .playlist-header{
+  text-align: center;
   vertical-align: middle;
   z-index: 2;
+  background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
+  border-radius: 5px;
+  border: 2px solid;
+  // background-color: $slightly-black;
 }
-.tester{
-  z-index: 1;
-}
-.search-bar{
+
+.auto-size{
+  font-size: 1vmax;
+  text-align: center;
 }
 
 .search-bar-query{
-  color: black;
-  padding: 0;
-  width:80%;
+  border: none;
+  color:black;
 }
 
 .search-bar-query:focus{
@@ -34,4 +42,25 @@
 
 .button{
   margin:0px auto; //it will center them
+}
+
+.active-playlist-form{
+  max-width: 80%;
+  margin: 0 auto;
+  padding-top: 30%;
+}
+
+.join-active-playlist{
+  display: flex;
+  justify-content: space-around;
+}
+
+.active-list-header{
+  font-size: 2vmax;
+}
+
+.active-playlists {
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 100%
 }

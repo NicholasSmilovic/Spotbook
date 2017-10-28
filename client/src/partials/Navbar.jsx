@@ -11,7 +11,8 @@ class Navbar extends Component{
             <div className="wideDiv">
               <Link className='nav-link' to="/">Home</Link>
               <Link className='nav-link' to="/users">Users</Link>
-              <Link className='nav-link' to="/playlists">Playlists</Link>
+              <Link className='nav-link' to="/playlists">Your Playlists</Link>
+              <Link className='nav-link' to="/activeplaylists">Active Playlists</Link>
             </div>
           </div>
           <div className="navNarrow">
@@ -19,7 +20,8 @@ class Navbar extends Component{
             <div className="narrowLinks">
               <Link className='nav-link' to="/">Home</Link>
               <Link className='nav-link' to="/users">Users</Link>
-              <Link className='nav-link' to="/playlists">Playlists</Link>
+              <Link className='nav-link' to="/playlists">Your Playlists</Link>
+              <Link className='nav-link' to="/activeplaylists">Active Playlists</Link>
             </div>
           </div>
         </nav>
