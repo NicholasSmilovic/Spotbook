@@ -48,6 +48,7 @@ module.exports = (message, ws, callback) =>{
           data: data,
           error: null
         }));
+        return data.name
       })
       break;
     case "addSongToPlaylist":
