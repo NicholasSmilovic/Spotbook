@@ -9,7 +9,6 @@ import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
-// import DataHandler from '../Charts/TopArtistData.jsx'
 
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
@@ -116,7 +115,7 @@ class CurrentUser extends Component {
   componentWillMount(){
 
 
-    this.getChartData();
+    // this.getChartData();
 
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
@@ -131,11 +130,6 @@ class CurrentUser extends Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
-
   testRoute() {
     $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
     // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
@@ -149,7 +143,6 @@ class CurrentUser extends Component {
 
   // Grab user's top tracks
   getUserTopTracks(){
-    // return $.get('http://localhost:3000/users/getUserTopTracks/'+1)
     return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
 
@@ -159,13 +152,13 @@ class CurrentUser extends Component {
           let topTracks = this.state.topTracks;
           topTracks.push(result);
           this.setState({ topTracks: topTracks });
-          this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
+          this.setState({ userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
         })
         .fail( err => {
           console.error(err);
         })
-      }
 
+      }
     })
     .fail( err => {
       console.error(err);
@@ -173,8 +166,6 @@ class CurrentUser extends Component {
   }
 
   getUserTopAbsArtists() {
-
-    // return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + 1)
     return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
     .done(absArtistIDs => {
       // console.log(absArtistIDs)
@@ -250,7 +241,7 @@ class CurrentUser extends Component {
           <div className='col-md-6'>
             <BarChart
               currentLocal={this.props.currentLocal}
-              chartData={this.state.chartData}
+              topTracks={this.state.topTracks}
 
               title="Left Chart"
               y_label=""

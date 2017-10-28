@@ -5,7 +5,7 @@ class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      topTracks: this.props.topTracks,
+      // topTracks: this.props.topTracks,
       topArtists: [],
       // chartData:props.chartData
       chartData: {
@@ -19,11 +19,23 @@ class BarChart extends Component {
   }
 
   componentWillMount() {
-    if(this.props.currentLocal)
-      this.getUserTopTrackArtists();
-      // console.log('Please wait.');
-    // } else {
-    // }
+    if(!this.props.topTracks) {
+      // console.log(this.props.topTracks, this.props.topTracks[0]);
+      // console.log(typeof(this.props.topTracks));
+      // console.log(this.props.topTracks.length);
+      // console.log(Object.keys(this.props.topTracks))
+      // console.log(this.props.topTracks.anonymous)
+      console.log('Please wait.');
+    } else {
+        console.log(this.props.topTracks);
+        console.log(this.props.topTracks.toLowerCase())
+        // this.props.topTracks.map( bullshit => {
+        //   console.log(bullshit);
+        // });
+
+        // this.getArtistsFromTrackIDs();
+    }
+    // return console.log(this.props.topTracks.length)
   }
 
   /*
@@ -35,6 +47,23 @@ class BarChart extends Component {
   5. GET INFO OF TOP 5 ARTISTS AND STORE IN STATE
   6. GET INFO OF TRACKS IN ARRAYS ASSOCIATED WITH TOP 5 ARTISTS AND STORE IN STATE
   */
+
+  getArtistsFromTrackIDs() {
+    console.log('*** inside getArtistsFromTrackIDs ***')
+    console.log(this.props.topTracks)
+    console.log(this.props.topTracks.length)
+    let artistIDs = [];
+
+    for (let i = 0; i < this.props.topTracks.length; i++) {
+      $.get('http://localhost:3000/tracks/getArtistFromTrackID/'+this.props.topTracks[i].id)
+      .done( artist => {
+        console.log(artist);
+      })
+      .fail (err => {
+        console.error(err);
+      })
+    }
+  }
 
   // get all top tracks artists
   // getUserTopTrackArtists() {
