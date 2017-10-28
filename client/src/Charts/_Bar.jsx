@@ -5,7 +5,7 @@ class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      // topTracks: this.props.topTracks,
+      topTracks: this.props.topTracks,
       topArtists: [],
       // chartData:props.chartData
       chartData: {
@@ -18,23 +18,34 @@ class BarChart extends Component {
     }
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(nextProps)
+  // }
+
+
   componentWillMount() {
-    if(!this.props.topTracks) {
+    console.log(this.state.topTracks)
+    console.log(this.state.topTracks.length)
+    console.log(typeof(this.state.topTracks))
+
+    this.getArtistsFromTrackIDs();
+    // console.log(this.props.topTracks)
+    // if(!this.props.topTracks) {
       // console.log(this.props.topTracks, this.props.topTracks[0]);
       // console.log(typeof(this.props.topTracks));
       // console.log(this.props.topTracks.length);
       // console.log(Object.keys(this.props.topTracks))
       // console.log(this.props.topTracks.anonymous)
-      console.log('Please wait.');
-    } else {
-        console.log(this.props.topTracks);
-        console.log(this.props.topTracks.toLowerCase())
+    //   console.log('Please wait.');
+    // } else {
+    //     console.log(this.props.topTracks);
+    //     console.log(this.props.topTracks.toLowerCase())
         // this.props.topTracks.map( bullshit => {
         //   console.log(bullshit);
         // });
 
         // this.getArtistsFromTrackIDs();
-    }
+    // }
     // return console.log(this.props.topTracks.length)
   }
 
@@ -49,12 +60,9 @@ class BarChart extends Component {
   */
 
   getArtistsFromTrackIDs() {
-    console.log('*** inside getArtistsFromTrackIDs ***')
-    console.log(this.props.topTracks)
-    console.log(this.props.topTracks.length)
     let artistIDs = [];
 
-    for (let i = 0; i < this.props.topTracks.length; i++) {
+    for (let i = 0; i < this.state.topTracks.length; i++) {
       $.get('http://localhost:3000/tracks/getArtistFromTrackID/'+this.props.topTracks[i].id)
       .done( artist => {
         console.log(artist);

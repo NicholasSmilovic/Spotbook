@@ -4,8 +4,6 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-// import SampleData from '../Charts/SampleChartData.jsx'
-
 import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
