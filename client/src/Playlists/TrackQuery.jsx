@@ -12,7 +12,7 @@ class TrackQuery extends Component{
   componentWillReceiveProps() {
     let accessToken = this.props.accessToken
     let query = this.props.query
-    fetch ("https://api.spotify.com/v1/search?q=" + query + "&type=track", {
+    fetch ("https://api.spotify.com/v1/search?q=" + query + " &type=track", {
       headers: {
         Authorization: "Bearer " + accessToken
       }

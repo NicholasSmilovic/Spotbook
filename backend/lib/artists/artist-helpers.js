@@ -18,9 +18,11 @@ module.exports = (knex) => {
       knex('artists').insert(newArtist)
         .then(() => {
           console.log(`${artistName} has beeen added to the database`)
+          resolve()
         })
-        .catch(() => {
+        .catch((e) => {
           console.log(`There was an error adding ${artistName} to the database`)
+          reject(e)
         })
     })
   }
@@ -164,8 +166,7 @@ module.exports = (knex) => {
         resolve(artist)
       })
       .catch(() => {
-
-        reject(artistToAdd)
+        resolve(artistToAdd)
       })
     })
   }

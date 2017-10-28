@@ -78,9 +78,7 @@ class App extends React.Component {
             userState: "verified",
             currentUser: data.id
           })
-
           this.setCurrentLocalUser();
-
           return true
         }
         this.setState({userState: "unverified"})
@@ -99,6 +97,21 @@ class App extends React.Component {
           })
       });
     }
+
+    // this.userCompatibility = () => {
+    //   console.log(this.state.currentUser)
+    //   console.log(this.state.allUsers[0].spotify_id)
+    //   this.state.allUsers.map((user) => {
+    //     if (user.spotify_id !== this.state.currentUser) {
+    //       console.log(user)
+    //     }
+    //       })
+    //       return true
+    //     }
+    //     this.setState({userState: "unverified"})
+    //     return false
+    //   })
+    // }
   }
 
   componentWillMount() {

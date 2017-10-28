@@ -5,9 +5,14 @@ h1 {
   color: $spotify-green;
 }
 
+input {
+  color:black;
+}
+
 body {
   color:white;
   background: linear-gradient(#c074b2,#8ab5e8) no-repeat center center fixed;
+  // background-color: $slightly-black;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -37,7 +42,7 @@ nav {
   background: transparent;
   overflow: hidden;
   padding: 1em;
-  // position: fixed;
+  position: sticky;
 
   .nav-link {
     font-family: $headerText;
@@ -115,9 +120,14 @@ nav {
     text-decoration: none;
   }
 
-  .flash-message{
+  .flash-message-success{
     text-align: center;
     background-color: $spotify-green
+  }
+
+  .flash-message-error{
+    text-align: center;
+    background-color: red
   }
 
   @media (min-width: 768px) {

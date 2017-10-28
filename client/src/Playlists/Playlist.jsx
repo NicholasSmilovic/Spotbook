@@ -8,6 +8,7 @@ class Playlist extends Component{
     super(props);
     this.state = {
       clicked: false,
+      update: false,
       flashMessage: false
     }
 
@@ -36,6 +37,14 @@ class Playlist extends Component{
     return string.split(":").join("%3A")
   }
 
+  removeFlashState = () => {
+    this.setState({ flashMessage: false })
+  }
+
+  rerendered = () =>{
+    this.setState({ update: false })
+  }
+
   addTrackToPlaylist = (track) =>{
     const message = "Added " + track.trackName + " to playlist " + this.props.playlist.name
     const spotifyURI = this.escapeColons(track.trackURI)
@@ -51,18 +60,20 @@ class Playlist extends Component{
       return response.json()
     })
     .then((data) => {
-      this.setState({ flashMessage: message })
+      this.setState({
+        flashMessage: message,
+        update: true
+       })
     })
-  }
-
-  removeFlashState = () => {
-    this.setState({ flashMessage: false })
   }
 
   render (){
     let renderSongs = null
     if(this.state.clicked){
-      renderSongs = <Songs playlist={this.props.playlist} accessToken={this.props.accessToken}/>
+      renderSongs = <Songs  playlist={this.props.playlist}
+                            accessToken={this.props.accessToken}
+                            rerendered = {this.rerendered}
+                            update = {this.state.update}/>
     }
 
     let flashMessage = null

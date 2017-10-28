@@ -28,9 +28,9 @@ module.exports = (knex) => {
           console.log(`${trackName} was added to the database`)
           resolve()
         })
-        .catch (() => {
+        .catch ((e) => {
           console.log(`There was an error adding ${trackName} to the database`)
-          reject()
+          reject(e)
         })
     })
   }
@@ -180,16 +180,34 @@ module.exports = (knex) => {
         resolve(track)
       })
       .catch(() => {
-
-        reject(trackToAdd)
+        resolve(trackToAdd)
       })
     })
   }
+
+  function getArtistFromTrack(id) {
+    return new Promise(function(resolve, reject) {
+      knex.select('artists.id').from('artists')
+        .innerJoin('artist_tracks', 'artist_id', 'artists.id')
+        .innerJoin('tracks', 'track_id', 'tracks.id')
+        .where('tracks.id', id)
+        .then((val) => {
+          resolve(val[0].id)
+        })
+        .catch(() => {
+          console.log(`There was an error retrieving track ${id}'s artist' from the database`)
+        })
+    })
+  }
+
+
+
   return {
     addTrack: addTrack,
     removeTrack: removeTrack,
     getTrackByID: getTrackByID,
     getTrackListeners: getTrackListeners,
-    getTrackBySpotifyID: getTrackBySpotifyID
+    getTrackBySpotifyID: getTrackBySpotifyID,
+    getArtistFromTrack: getArtistFromTrack
   }
 }

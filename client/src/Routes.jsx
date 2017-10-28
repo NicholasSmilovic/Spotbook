@@ -1,4 +1,4 @@
- import React from 'react'
+import React from 'react'
 import {
   HashRouter as Router,
   Route,
@@ -12,6 +12,7 @@ import Playlists from './Playlists/Playlists.jsx';
 import Landing from './Dashboard/Landing.jsx';
 import CurrentUser from './Dashboard/CurrentUser.jsx'
 import Navbar from './partials/Navbar.jsx'
+import ActivePlaylists from './Playlists/ActivePlaylists/ActivePlaylists.jsx'
 
 
 
@@ -45,13 +46,23 @@ class Routes extends React.Component {
       )
     }
 
+
+    const RenderActivePlaylists = () => {
+      return (
+        <ActivePlaylists
+          accessToken={this.props.accessToken}
+          currentUser={this.props.currentUser} />
+        )
+    }
+
     return (
       <Router>
         <div>
 
           <Navbar />
           <Route exact path="/" component={CurrentUserPage} />
-          <Route path="/playlists" component={PlaylistsPage}/>
+          <Route exact path="/activeplaylists" component={RenderActivePlaylists} />
+          <Route exact path="/playlists" component={PlaylistsPage}/>
 
           <Route exact path="/users" component={UsersExplorerPage}/>
           <Route path="/users/:id" component={User}/>
