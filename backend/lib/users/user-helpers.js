@@ -153,6 +153,33 @@ function getUserTopTracks(id) {
 //     console.log(e)
 //   })
 
+function getUserTopFullTracks(id) {
+  return new Promise(function(resolve, reject) {
+    knex.select('tracks').from('tracks')
+      .innerJoin('user_tracks', 'tracks.id', 'track_id')
+      .innerJoin('users', 'users.id', 'user_id')
+      .where('users.id', id)
+      .then((val) => {
+        let tracks = []
+        val.forEach((track => {
+          tracks.push(track)
+        }))
+        resolve(tracks)
+      })
+      .catch(() => {
+        console.log(`There was an error retrieving tracks by user id ${id} from the database`)
+      })
+  })
+}
+
+// getUserTopFullTracks(1)
+//   .then((response) => {
+//     console.log(response)
+//   })
+//   .catch((e) => {
+//     console.log(e)
+//   })
+
 function getUserTopAbsArtists(id) {
   return new Promise(function(resolve, reject) {
     knex.select('absolute_artists.id').from('absolute_artists')
@@ -173,6 +200,31 @@ function getUserTopAbsArtists(id) {
 }
 
 // getUserTopAbsArtists(2)
+//   .then((response) => {
+//     console.log(response)
+//   })
+//   .catch((e) => {console.log(e)})
+
+function getUserTopFullAbsArtists(id) {
+  return new Promise(function(resolve, reject) {
+    knex.select('absolute_artists.id').from('absolute_artists')
+      .innerJoin('user_absolute_artists', 'absolute_artists.id', 'absolute_artist_id')
+      .innerJoin('users', 'users.id', 'user_id')
+      .where('users.id', id)
+      .then((val) => {
+        let artists = []
+        val.forEach((artist => {
+          artists.push(artist)
+        }))
+        resolve(artists)
+      })
+      .catch(() => {
+        console.log(`There was an error retrieving artists by user id ${id} from the database`)
+      })
+  })
+}
+
+// getUserTopFullAbsArtists(2)
 //   .then((response) => {
 //     console.log(response)
 //   })
@@ -332,8 +384,10 @@ function getAllUsers() {
     getUserByID: getUserByID,
     getUserBySpotifyID: getUserBySpotifyID,
     getUserTopTracks: getUserTopTracks,
+    getUserTopFullTracks: getUserTopFullTracks,
     getUserTopTrackArtists: getUserTopTrackArtists,
     getUserTopAbsArtists: getUserTopAbsArtists,
+    getUserTopFullAbsArtists: getUserTopFullAbsArtists,
     getUserPlaylists: getUserPlaylists,
     getUserFollows: getUserFollows
     //follow user and unfollow user coming this week!
