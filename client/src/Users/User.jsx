@@ -10,29 +10,29 @@ class User extends Component{
       }
     }
   }
-  // getUser = () => {
-  //   return new Promise( (resolve, reject) => {
-  //     fetch(`http://localhost:3000/users/getUserByID/${this.props.match.params.id}`)
-  //       .then((response) => {
-  //         return response.json()
-  //       })
-  //       .then((data) => {
-  //         resolve(data)
-  //       })
-  //   })
-  // }
+  getUser = () => {
+    return new Promise( (resolve, reject) => {
+      fetch(`http://localhost:3000/users/getUserByID/${this.props.match.params.id}`)
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          resolve(data)
+        })
+    })
+  }
 
-  uCompleteMe = () => {
-    let you = this.state.user
-    let me = this.props.currentLocal
-    let yourTopTracks = []
-    let myTopTracks = []
-    $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
-      .done((response) => {
-        yourTopTracks = response
-        console.log(yourTopTracks)
+  // uCompleteMe = () => {
+  //   let you = this.state.user
+  //   let me = this.props.currentLocal
+  //   let yourTopTracks = []
+  //   let myTopTracks = []
+  //   $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
+  //     .done((response) => {
+  //       yourTopTracks = response
+  //       console.log(yourTopTracks)
 
-      })
+  //     })
       // .done(() => {
       //   return $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
       // })
@@ -43,15 +43,15 @@ class User extends Component{
       //   console.log('Me: ', myTopTracks, 'You:', yourTopTracks)
       // })
 
-  }
+  // }
 
   componentWillMount () {
-    // this.getUser().then( user => { this.setState({user}) })
+    this.getUser().then( user => { this.setState({user}) })
   }
 
 
   render (){
-    this.uCompleteMe()
+    // this.uCompleteMe()
 
     return(
         <div>
