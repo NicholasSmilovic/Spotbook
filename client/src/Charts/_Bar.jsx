@@ -14,7 +14,7 @@ class BarChart extends Component {
           label: 'Track Count',
           data: []
         }]
-      };
+      }
     }
   }
 
