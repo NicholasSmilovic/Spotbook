@@ -9,7 +9,6 @@ class User extends Component{
         image_urls: {}
       }
     }
-  console.log(this.props.currentLocal)
   }
   getUser = () => {
     return new Promise( (resolve, reject) => {
@@ -23,26 +22,34 @@ class User extends Component{
     })
   }
 
+ spliceTracks(yourTopTracks, myTopTracks) {
+    console.log('in the function')
+  }
+
   uCompleteMe = () => {
     let you = this.state.user
     let me = this.props.currentLocal
     let yourTopTracks = []
     let myTopTracks = []
     $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
-      .done((response) => {
-        yourTopTracks = response
+      .done((yourResponse) => {
+        yourTopTracks = yourResponse
       })
       .done(() => {
-        return $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
-      })
-      .done((response) => {
-        myTopTracks = response
-      })
-      .done(() => {
-        console.log('Me: ', myTopTracks, 'You:', yourTopTracks)
+        $.get(`http://localhost:3000/users/getUserTopTracks/${me.id}`)
+          .then((myResponse) => {
+            myTopTracks = myResponse
+          })
+          .then(() => {
+            spliceTracks(yourTopTracks, myTopTracks)
+          })
       })
 
+
   }
+
+
+
 
   componentWillMount () {
     this.getUser().then( user => { this.setState({user}) })

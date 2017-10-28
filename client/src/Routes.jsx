@@ -48,6 +48,7 @@ class Routes extends React.Component {
     const UserPage = (props) => {
       return (
         <User
+          {...props}
           currentLocal={this.props.currentLocal}
         />
       )
