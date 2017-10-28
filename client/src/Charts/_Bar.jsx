@@ -1,26 +1,53 @@
 import React, {Component} from 'react';
 import {Bar} from 'react-chartjs-2';
 
-class BarHandler extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      topTracks: [],
-      fiveArtists: []
-    }
-  }
-
-}
-
 class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      chartData:props.chartData
+      topTracks: [],
+      topArtists: [],
+      // chartData:props.chartData
+      chartData: {
+        labels: [],
+        datasets: [{
+          label: 'Track Count',
+          data: []
+        }]
+      };
     }
   }
 
-  render() {
+  componentWillMount() {
+    if(this.props.currentLocal)
+      this.getUserTopTrackArtists();
+      // console.log('Please wait.');
+    // } else {
+    // }
+  }
+
+  // get all top tracks artists
+  getUserTopTrackArtists() {
+    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
+    .done( artists => {
+      // for(let i = 0; i < artists.length; i++) {
+      //   $.get('http://localhost:3000/users/get')
+      // }
+      console.log(artists);
+    })
+    .fail( err => {
+      console.error(err);
+    })
+
+  }
+  // determine top 5 artists with most tracks
+
+  // get all tracks of these artists
+  // $.get()
+
+
+
+  render(){
 
     let fontColor = '#EEE';
 
@@ -81,3 +108,5 @@ class BarChart extends Component {
 }
 
 export default BarChart;
+// export default BarHandler;
+// export default {BarChart, BarHandler};

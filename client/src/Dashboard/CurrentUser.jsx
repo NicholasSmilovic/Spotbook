@@ -9,6 +9,7 @@ import SampleData from '../Charts/SampleChartData.jsx'
 import Prettiness from '../Charts/Prettiness.jsx'
 import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
+// import DataHandler from '../Charts/TopArtistData.jsx'
 
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
@@ -92,18 +93,19 @@ class CurrentUser extends Component {
       }
 
 
-      let userAudioTrackFeaturesAverages = { danceability: danceability/topTracks.length,
-                                             energy: energy/topTracks.length,
-                                             key: keyString,
-                                             loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
-                                             mode: modeString,
-                                             speechiness: speechiness/topTracks.length,
-                                             acousticness: acousticness/topTracks.length,
-                                             instrumentalness: instrumentalness/topTracks.length,
-                                             liveness: liveness/topTracks.length,
-                                             valence: valence/topTracks.length,
-                                             tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
-                                            }
+      let userAudioTrackFeaturesAverages = {
+        danceability: danceability/topTracks.length,
+        energy: energy/topTracks.length,
+        key: keyString,
+        loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
+        mode: modeString,
+        speechiness: speechiness/topTracks.length,
+        acousticness: acousticness/topTracks.length,
+        instrumentalness: instrumentalness/topTracks.length,
+        liveness: liveness/topTracks.length,
+        valence: valence/topTracks.length,
+        tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
+      }
       return userAudioTrackFeaturesAverages
     }
   }
@@ -112,6 +114,8 @@ class CurrentUser extends Component {
 
 
   componentWillMount(){
+
+
     this.getChartData();
 
     if (!this.props.currentLocal) {
@@ -122,7 +126,7 @@ class CurrentUser extends Component {
       this.getUserTopAbsArtists()
       this.getUserTopTracks()
 // ***** ***** ***** ***** *****
-      // this.testRoute();
+      // DataHandler();
 // ***** ***** ***** ***** *****
     }
   }
@@ -245,6 +249,7 @@ class CurrentUser extends Component {
         <div className='row'>
           <div className='col-md-6'>
             <BarChart
+              currentLocal={this.props.currentLocal}
               chartData={this.state.chartData}
 
               title="Left Chart"
