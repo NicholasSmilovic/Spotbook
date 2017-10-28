@@ -9,19 +9,18 @@ class User extends Component{
         image_urls: {}
       }
     }
-  console.log(this.props.currentLocal)
   }
-  getUser = () => {
-    return new Promise( (resolve, reject) => {
-      fetch(`http://localhost:3000/users/getUserByID/${this.props.match.params.id}`)
-        .then((response) => {
-          return response.json()
-        })
-        .then((data) => {
-          resolve(data)
-        })
-    })
-  }
+  // getUser = () => {
+  //   return new Promise( (resolve, reject) => {
+  //     fetch(`http://localhost:3000/users/getUserByID/${this.props.match.params.id}`)
+  //       .then((response) => {
+  //         return response.json()
+  //       })
+  //       .then((data) => {
+  //         resolve(data)
+  //       })
+  //   })
+  // }
 
   uCompleteMe = () => {
     let you = this.state.user
@@ -31,21 +30,23 @@ class User extends Component{
     $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
       .done((response) => {
         yourTopTracks = response
+        console.log(yourTopTracks)
+
       })
-      .done(() => {
-        return $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
-      })
-      .done((response) => {
-        myTopTracks = response
-      })
-      .done(() => {
-        console.log('Me: ', myTopTracks, 'You:', yourTopTracks)
-      })
+      // .done(() => {
+      //   return $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
+      // })
+      // .done((response) => {
+      //   myTopTracks = response
+      // })
+      // .done(() => {
+      //   console.log('Me: ', myTopTracks, 'You:', yourTopTracks)
+      // })
 
   }
 
   componentWillMount () {
-    this.getUser().then( user => { this.setState({user}) })
+    // this.getUser().then( user => { this.setState({user}) })
   }
 
 
