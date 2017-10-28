@@ -10,8 +10,6 @@ import UserShortProfile from './UserShortProfile.jsx'
 class UsersExplorer extends Component{
 
   render (){
-    console.log(this.props.allUsers)
-
     const listUsers = this.props.allUsers.map((user, index) => {
       return <UserShortProfile key={user.id} user={user}/>
     })

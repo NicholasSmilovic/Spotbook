@@ -21,6 +21,20 @@ module.exports = (DataHelpers) => {
 
   });
 
+  router.get('/getArtistFromTrackID/:id', (req, res) => {
+
+    let track_id = req.params.id;
+
+    DataHelpers.trackHelpers.getTrackByID(track_id)
+    .then((artist) => {
+      res.send(artist)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+
+  });
+
 
 
   return router;
