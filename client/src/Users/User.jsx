@@ -22,8 +22,31 @@ class User extends Component{
     })
   }
 
- spliceTracks(yourTopTracks, myTopTracks) {
-    console.log('in the function')
+  findUncommonTracks = (y, m) => {
+    let uncommonTracks = []
+    uncommonTracks = this.loops(y, m, uncommonTracks)
+    uncommonTracks = this.loops(m, y, uncommonTracks)
+    return uncommonTracks
+  }
+
+  loops = (primary, secondary, uncommonTracks) => {
+    for (let i = 0; i < primary.length; i++) {
+      let common = false
+      for (let j = 0; j < secondary.length; j++) {
+        if (primary[i] === secondary[j]) {
+          common = true
+          break
+        }
+        if (secondary[j] > primary[i]) {
+          break
+        }
+      }
+      if (!common) {
+        uncommonTracks.push(primary[i])
+      }
+    }
+    return uncommonTracks
+
   }
 
   uCompleteMe = () => {
@@ -41,7 +64,19 @@ class User extends Component{
             myTopTracks = myResponse
           })
           .then(() => {
-            spliceTracks(yourTopTracks, myTopTracks)
+            let playlist = []
+            let playlistPool = this.findUncommonTracks(yourTopTracks, myTopTracks)
+            for (let i = 0; i < 20; i++) {
+              playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPool.length - 1))])
+            }
+            console.log(`Your playlist with ${you.display_name} is...`)
+            playlist.map(track => {
+              return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
+                .done((response) => {
+                  console.log(response.track_name)
+                })
+            })
+
           })
       })
 
