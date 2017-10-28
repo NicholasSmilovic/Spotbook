@@ -46,6 +46,18 @@ module.exports = (DataHelpers) => {
     });
   });
 
+  router.get('/getUserTopFullTracks/:id', (req,res) => {
+      let user_id = req.params.id;
+
+      DataHelpers.userHelpers.getUserTopFullTracks(user_id)
+      .then((tracks) => {
+        res.send(tracks)
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    });
+
   router.get('/getUserTopTrackArtists/:id', (req, res) => {
     let user_id = req.params.id;
 
