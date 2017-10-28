@@ -207,7 +207,7 @@ function getUserTopAbsArtists(id) {
 
 function getUserTopFullAbsArtists(id) {
   return new Promise(function(resolve, reject) {
-    knex.select('absolute_artists.id').from('absolute_artists')
+    knex.select('absolute_artists').from('absolute_artists')
       .innerJoin('user_absolute_artists', 'absolute_artists.id', 'absolute_artist_id')
       .innerJoin('users', 'users.id', 'user_id')
       .where('users.id', id)
