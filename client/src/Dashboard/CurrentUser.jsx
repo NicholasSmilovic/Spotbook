@@ -197,7 +197,7 @@ class CurrentUser extends Component {
 
       $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
-        console.log(chartDetails);
+        // console.log(chartDetails[0][1].length);
       });
 
     })
@@ -245,7 +245,8 @@ class CurrentUser extends Component {
 
     // console.log(finalTally);
 
-    return [finalTally, tally];
+    // return [finalTally, tally];
+    return finalTally;
   }
 
 
