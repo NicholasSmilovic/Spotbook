@@ -392,16 +392,10 @@ class CurrentUser extends Component {
   }
 
 
-
-  // handleChartData(){
-  //   let chart = Prettiness(this.state.chartData, Palette().cool_10);
-  //   this.setState({ chartData: chart.data });
-  // }
-
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      let label = this.state.chartData.labels[index];
+      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
       let insightData = `INDEX: ${index} => ${label}`;
 
       this.setState({ insightData: insightData });
@@ -457,7 +451,6 @@ class CurrentUser extends Component {
         <div className='row'>
           <div className='col-md-6'>
             <BarChart
-                currentLocal={this.props.currentLocal}
                 chartData={data}
 
                 title={title}
