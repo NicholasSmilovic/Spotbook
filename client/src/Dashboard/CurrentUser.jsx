@@ -20,7 +20,7 @@ class CurrentUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // chartData:{},
+      chartData:{},
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
@@ -197,7 +197,7 @@ class CurrentUser extends Component {
 
       $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
-        // console.log(chartDetails[0][1].length);
+        console.log(chartDetails);
       });
 
     })
