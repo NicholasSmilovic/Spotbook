@@ -24,6 +24,7 @@ class CurrentUser extends Component {
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
+      topArtistIDs:[],
       userAudioTrackFeatures: {},
 
       compatibleUsers: []
@@ -168,7 +169,7 @@ class CurrentUser extends Component {
     .done( topTrackIDs => {
 
       let artistIDs = [];
-
+      let artistByTrack;
       for (let i = 0; i < topTrackIDs.length; i++) {
 
 // GET TRACK DETAILS BY TRACK_ID
@@ -184,20 +185,24 @@ class CurrentUser extends Component {
         })
 
 // GET ARTIST_ID BY TRACK_ID
-        $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
         .done( result => {
+          let artistIDs = this.state.topArtistIDs;
           artistIDs.push(result.id);
+          this.setState({ topArtistIDs: artistIDs })
           // console.log(result.id)
         })
         .fail( err => {
           console.error(err);
         })
       }
+
+      $.when(artistByTrack).done( () => {
+        this.sortArtists(this.state.topArtistIDs);
+      });
 // SORTING BY ARTIST_ID
-      console.log(artistIDs)
       // console.log(artistIDs[99])
       // if(artistIDs.length > 0)
-      //   this.sortArtists(artistIDs);
 
 
     })
