@@ -198,6 +198,15 @@ class CurrentUser extends Component {
       $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
         console.log(chartDetails);
+
+        $.get('http://localhost:3000/artists/getArtistByID/'+1)
+        .done( result => {
+          console.log(result);
+        })
+        .fail( err => {
+          console.error(err);
+        })
+
       });
 
     })
