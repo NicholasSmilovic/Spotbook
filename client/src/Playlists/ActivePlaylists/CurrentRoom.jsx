@@ -4,7 +4,7 @@ import StickySideBar from "../StickySideBar.jsx"
 
 class Room extends Component{
   leaveRoom = () =>{
-    this.props.leaveRoom("", "")
+    this.props.leaveRoom()
   }
   render (){
     return(

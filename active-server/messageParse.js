@@ -11,10 +11,14 @@ const respondWith = (reciever, type, data, error) => {
 
 module.exports = (message, ws, callback) =>{
   console.log(message.type)
+
   switch(message.type){
+
     case "getPlaylists":
       callback(db.getAllPlaylists(), "all", "playlists", null)
       break;
+
+
     case "startPlaylist":
       db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error) => {
         console.log("error: ", error)
@@ -29,8 +33,13 @@ module.exports = (message, ws, callback) =>{
           error: null
         }));
         callback(db.getAllPlaylists(), "all", "playlists", error);
+        callback(null, null, null, null, ()=> {
+          return message.playlist.name
+        })
       });
       break;
+
+
     case "joinPlaylist":
       db.verify(message.playlist, (data, error) => {
         if(error) {
@@ -48,9 +57,13 @@ module.exports = (message, ws, callback) =>{
           data: data,
           error: null
         }));
-        return data.name
+        callback(null, null, null, null, () => {
+          return data.name
+        })
       })
       break;
+
+
     case "addSongToPlaylist":
       db.verify(message.credentials, (data, error) => {
         if(error) {
@@ -75,6 +88,16 @@ module.exports = (message, ws, callback) =>{
           callback(null, playlistName, "update", null)
         })
       })
+      break;
+
+
+    case "leaveRoom":
+      callback(null, null, null, null, () => {
+        return ""
+      })
+      break;
+
+
     default:
       return
   }

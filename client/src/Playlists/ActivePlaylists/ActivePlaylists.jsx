@@ -38,6 +38,11 @@ class ActivePlaylists extends Component{
     })
   }
 
+  _leavePlaylist = () => {
+    this._joinPlaylist({name:"", password:"", spotifyObject: ""})
+    this.webSocket.leaveRoom()
+  }
+
   _attemptJoin = (name, password) => {
     this.webSocket.verify({ name:name, password:password })
   }
@@ -111,7 +116,7 @@ class ActivePlaylists extends Component{
         <CurrentRoom
           data = {this.state.currentPlaylistData}
           room = {this.state.currentPlaylist}
-          leaveRoom = {this._joinPlaylist}
+          leaveRoom = {this._leavePlaylist}
           currentUser = {this.props.currentUser}
           accessToken = {this.props.accessToken}
           addSong = {this.addSongToPlaylist}

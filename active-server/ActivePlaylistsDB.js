@@ -1,68 +1,6 @@
 var request = require('request');
 
-let playlists ={
-  "activeplaylists1":{
-    userSpotifyId: "nicholas_smilovic",
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "activeplaylists2":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "activeplaylists3":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "asd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "asd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "s;sdjflksd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  }
-}
+let playlists = require('./starterDB.js')
 
 const getSecurePlaylist = (name) =>{
   let obj = {
@@ -78,7 +16,8 @@ const getAllPlaylists = () => {
   for(let playlist in playlists){
     let obj = {
       name:playlist,
-      spotifyObject:playlists[playlist].spotifyObject
+      spotifyObject:playlists[playlist].spotifyObject,
+      users:playlists[playlist].users
     }
     arrayOfPlaylists.push(obj)
   }
@@ -116,7 +55,8 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
       name: playlist.name,
       password: playlist.password,
       spotifyObject: body,
-      accessToken
+      accessToken: accessToken,
+      users:[]
     }
     callback()
   })
@@ -163,10 +103,25 @@ const verify = (playlist, callback) => {
   callback(null, "invalid credentials")
 }
 
+const updateRoomPopulations = (sockets, callback) => {
+  for(playlist in playlists){
+    playlists[playlist].users = []
+  }
+  for(let socket in sockets) {
+    console.log(sockets[socket].playlist)
+    let playlistName = sockets[socket].playlist
+  if (playlists[playlistName]) {
+    playlists[playlistName].users.push(socket)
+  }
+  callback()
+}
+}
+
 module.exports = {
   getAllPlaylists: getAllPlaylists,
   addNewPlaylist: addNewPlaylist,
   verify: verify,
   getSecurePlaylist: getSecurePlaylist,
-  addSongToPlaylist: addSongToPlaylist
+  addSongToPlaylist: addSongToPlaylist,
+  updateRoomPopulations: updateRoomPopulations
 }
