@@ -15,15 +15,14 @@ module.exports = (message, ws, callback) =>{
   switch(message.type){
 
     case "getPlaylists":
-      callback(db.getAllPlaylists(), "all", "playlists", null)
+      callback(db.getAllPlaylists(), "all", "playlists", null, ws)
       break;
 
 
     case "startPlaylist":
       db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error) => {
-        console.log("error: ", error)
         if(error){
-          callback(null, null, null, error)
+          callback(null, null, null, error, ws)
           return;
         }
         ws.send(JSON.stringify({
@@ -32,8 +31,8 @@ module.exports = (message, ws, callback) =>{
           data: db.getSecurePlaylist(message.playlist.name),
           error: null
         }));
-        callback(db.getAllPlaylists(), "all", "playlists", error);
-        callback(null, null, null, null, ()=> {
+        callback(db.getAllPlaylists(), "all", "playlists", error, ws);
+        callback(null, null, null, null, ws, ()=> {
           return message.playlist.name
         })
       });
@@ -57,7 +56,7 @@ module.exports = (message, ws, callback) =>{
           data: data,
           error: null
         }));
-        callback(null, null, null, null, () => {
+        callback(null, null, null, null, ws, () => {
           return data.name
         })
       })
@@ -85,14 +84,14 @@ module.exports = (message, ws, callback) =>{
             }));
             return
           }
-          callback(null, playlistName, "update", null)
+          callback(null, playlistName, "update", null, ws)
         })
       })
       break;
 
 
     case "leaveRoom":
-      callback(null, null, null, null, () => {
+      callback(null, null, null, null, ws, () => {
         return ""
       })
       break;

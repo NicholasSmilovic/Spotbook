@@ -15,29 +15,30 @@ const sendUpdate = (callback) => {
 }
 
 const wss = new SocketServer({ server });
+wss.broadcast = function broadcast(data, reciever, type, error, ws, callback) {
+  message = {
+    reciever: reciever,
+    type: type,
+    data: data,
+    error: error
+  }
+  wss.clients.forEach(function each(client){
+    if(client.readyState === ws.OPEN){
+      client.send(JSON.stringify(message))
+    }
+  })
+  if(callback) {
+    sockets[ws.id].playlist = callback()
+    sendUpdate(() => {
+      messageParse({type: "getPlaylists"}, ws, wss.broadcast)
+    })
+  }
+}
+
 wss.on('connection', (ws) => {
   ws.id = uuidv1()
   console.log("Client Connected: ", ws.id)
   sockets[ws.id] = ws
-  wss.broadcast = function broadcast(data, reciever, type, error, callback) {
-    message = {
-      reciever: reciever,
-      type: type,
-      data: data,
-      error: error
-    }
-    wss.clients.forEach(function each(client){
-      if(client.readyState === ws.OPEN){
-        client.send(JSON.stringify(message))
-      }
-    })
-    if(callback) {
-      sockets[ws.id].playlist = callback()
-      sendUpdate(() => {
-        messageParse({type: "getPlaylists"}, null, wss.broadcast)
-      })
-    }
-  }
   ws.on('message', (data) => {
     // console.log("recieved message")
     // console.log(data)
@@ -48,7 +49,7 @@ wss.on('connection', (ws) => {
     console.log('Client disconnected id: ', ws.id)
     delete sockets[ws.id]
     sendUpdate(() => {
-      messageParse({type: "getPlaylists"}, null, wss.broadcast)
+      messageParse({type: "getPlaylists"}, ws, wss.broadcast)
     })
   });
 });

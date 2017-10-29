@@ -20,7 +20,7 @@ class ActivePlaylist extends Component{
     return(
       <div className = "row active-playlists">
         <div className = "active-list-header">
-          {this.props.playlist.name}
+          {this.props.playlist.name} (population: {this.props.playlist.users.length})
         </div>
         <div className = "join-active-playlist">
             <label> Password: </label>

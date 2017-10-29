@@ -4,6 +4,7 @@ module.exports = (stateOperations, response) => {
   switch (response.type) {
     case "playlists":
       stateOperations.newPlaylists(response.data)
+      stateOperations.update(response.reciever)
       return;
     case "approvedJoin":
       stateOperations.flashMessage("Joined Room")

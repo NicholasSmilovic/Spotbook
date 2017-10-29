@@ -66,7 +66,7 @@ class ActivePlaylists extends Component{
   }
 
   _update = (name) => {
-    if(name === this.state.currentPlaylist){
+    if(name === this.state.currentPlaylist || name === "all"){
       this.setState({ update: true })
     }
   }
@@ -95,19 +95,19 @@ class ActivePlaylists extends Component{
     if(!(this.state.currentPlaylist)) {
       return(
         <div>
-        <Flashes removeFlashState = {this._flashMessage} error = {this.state.flash.error} content = {this.state.flash.data}/>
-      <div className = "row text-center">
-          <NewPlaylistForm
-            handleFormSubmit = {this.handleFormSubmit}
-            newPlaylistName = {this.state.newPlaylistName}
-            newPlaylistPassword = {this.state.newPlaylistPassword}
-            />
-          <JoinPlaylist
-            playlists={this.state.playlists}
-            attemptJoin={this._attemptJoin}
-            />
-      </div>
-      </div>
+          <Flashes removeFlashState = {this._flashMessage} error = {this.state.flash.error} content = {this.state.flash.data}/>
+          <div className = "row text-center">
+            <NewPlaylistForm
+              handleFormSubmit = {this.handleFormSubmit}
+              newPlaylistName = {this.state.newPlaylistName}
+              newPlaylistPassword = {this.state.newPlaylistPassword}
+              />
+            <JoinPlaylist
+              playlists={this.state.playlists}
+              attemptJoin={this._attemptJoin}
+              />
+          </div>
+        </div>
       )
     }
     return(

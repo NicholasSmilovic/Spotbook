@@ -4,10 +4,10 @@ let playlists = require('./starterDB.js')
 
 const getSecurePlaylist = (name) =>{
   let obj = {
-      name: name,
-      spotifyObject:playlists[name].spotifyObject,
-      password: playlists[name].password
-    }
+    name: name,
+    spotifyObject:playlists[name].spotifyObject,
+    password: playlists[name].password
+  }
   return obj
 }
 
@@ -85,7 +85,6 @@ const addSongToPlaylist =  (playlist, track, callback) => {
       callback(null, "bad request to spotify")
       return
     }
-    console.log("body: ", response.toJSON())
     callback(playlist.name)
   })
 
@@ -108,13 +107,15 @@ const updateRoomPopulations = (sockets, callback) => {
     playlists[playlist].users = []
   }
   for(let socket in sockets) {
-    console.log(sockets[socket].playlist)
     let playlistName = sockets[socket].playlist
-  if (playlists[playlistName]) {
-    playlists[playlistName].users.push(socket)
+    console.log("inside update server function")
+    console.log(sockets[socket].id)
+    console.log(sockets[socket].playlist)
+    if (playlists[playlistName]) {
+      playlists[playlistName].users.push(socket)
+    }
   }
   callback()
-}
 }
 
 module.exports = {
