@@ -213,11 +213,13 @@ class CurrentUser extends Component {
 /* artist detail fetching, associated track fetching, setting */
   setChartDataRaw(highLevelDetails) {
     for (let i = 0; i < highLevelDetails.length; i++) {
-      let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+highLevelDetails[i][0])
+      let artistID = highLevelDetails[i][0];
+      let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
           .done( result => {
             let chartDataRaw = this.state.chartDataRaw;
             chartDataRaw.push({artist: result, tracks: []})
             // console.log(result);
+            this.setState(chartDataRaw);
           })
           .fail( err => {
             console.error(err);
@@ -225,7 +227,14 @@ class CurrentUser extends Component {
 
       $.when(setArtist).done( () => {
         for (let j = 0; j < highLevelDetails[i][1].length; j++) {
-          console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
+          // console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
+          let trackID = highLevelDetails[i][1][j];
+          $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+          .done( result => {
+            let chartDataRaw = this.state.chartDataRaw;
+            chartDataRaw[i]['tracks'].push(result);
+            this.setState(chartDataRaw);
+          })
         }
       })
     }
