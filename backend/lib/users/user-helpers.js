@@ -155,7 +155,7 @@ function getUserTopTracks(id) {
 
 function getUserTopFullTracks(id) {
   return new Promise(function(resolve, reject) {
-    knex.select('tracks.id','track_name','spotify_id','danceability','energy','key','loudness').from('tracks')
+    knex.select('tracks.id','tracks.track_name','tracks.spotify_id','tracks.danceability','tracks.energy','tracks.key','tracks.loudness','tracks.mode','tracks.speechiness','tracks.acousticness','tracks.instrumentalness','tracks.liveness','tracks.valence','tracks.tempo').from('tracks')
       .innerJoin('user_tracks', 'tracks.id', 'track_id')
       .innerJoin('users', 'users.id', 'user_id')
       .where('users.id', id)
@@ -207,7 +207,7 @@ function getUserTopAbsArtists(id) {
 
 function getUserTopFullAbsArtists(id) {
   return new Promise(function(resolve, reject) {
-    knex.select('absolute_artists').from('absolute_artists')
+    knex.select('absolute_artists.id', 'absolute_artists.artist_name', 'absolute_artists.genres', 'absolute_artists.spotify_id').from('absolute_artists')
       .innerJoin('user_absolute_artists', 'absolute_artists.id', 'absolute_artist_id')
       .innerJoin('users', 'users.id', 'user_id')
       .where('users.id', id)
