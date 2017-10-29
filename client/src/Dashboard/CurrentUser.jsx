@@ -247,15 +247,25 @@ class CurrentUser extends Component {
 
     tally.splice(5);
 
+    let finalTally = [];
+
+    for (let i = 0; i < tally.length; i++) {
+      // finalTally.push({(tally[i][0].toString()): null})
+      finalTally.push([tally[i][0], []])
+    }
+
+    // console.log(finalTally);
+
     for (let i = 0; i < sorted.length; i++) {
-      for (let j = 0; j < tally.length; j++) {
-        if (sorted[i][0] === tally[j][0]) {
-          console.log('HI')
+      for (let j = 0; j < finalTally.length; j++) {
+        if (sorted[i][0] === finalTally[j][0]) {
+          // console.log('HI')
+          finalTally[j][1].push(sorted[i][1]);
         }
       }
     }
 
-    console.log(tally);
+    console.log(finalTally);
 
 
   }
