@@ -4,12 +4,9 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-import SampleData from '../Charts/SampleChartData.jsx'
-
-import Prettiness from '../Charts/Prettiness.jsx'
-import Palette from '../Charts/Palette.jsx'
+// import Prettiness from '../Charts/Prettiness.jsx'
+// import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
-// import DataHandler from '../Charts/TopArtistData.jsx'
 
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
@@ -23,7 +20,19 @@ class CurrentUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chartData:{},
+      chartData: null,
+      chartDataRaw: null,
+
+      // chartData:{
+      //   labels: [],
+      //   datasets: [{
+      //     label: 'Tracks',
+      //     data: []
+      //   }]
+      // },
+
+      // chartDataRaw: [],
+
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
@@ -292,7 +301,7 @@ class CurrentUser extends Component {
   componentWillMount(){
 
 
-    this.getChartData();
+    // this.getChartData();
 
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
@@ -307,27 +316,14 @@ class CurrentUser extends Component {
     })
 
 
-// ***** ***** ***** ***** *****
-      // DataHandler();
-// ***** ***** ***** ***** *****
     }
   }
 
-  componentDidMount() {
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log(this.state.chartData)
+  // }
 
-  }
 
-
-  testRoute() {
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-    // $.get('http://localhost:3000/users/getUserTopTrackArtists/'+1)
-    .done( topTrackArtists => {
-      console.log(topTrackArtists);
-    })
-    .fail( err => {
-      console.error(err);
-    })
-  }
 
 
   // CURRENT USER
@@ -335,7 +331,12 @@ class CurrentUser extends Component {
     return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
 
+      let artistIDs = [];
+      let artist_track = [];
+      let artistByTrack;
       for (let i = 0; i < topTrackIDs.length; i++) {
+
+// GET TRACK DETAILS BY TRACK_ID
         $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
           let currentUserTopTracks = this.state.topTracks;
@@ -346,12 +347,143 @@ class CurrentUser extends Component {
         .fail( err => {
           console.error(err);
         })
+
+// GET ARTIST_ID BY TRACK_ID
+        artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        .done( result => {
+          artistIDs.push(result.id);
+          artist_track.push([result.id, topTrackIDs[i].id])
+        })
+        .fail( err => {
+          console.error(err);
+        })
       }
+
+      let chartDetails = $.when(artistByTrack).done( () => {
+        let chartDetails = this.sortArtists(artist_track);
+        // console.log(chartDetails);
+        this.setChartDataRaw(chartDetails);
+        // console.log(this.state.chartDataRaw)
+
+      });
+
+      $.when(chartDetails).done( () => {
+
+        // console.log(this.state.chartData);
+      })
 
     })
     .fail( err => {
       console.error(err);
     });
+  }
+
+/* artist detail fetching, associated track fetching, setting */
+  setChartDataRaw(highLevelDetails) {
+
+    return new Promise( (resolve, reject) => {
+
+    let chartData = {
+        labels: [],
+        datasets: [{
+          label: 'Tracks',
+          data: []
+        }]
+      };
+
+    let chartDataRaw = [];
+
+      for (let i = 0; i < highLevelDetails.length; i++) {
+        let artistID = highLevelDetails[i][0];
+        let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
+            .done( result => {
+
+              // let chartData = this.state.chartData;
+              if(result.artist_name.length > 15) {
+                chartData['labels'].push(result.artist_name.slice(0,15)+'...')
+              } else {
+                chartData['labels'].push(result.artist_name)
+              }
+              chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+              // this.setState({chartData});
+
+              // let chartDataRaw = this.state.chartDataRaw;
+              chartDataRaw.push({artist: result, tracks: []})
+              // this.setState({chartDataRaw});
+            })
+            .fail( err => {
+              console.error(err);
+            })
+
+        $.when(setArtist).done( () => {
+          for (let j = 0; j < highLevelDetails[i][1].length; j++) {
+            // console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
+            let trackID = highLevelDetails[i][1][j];
+            $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+            .done( result => {
+              // let chartDataRaw = this.state.chartDataRaw;
+              chartDataRaw[i]['tracks'].push(result);
+              // this.setState({chartDataRaw});
+            })
+          }
+        })
+      }
+      setTimeout(() => resolve([chartData, chartDataRaw]), 100);
+      // resolve([chartData, chartDataRaw]);
+
+    })
+    .then( result => {
+      // console.log(result[0].labels.length)
+      // console.log(result[0].labels)
+      // console.log(result[1])
+      this.setState({chartData: result[0]})
+      this.setState({chartDataRaw: result[1]})
+    })
+    // console.log(chartData)
+    // console.log(chartDataRaw)
+    // console.log('***** inside setChartDataRaw() *****')
+
+  }
+
+/* artist sorting, filtering, and top five-ing */
+  sortArtists(artist_track) {
+    let sorted = artist_track.sort();
+    let tally = [];
+    let count = 1;
+
+    for (let i = 0; i < sorted.length; i++) {
+      let artist = [sorted[i][0], count];
+      if (sorted[i+1] === undefined) {
+        break;
+      } else if (sorted[i][0] === sorted[i+1][0]) {
+        count++;
+      } else {
+        tally.push(artist)
+        count = 1;
+      }
+    }
+
+    tally.sort( (a,b) => {
+      return b[1] - a[1];
+    });
+
+    tally.splice(5);
+
+    let finalTally = [];
+
+    for (let i = 0; i < tally.length; i++) {
+      finalTally.push([tally[i][0], []])
+    }
+
+    for (let i = 0; i < sorted.length; i++) {
+      for (let j = 0; j < finalTally.length; j++) {
+        if (sorted[i][0] === finalTally[j][0]) {
+          finalTally[j][1].push(sorted[i][1]);
+        }
+      }
+    }
+
+    return finalTally;
   }
 
 
@@ -407,16 +539,10 @@ class CurrentUser extends Component {
   // }
 
 
-
-  getChartData(){
-    let chart = Prettiness(SampleData(), Palette().cool_10);
-    this.setState({ chartData: chart.data });
-  }
-
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      let label = this.state.chartData.labels[index];
+      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
       let insightData = `INDEX: ${index} => ${label}`;
 
       this.setState({ insightData: insightData });
@@ -434,6 +560,18 @@ class CurrentUser extends Component {
       user_img = this.props.currentLocal.image_urls.image;
       user_name = this.props.currentLocal.display_name
     }
+
+    let title = 'Loading Your Top Artist Data...'
+    let data = {
+      labels: ['','','','',''],
+        datasets:[{ label:'Loading...', data:[0,0,0,0,0]}]
+      };
+
+    if(this.state.chartData) {
+      data = this.state.chartData
+      title = 'Your Top Artists'
+    }
+
 
     return(
       <div>
@@ -460,15 +598,14 @@ class CurrentUser extends Component {
         <div className='row'>
           <div className='col-md-6'>
             <BarChart
-              currentLocal={this.props.currentLocal}
-              chartData={this.state.chartData}
+                chartData={data}
 
-              title="Left Chart"
-              y_label=""
-              x_label="X-AXIS"
+                title={title}
+                y_label=""
+                x_label=""
 
-              handleClick={ event => this.handleClickElement(event) }
-            />
+                handleClick={ event => this.handleClickElement(event) }
+              />
           </div>
 
           <div className='col-md-6'>

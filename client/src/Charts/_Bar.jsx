@@ -1,29 +1,76 @@
 import React, {Component} from 'react';
 import {Bar} from 'react-chartjs-2';
 
+import Prettiness from '../Charts/Prettiness.jsx'
+import Palette from '../Charts/Palette.jsx'
+
 class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      topTracks: [],
-      topArtists: [],
-      // chartData:props.chartData
-      chartData: {
-        labels: [],
-        datasets: [{
-          label: 'Track Count',
-          data: []
+      chartData: this.props.chartData,
+
+      chartDataSample: {
+        labels: [
+        'Carlo',
+        'Nich',
+        'Brandon',
+        'Bryce',
+        'Dummy_1',
+        ],
+        datasets:[{
+          label:'Stuff',
+          data:[50,80,70,100,110],
         }]
       }
+
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps !== this.props) {
+      this.setState({chartData: nextProps.chartData});
+      this.handleChartData();
     }
   }
 
   componentWillMount() {
-    if(this.props.currentLocal)
-      this.getUserTopTrackArtists();
-      // console.log('Please wait.');
-    // } else {
-    // }
+    // console.log('willMount:')
+    // console.log($.isArray(this.state.chartData.labels))
+    // console.log(this.state.chartDataSample)
+    // console.log(this.state.chartData.datasets)
+    // console.log(this.state.chartData.labels)
+
+    if(!this.props.chartData) {
+      // console.log('componentWillMount: Please wait.')
+    } else {
+      // console.log(this.props.chartData.labels.length)
+      // console.log(this.props.chartData.labels.length)
+    // console.log(this.state.chartData.labels.length)
+      // this.printForNoReason(this.props.chartData)
+    }
+
+  }
+
+  componentDidMount() {
+    this.handleChartData();
+
+    // console.log(this.props.chartData.labels.length)
+    // console.log(this.state.chartDataSample)
+    // console.log(this.state.chartData);
+  }
+
+  printForNoReason(stuff) {
+    console.log(stuff);
+  }
+
+  handleChartData(){
+    let chart = Prettiness(this.state.chartData, Palette().cool_10);
+    this.setState({ chartData: chart.data });
+
+    // let chartSample = Prettiness(this.state.chartDataSample, Palette().cool_10);
+    // this.setState({ chartDataSample: chartSample.data });
+
   }
 
   /*
@@ -36,24 +83,7 @@ class BarChart extends Component {
   6. GET INFO OF TRACKS IN ARRAYS ASSOCIATED WITH TOP 5 ARTISTS AND STORE IN STATE
   */
 
-  // get all top tracks artists
-  // getUserTopTrackArtists() {
-  //   $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-  //   .done( artists => {
-  //     // for(let i = 0; i < artists.length; i++) {
-  //     //   $.get('http://localhost:3000/users/get')
-  //     // }
-  //     console.log(artists);
-  //   })
-  //   .fail( err => {
-  //     console.error(err);
-  //   })
 
-  // }
-  // determine top 5 artists with most tracks
-
-  // get all tracks of these artists
-  // $.get()
 
 
 
@@ -61,11 +91,13 @@ class BarChart extends Component {
 
     let fontColor = '#EEE';
 
+    // console.log(this.props.chartData)
+
     return (
       <div className="chart">
 
         <Bar
-          data={this.state.chartData}
+          data={this.props.chartData}
           getElementAtEvent = {this.props.handleClick}
           options={{
             title:{

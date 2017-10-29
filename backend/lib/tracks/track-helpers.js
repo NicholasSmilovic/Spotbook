@@ -186,16 +186,20 @@ module.exports = (knex) => {
   }
 
   function getArtistFromTrack(id) {
+    // console.log('***** INSIDE HELPER *****')
     return new Promise(function(resolve, reject) {
       knex.select('artists.id').from('artists')
         .innerJoin('artist_tracks', 'artist_id', 'artists.id')
         .innerJoin('tracks', 'track_id', 'tracks.id')
         .where('tracks.id', id)
+        // .then((val) => {
+        //   resolve(val[0].id)
+        // })
         .then((val) => {
-          resolve(val[0].id)
+          resolve(val[0])
         })
         .catch(() => {
-          console.log(`There was an error retrieving track ${id}'s artist' from the database`)
+          console.log(`\nThere was an error retrieving track ${id}'s artist' from the database\n`)
         })
     })
   }
