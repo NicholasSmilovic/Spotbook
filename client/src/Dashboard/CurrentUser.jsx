@@ -20,7 +20,14 @@ class CurrentUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chartData:{},
+      chartData:{
+        labels: [],
+        datasets: [{
+          label: 'Tracks',
+          data: []
+        }]
+      },
+
       chartDataRaw: [],
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
@@ -200,7 +207,7 @@ class CurrentUser extends Component {
         let chartDetails = this.sortArtists(artist_track);
         console.log(chartDetails);
         this.setChartDataRaw(chartDetails);
-
+        // console.log(this.state.chartDataRaw)
 
       });
 
@@ -216,10 +223,16 @@ class CurrentUser extends Component {
       let artistID = highLevelDetails[i][0];
       let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
           .done( result => {
+
+            let chartData = this.state.chartData;
+            chartData['labels'].push(result.artist_name)
+            chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+            this.setState({chartData});
+
             let chartDataRaw = this.state.chartDataRaw;
             chartDataRaw.push({artist: result, tracks: []})
             // console.log(result);
-            this.setState(chartDataRaw);
+            this.setState({chartDataRaw});
           })
           .fail( err => {
             console.error(err);
@@ -233,7 +246,7 @@ class CurrentUser extends Component {
           .done( result => {
             let chartDataRaw = this.state.chartDataRaw;
             chartDataRaw[i]['tracks'].push(result);
-            this.setState(chartDataRaw);
+            this.setState({chartDataRaw});
           })
         }
       })
