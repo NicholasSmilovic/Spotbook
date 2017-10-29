@@ -1,52 +1,75 @@
 import React, {Component} from 'react';
 import {Bar} from 'react-chartjs-2';
 
+import Prettiness from '../Charts/Prettiness.jsx'
+import Palette from '../Charts/Palette.jsx'
+
 class BarChart extends Component {
   constructor(props){
     super(props);
     this.state = {
-      topTracks: this.props.topTracks,
-      topArtists: [],
-      // chartData:props.chartData
-      chartData: {
-        labels: [],
-        datasets: [{
-          label: 'Track Count',
-          data: []
+      chartData: this.props.chartData,
+
+      chartDataSample: {
+        labels: [
+        'Carlo',
+        'Nich',
+        'Brandon',
+        'Bryce',
+        'Dummy_1',
+        ],
+        datasets:[{
+          label:'Stuff',
+          data:[50,80,70,100,110],
         }]
       }
+
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(nextProps)
-  // }
-
+  componentWillReceiveProps(nextProps) {
+    if(nextProps !== this.props) {
+      this.setState({chartData: nextProps.chartData});
+    }
+  }
 
   componentWillMount() {
-    // console.log(this.state.topTracks)
-    // console.log(this.state.topTracks.length)
-    // console.log(typeof(this.state.topTracks))
+    // console.log('willMount:')
+    // console.log($.isArray(this.state.chartData.labels))
+    // console.log(this.state.chartDataSample)
+    // console.log(this.state.chartData.datasets)
+    // console.log(this.state.chartData.labels)
 
-    // this.getArtistsFromTrackIDs();
-    // console.log(this.props.topTracks)
-    // if(!this.props.topTracks) {
-      // console.log(this.props.topTracks, this.props.topTracks[0]);
-      // console.log(typeof(this.props.topTracks));
-      // console.log(this.props.topTracks.length);
-      // console.log(Object.keys(this.props.topTracks))
-      // console.log(this.props.topTracks.anonymous)
-    //   console.log('Please wait.');
-    // } else {
-    //     console.log(this.props.topTracks);
-    //     console.log(this.props.topTracks.toLowerCase())
-        // this.props.topTracks.map( bullshit => {
-        //   console.log(bullshit);
-        // });
+    if(!this.props.chartData) {
+      // console.log('componentWillMount: Please wait.')
+    } else {
+      // console.log(this.props.chartData.labels.length)
+      // console.log(this.props.chartData.labels.length)
+    // console.log(this.state.chartData.labels.length)
+      // this.printForNoReason(this.props.chartData)
+    }
 
-        // this.getArtistsFromTrackIDs();
-    // }
-    // return console.log(this.props.topTracks.length)
+  }
+
+  componentDidMount() {
+    this.handleChartData();
+
+    // console.log(this.props.chartData.labels.length)
+    // console.log(this.state.chartDataSample)
+    // console.log(this.state.chartData);
+  }
+
+  printForNoReason(stuff) {
+    console.log(stuff);
+  }
+
+  handleChartData(){
+    let chart = Prettiness(this.state.chartData, Palette().cool_10);
+    this.setState({ chartData: chart.data });
+
+    // let chartSample = Prettiness(this.state.chartDataSample, Palette().cool_10);
+    // this.setState({ chartDataSample: chartSample.data });
+
   }
 
   /*
@@ -59,38 +82,7 @@ class BarChart extends Component {
   6. GET INFO OF TRACKS IN ARRAYS ASSOCIATED WITH TOP 5 ARTISTS AND STORE IN STATE
   */
 
-  // getArtistsFromTrackIDs() {
-  //   let artistIDs = [];
 
-  //   for (let i = 0; i < this.state.topTracks.length; i++) {
-  //     $.get('http://localhost:3000/tracks/getArtistFromTrackID/'+this.props.topTracks[i].id)
-  //     .done( artist => {
-  //       console.log(artist);
-  //     })
-  //     .fail (err => {
-  //       console.error(err);
-  //     })
-  //   }
-  // }
-
-  // get all top tracks artists
-  // getUserTopTrackArtists() {
-  //   $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-  //   .done( artists => {
-  //     // for(let i = 0; i < artists.length; i++) {
-  //     //   $.get('http://localhost:3000/users/get')
-  //     // }
-  //     console.log(artists);
-  //   })
-  //   .fail( err => {
-  //     console.error(err);
-  //   })
-
-  // }
-  // determine top 5 artists with most tracks
-
-  // get all tracks of these artists
-  // $.get()
 
 
 
@@ -98,11 +90,13 @@ class BarChart extends Component {
 
     let fontColor = '#EEE';
 
+    // console.log(this.props.chartData)
+
     return (
       <div className="chart">
 
         <Bar
-          data={this.state.chartData}
+          data={this.props.chartData}
           getElementAtEvent = {this.props.handleClick}
           options={{
             title:{
