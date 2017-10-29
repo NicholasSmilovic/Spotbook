@@ -196,15 +196,9 @@ class CurrentUser extends Component {
       }
 
       $.when(artistByTrack).done( () => {
-        // this.sortArtists(this.state.topArtistIDs);
-        // console.log(artist_track)
-        // this.sortArtists(artistIDs);
-        this.sortArtists(artist_track);
+        let chartDetails = this.sortArtists(artist_track);
+        console.log(chartDetails);
       });
-// SORTING BY ARTIST_ID
-      // console.log(artistIDs[99])
-      // if(artistIDs.length > 0)
-
 
     })
     .fail( err => {
@@ -213,33 +207,21 @@ class CurrentUser extends Component {
   }
 
   sortArtists(artist_track) {
-    // console.log(artistIDs.sort());
     let sorted = artist_track.sort();
-    // console.log(sorted)
-    // return
     let tally = [];
     let count = 1;
-    // let artist_track_deets = [];
 
     for (let i = 0; i < sorted.length; i++) {
-      // let artist = {id: sorted[i], count: count};
       let artist = [sorted[i][0], count];
-      // let deet = { sorted[i][0]: [] };
       if (sorted[i+1] === undefined) {
         break;
       } else if (sorted[i][0] === sorted[i+1][0]) {
         count++;
-        // deet.sorted[i][0].push(sorted[i][1])
-        // artist.count = count;
       } else {
-        // artist_tract_deets.push(deet);
-
         tally.push(artist)
         count = 1;
       }
     }
-
-    // console.log(artist_tract_deets);
 
     tally.sort( (a,b) => {
       return b[1] - a[1];
@@ -250,24 +232,20 @@ class CurrentUser extends Component {
     let finalTally = [];
 
     for (let i = 0; i < tally.length; i++) {
-      // finalTally.push({(tally[i][0].toString()): null})
       finalTally.push([tally[i][0], []])
     }
-
-    // console.log(finalTally);
 
     for (let i = 0; i < sorted.length; i++) {
       for (let j = 0; j < finalTally.length; j++) {
         if (sorted[i][0] === finalTally[j][0]) {
-          // console.log('HI')
           finalTally[j][1].push(sorted[i][1]);
         }
       }
     }
 
-    console.log(finalTally);
+    // console.log(finalTally);
 
-
+    return [finalTally, tally];
   }
 
 
