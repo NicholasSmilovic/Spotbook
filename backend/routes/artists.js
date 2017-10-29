@@ -9,7 +9,7 @@ module.exports = (DataHelpers) => {
 
   router.get('/getArtistByID/:id', (req, res) => {
 
-    console.log('***** inside getArtistByID route *****')
+    // console.log('***** inside getArtistByID route *****')
     let artistID = req.params.id;
 
     DataHelpers.artistHelpers.getArtistByID(artistID)

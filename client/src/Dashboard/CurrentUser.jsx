@@ -21,6 +21,7 @@ class CurrentUser extends Component {
     super(props);
     this.state = {
       chartData:{},
+      chartDataRaw: [],
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
@@ -198,14 +199,8 @@ class CurrentUser extends Component {
       $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
         console.log(chartDetails);
+        this.setChartDataRaw(chartDetails);
 
-        $.get('http://localhost:3000/artists/getArtistByID/'+1)
-        .done( result => {
-          console.log(result);
-        })
-        .fail( err => {
-          console.error(err);
-        })
 
       });
 
@@ -215,6 +210,28 @@ class CurrentUser extends Component {
     });
   }
 
+/* artist detail fetching, associated track fetching, setting */
+  setChartDataRaw(highLevelDetails) {
+    for (let i = 0; i < highLevelDetails.length; i++) {
+      let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+highLevelDetails[i][0])
+          .done( result => {
+            let chartDataRaw = this.state.chartDataRaw;
+            chartDataRaw.push({artist: result, tracks: []})
+            // console.log(result);
+          })
+          .fail( err => {
+            console.error(err);
+          })
+
+      $.when(setArtist).done( () => {
+        for (let j = 0; j < highLevelDetails[i][1].length; j++) {
+          console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
+        }
+      })
+    }
+  }
+
+/* artist sorting, filtering, and top five-ing */
   sortArtists(artist_track) {
     let sorted = artist_track.sort();
     let tally = [];
@@ -252,9 +269,6 @@ class CurrentUser extends Component {
       }
     }
 
-    // console.log(finalTally);
-
-    // return [finalTally, tally];
     return finalTally;
   }
 
