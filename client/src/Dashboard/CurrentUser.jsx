@@ -211,14 +211,23 @@ class CurrentUser extends Component {
     });
   }
 
-  sortArtists(rawArtistIDs) {
-    console.log(rawArtistIDs);
-    console.log(rawArtistIDs.length);
-    // let artistIDs = [];
-    // for(let i = 0; i < rawArtistIDs.length; i++) {
-    //   artistIDs.push(rawArtistIDs[i].id);
-    // }
-    // console.log(artistIDs);
+  sortArtists(artistIDs) {
+    // console.log(artistIDs.sort());
+    let sorted = artistIDs.sort();
+    let tally = [];
+    let count = 1;
+    for (let i = 0; i < sorted.length; i++) {
+      let artist = {id: sorted[i], count: count};
+      if (sorted[i] === sorted[i+1]) {
+        count++;
+        artist.count = count;
+      } else {
+        tally.push(artist)
+        count = 1;
+      }
+    }
+    console.log(tally);
+
   }
 
 
