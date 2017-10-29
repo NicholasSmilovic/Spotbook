@@ -30,6 +30,7 @@ class BarChart extends Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps !== this.props) {
       this.setState({chartData: nextProps.chartData});
+      this.handleChartData();
     }
   }
 

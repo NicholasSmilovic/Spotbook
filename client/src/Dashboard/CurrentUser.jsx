@@ -232,17 +232,18 @@ class CurrentUser extends Component {
 
 /* artist detail fetching, associated track fetching, setting */
   setChartDataRaw(highLevelDetails) {
+
     return new Promise( (resolve, reject) => {
 
-      let chartData = {
-          labels: [],
-          datasets: [{
-            label: 'Tracks',
-            data: []
-          }]
-        };
+    let chartData = {
+        labels: [],
+        datasets: [{
+          label: 'Tracks',
+          data: []
+        }]
+      };
 
-      let chartDataRaw = [];
+    let chartDataRaw = [];
 
       for (let i = 0; i < highLevelDetails.length; i++) {
         let artistID = highLevelDetails[i][0];
@@ -250,7 +251,11 @@ class CurrentUser extends Component {
             .done( result => {
 
               // let chartData = this.state.chartData;
-              chartData['labels'].push(result.artist_name)
+              if(result.artist_name.length > 15) {
+                chartData['labels'].push(result.artist_name.slice(0,15)+'...')
+              } else {
+                chartData['labels'].push(result.artist_name)
+              }
               chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
               // this.setState({chartData});
 
@@ -280,15 +285,15 @@ class CurrentUser extends Component {
 
     })
     .then( result => {
-      console.log(result[0].labels.length)
-      console.log(result[0].labels)
-      console.log(result[1])
+      // console.log(result[0].labels.length)
+      // console.log(result[0].labels)
+      // console.log(result[1])
+      this.setState({chartData: result[0]})
+      this.setState({chartDataRaw: result[1]})
     })
     // console.log(chartData)
     // console.log(chartDataRaw)
     // console.log('***** inside setChartDataRaw() *****')
-    this.setState({chartData})
-    this.setState({chartDataRaw})
 
   }
 
@@ -415,21 +420,15 @@ class CurrentUser extends Component {
       user_name = this.props.currentLocal.display_name
     }
 
-    let barChart = <h3>Loading</h3>;
+    let title = 'Loading Your Top Artist Data...'
+    let data = {
+      labels: ['','','','',''],
+        datasets:[{ label:'Loading...', data:[0,0,0,0,0]}]
+      };
 
     if(this.state.chartData) {
-      // console.log(this.state.chartData)
-
-      barChart = <BarChart
-                currentLocal={this.props.currentLocal}
-                chartData={this.state.chartData}
-
-                title="Left Chart"
-                y_label=""
-                x_label="X-AXIS"
-
-                handleClick={ event => this.handleClickElement(event) }
-              />
+      data = this.state.chartData
+      title = 'Your Top Artists'
     }
 
 
@@ -457,7 +456,16 @@ class CurrentUser extends Component {
 
         <div className='row'>
           <div className='col-md-6'>
-            {barChart}
+            <BarChart
+                currentLocal={this.props.currentLocal}
+                chartData={data}
+
+                title={title}
+                y_label=""
+                x_label=""
+
+                handleClick={ event => this.handleClickElement(event) }
+              />
           </div>
 
           <div className='col-md-6'>
