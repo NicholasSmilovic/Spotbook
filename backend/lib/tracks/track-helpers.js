@@ -186,7 +186,7 @@ module.exports = (knex) => {
   }
 
   function getArtistFromTrack(id) {
-    console.log('***** INSIDE HELPER *****')
+    // console.log('***** INSIDE HELPER *****')
     return new Promise(function(resolve, reject) {
       knex.select('artists.id').from('artists')
         .innerJoin('artist_tracks', 'artist_id', 'artists.id')

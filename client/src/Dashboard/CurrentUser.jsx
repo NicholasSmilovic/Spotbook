@@ -24,7 +24,6 @@ class CurrentUser extends Component {
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
-      topArtistIDs:[],
       userAudioTrackFeatures: {},
 
       compatibleUsers: []
@@ -169,6 +168,7 @@ class CurrentUser extends Component {
     .done( topTrackIDs => {
 
       let artistIDs = [];
+      let artist_track = [];
       let artistByTrack;
       for (let i = 0; i < topTrackIDs.length; i++) {
 
@@ -187,10 +187,8 @@ class CurrentUser extends Component {
 // GET ARTIST_ID BY TRACK_ID
         artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
         .done( result => {
-          let artistIDs = this.state.topArtistIDs;
           artistIDs.push(result.id);
-          this.setState({ topArtistIDs: artistIDs })
-          // console.log(result.id)
+          artist_track.push([result.id, topTrackIDs[i].id])
         })
         .fail( err => {
           console.error(err);
@@ -198,7 +196,10 @@ class CurrentUser extends Component {
       }
 
       $.when(artistByTrack).done( () => {
-        this.sortArtists(this.state.topArtistIDs);
+        // this.sortArtists(this.state.topArtistIDs);
+        // console.log(artist_track)
+        // this.sortArtists(artistIDs);
+        this.sortArtists(artist_track);
       });
 // SORTING BY ARTIST_ID
       // console.log(artistIDs[99])
@@ -211,22 +212,51 @@ class CurrentUser extends Component {
     });
   }
 
-  sortArtists(artistIDs) {
+  sortArtists(artist_track) {
     // console.log(artistIDs.sort());
-    let sorted = artistIDs.sort();
+    let sorted = artist_track.sort();
+    // console.log(sorted)
+    // return
     let tally = [];
     let count = 1;
+    // let artist_track_deets = [];
+
     for (let i = 0; i < sorted.length; i++) {
-      let artist = {id: sorted[i], count: count};
-      if (sorted[i] === sorted[i+1]) {
+      // let artist = {id: sorted[i], count: count};
+      let artist = [sorted[i][0], count];
+      // let deet = { sorted[i][0]: [] };
+      if (sorted[i+1] === undefined) {
+        break;
+      } else if (sorted[i][0] === sorted[i+1][0]) {
         count++;
-        artist.count = count;
+        // deet.sorted[i][0].push(sorted[i][1])
+        // artist.count = count;
       } else {
+        // artist_tract_deets.push(deet);
+
         tally.push(artist)
         count = 1;
       }
     }
+
+    // console.log(artist_tract_deets);
+
+    tally.sort( (a,b) => {
+      return b[1] - a[1];
+    });
+
+    tally.splice(5);
+
+    for (let i = 0; i < sorted.length; i++) {
+      for (let j = 0; j < tally.length; j++) {
+        if (sorted[i][0] === tally[j][0]) {
+          console.log('HI')
+        }
+      }
+    }
+
     console.log(tally);
+
 
   }
 
