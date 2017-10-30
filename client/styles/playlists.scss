@@ -120,3 +120,39 @@ a:visited{
   color: inherit;
   text-decoration: inherit;
 }
+
+.show-tracks-button {
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.new-active-button {
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.leave-active-button {
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: red;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}

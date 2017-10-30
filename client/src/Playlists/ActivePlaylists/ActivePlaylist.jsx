@@ -27,10 +27,9 @@ class ActivePlaylist extends Component{
           {this.props.playlist.name} (population: {usersCount})
         </div>
         <div className = "join-active-playlist">
-            <label> Password: </label>
-            <input className="form-control" onChange={this.handlePasswordChange} value={this.state.password}/>
-          <button onClick={this.handleJoin} className = "btn btn-success"> JOIN </button>
+            <input placeholder="password" className="form-control" onChange={this.handlePasswordChange} value={this.state.password}/>
         </div>
+          <button onClick={this.handleJoin} className = "new-active-button"> JOIN </button>
       </div>
       )
   }

@@ -9,21 +9,6 @@ class BarChart extends Component {
     super(props);
     this.state = {
       chartData: this.props.chartData,
-
-      chartDataSample: {
-        labels: [
-        'Carlo',
-        'Nich',
-        'Brandon',
-        'Bryce',
-        'Dummy_1',
-        ],
-        datasets:[{
-          label:'Stuff',
-          data:[50,80,70,100,110],
-        }]
-      }
-
     }
   }
 
@@ -34,43 +19,14 @@ class BarChart extends Component {
     }
   }
 
-  componentWillMount() {
-    // console.log('willMount:')
-    // console.log($.isArray(this.state.chartData.labels))
-    // console.log(this.state.chartDataSample)
-    // console.log(this.state.chartData.datasets)
-    // console.log(this.state.chartData.labels)
-
-    if(!this.props.chartData) {
-      // console.log('componentWillMount: Please wait.')
-    } else {
-      // console.log(this.props.chartData.labels.length)
-      // console.log(this.props.chartData.labels.length)
-    // console.log(this.state.chartData.labels.length)
-      // this.printForNoReason(this.props.chartData)
-    }
-
-  }
-
   componentDidMount() {
     this.handleChartData();
 
-    // console.log(this.props.chartData.labels.length)
-    // console.log(this.state.chartDataSample)
-    // console.log(this.state.chartData);
-  }
-
-  printForNoReason(stuff) {
-    console.log(stuff);
   }
 
   handleChartData(){
     let chart = Prettiness(this.state.chartData, Palette().cool_10);
     this.setState({ chartData: chart.data });
-
-    // let chartSample = Prettiness(this.state.chartDataSample, Palette().cool_10);
-    // this.setState({ chartDataSample: chartSample.data });
-
   }
 
   /*
@@ -90,8 +46,6 @@ class BarChart extends Component {
   render(){
 
     let fontColor = '#EEE';
-
-    // console.log(this.props.chartData)
 
     return (
       <div className="chart">
@@ -150,5 +104,3 @@ class BarChart extends Component {
 }
 
 export default BarChart;
-// export default BarHandler;
-// export default {BarChart, BarHandler};

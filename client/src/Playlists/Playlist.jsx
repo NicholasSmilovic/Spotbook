@@ -89,10 +89,10 @@ class Playlist extends Component{
                       <div className='col-xl-6 text-center'>
                         <h1>{this.props.playlist.name}</h1>
                       </div>
-                        <button className="col-xl-2 text-center btn btn-primary playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
+                        <button className="show-tracks-button col-xl-2 text-center playlist-header-button" onClick={this.toggleButton}>Show Tracks</button>
             </header>
             {renderSongs}
-            <hr/>
+            <br/>
           </div>
         </div>
       )

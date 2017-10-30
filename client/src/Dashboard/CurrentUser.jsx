@@ -4,8 +4,6 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-// import Prettiness from '../Charts/Prettiness.jsx'
-// import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
 
@@ -23,22 +21,11 @@ class CurrentUser extends Component {
       chartData: null,
       chartDataRaw: null,
 
-      // chartData:{
-      //   labels: [],
-      //   datasets: [{
-      //     label: 'Tracks',
-      //     data: []
-      //   }]
-      // },
-
-      // chartDataRaw: [],
-
-      insightData: 'Click bar on chart for more info!',
+      insightData: null,
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
       allUsersCompared: null,
-      insightData:'Stuff',
       compatibleUsers: []
     }
 
@@ -288,14 +275,15 @@ class CurrentUser extends Component {
   componentWillMount(){
 
 
-    // this.getChartData();
 
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
     } else {
+
       // console.log("We got it. The thing that you need immediately follows this sentence.")
       // console.log(this.props.currentLocal);
     this.setCurrentUserTopAbsArtists(),
+    // this.setCurrentUserTopTracks()
     this.setCurrentUserTopTracks().then(()=> {
       return this.userCompatibility()
     }).then(allUsersComparedArray => {
@@ -305,13 +293,6 @@ class CurrentUser extends Component {
 
     }
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log(this.state.chartData)
-  // }
-
-
-
 
   // CURRENT USER
   setCurrentUserTopTracks = () => {
@@ -346,18 +327,13 @@ class CurrentUser extends Component {
         })
       }
 
-      let chartDetails = $.when(artistByTrack).done( () => {
+      $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
         // console.log(chartDetails);
         this.setChartDataRaw(chartDetails);
         // console.log(this.state.chartDataRaw)
 
       });
-
-      $.when(chartDetails).done( () => {
-
-        // console.log(this.state.chartData);
-      })
 
     })
     .fail( err => {
@@ -369,67 +345,61 @@ class CurrentUser extends Component {
   setChartDataRaw(highLevelDetails) {
 
     return new Promise( (resolve, reject) => {
-
-    let chartData = {
-        labels: [],
-        datasets: [{
-          label: 'Tracks',
-          data: []
-        }]
-      };
-
-    let chartDataRaw = [];
-
-      for (let i = 0; i < highLevelDetails.length; i++) {
-        let artistID = highLevelDetails[i][0];
-        let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
-            .done( result => {
-
-              // let chartData = this.state.chartData;
-              if(result.artist_name.length > 15) {
-                chartData['labels'].push(result.artist_name.slice(0,15)+'...')
-              } else {
-                chartData['labels'].push(result.artist_name)
-              }
-              chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
-              // this.setState({chartData});
-
-              // let chartDataRaw = this.state.chartDataRaw;
-              chartDataRaw.push({artist: result, tracks: []})
-              // this.setState({chartDataRaw});
-            })
-            .fail( err => {
-              console.error(err);
-            })
-
-        $.when(setArtist).done( () => {
-          for (let j = 0; j < highLevelDetails[i][1].length; j++) {
-            // console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
-            let trackID = highLevelDetails[i][1][j];
-            $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
-            .done( result => {
-              // let chartDataRaw = this.state.chartDataRaw;
-              chartDataRaw[i]['tracks'].push(result);
-              // this.setState({chartDataRaw});
-            })
+      let chartData = {
+          labels: [],
+          datasets: [{
+            label: 'Tracks',
+            data: []
+          }]
+        };
+      let chartDataRaw = [];
+      return Promise.all(highLevelDetails.map(i => {
+        let artistID = i[0];
+        return $.get('http://localhost:3000/artists/getArtistByID/' + artistID)
+      }))
+      .then(response => {
+        for (let i = 0; i < response.length; i++) {
+          if(response[i].artist_name.length > 15) {
+            chartData['labels'].push(response[i].artist_name.slice(0,15)+'...')
+          } else {
+            chartData['labels'].push(response[i].artist_name)
           }
+          chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+          chartDataRaw.push({artist: response[i], tracks: []})
+        }
+        // console.log(chartData)
+        // console.log(chartDataRaw)
+      })
+      .then(()=> {
+        // console.log('after setting artists')
+        // for (let i = 0; i < chartDataRaw.length; i++) {
+        return Promise.all(highLevelDetails.map(i => {
+        // console.log(i)
+          return Promise.all(i[1].map(trackID => {
+            return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+          }))
+          .then((response) => {
+            // console.log(i[0])
+            // console.log((response))
+            for (let j = 0; j < chartDataRaw.length; j++) {
+              if(chartDataRaw[j]['artist']['id'] === i[0]) {
+                chartDataRaw[j]['tracks'] = response
+              }
+            }
+
+          })
+        }))
+        .then(() => {
+          // console.log(chartDataRaw)
+          this.setState({chartData})
+          this.setState({chartDataRaw})
         })
-      }
-      setTimeout(() => resolve([chartData, chartDataRaw]), 100);
-      // resolve([chartData, chartDataRaw]);
-
+      })
     })
-    .then( result => {
-      // console.log(result[0].labels.length)
-      // console.log(result[0].labels)
-      // console.log(result[1])
-      this.setState({chartData: result[0]})
-      this.setState({chartDataRaw: result[1]})
-    })
-    // console.log(chartData)
-    // console.log(chartDataRaw)
-    // console.log('***** inside setChartDataRaw() *****')
-
+      // .then( result => {
+      //   this.setState({chartData: result[0]})
+      //   this.setState({chartDataRaw: result[1]})
+      // })
   }
 
 /* artist sorting, filtering, and top five-ing */
@@ -469,7 +439,6 @@ class CurrentUser extends Component {
         }
       }
     }
-
     return finalTally;
   }
 
@@ -522,8 +491,10 @@ class CurrentUser extends Component {
     if (event[0]) {
       let index = event[0]['_index'];
       let label = this.state.chartDataRaw[index]['artist']['artist_name'];
-      let insightData = `INDEX: ${index} => ${label}`;
+      // let insightData = `INDEX: ${index} => ${label}`;
 
+      let insightData = this.state.chartDataRaw[index]
+      console.log(insightData);
       this.setState({ insightData: insightData });
     }
   }
@@ -540,6 +511,34 @@ class CurrentUser extends Component {
       user_name = this.props.currentLocal.display_name
     }
 
+
+    let title = '';
+    let data = null;
+
+    if(!this.state.chartData) {
+      title = 'Loading Your Top Artist Data...'
+      data = {
+        labels: [
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING'],
+          datasets:[{ label:'Loading...',
+          data:[
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random()
+          ]
+        }]
+      }
+    } else {
+      data = this.state.chartData
+      title = 'Your Top Artists'
+    }
+
     const comparedUsers = this.state.allUsersCompared;
 
     let userSidebar = null;
@@ -548,18 +547,6 @@ class CurrentUser extends Component {
       } else {
         userSidebar = <div>Loading</div>
       }
-
-    let title = 'Loading Your Top Artist Data...'
-    let data = {
-      labels: ['','','','',''],
-        datasets:[{ label:'Loading...', data:[0,0,0,0,0]}]
-      };
-
-    if(this.state.chartData) {
-      data = this.state.chartData
-      title = 'Your Top Artists'
-    }
-
 
     return(
       <div>
