@@ -9,21 +9,6 @@ class BarChart extends Component {
     super(props);
     this.state = {
       chartData: this.props.chartData,
-
-      chartDataSample: {
-        labels: [
-        'Carlo',
-        'Nich',
-        'Brandon',
-        'Bryce',
-        'Dummy_1',
-        ],
-        datasets:[{
-          label:'Stuff',
-          data:[50,80,70,100,110],
-        }]
-      }
-
     }
   }
 
@@ -39,14 +24,9 @@ class BarChart extends Component {
 
   }
 
-  printForNoReason(stuff) {
-    console.log(stuff);
-  }
-
   handleChartData(){
     let chart = Prettiness(this.state.chartData, Palette().cool_10);
     this.setState({ chartData: chart.data });
-
   }
 
   /*

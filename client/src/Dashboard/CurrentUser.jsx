@@ -21,7 +21,7 @@ class CurrentUser extends Component {
       chartData: null,
       chartDataRaw: null,
 
-      insightData: 'Click bar on chart for more info!',
+      insightData: null,
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
@@ -355,49 +355,61 @@ class CurrentUser extends Component {
   setChartDataRaw(highLevelDetails) {
 
     return new Promise( (resolve, reject) => {
-
-    let chartData = {
-        labels: [],
-        datasets: [{
-          label: 'Tracks',
-          data: []
-        }]
-      };
-
-    let chartDataRaw = [];
-
-      for (let i = 0; i < highLevelDetails.length; i++) {
-        let artistID = highLevelDetails[i][0];
-        let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
-            .done( result => {
-              if(result.artist_name.length > 15) {
-                chartData['labels'].push(result.artist_name.slice(0,15)+'...')
-              } else {
-                chartData['labels'].push(result.artist_name)
-              }
-              chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
-              chartDataRaw.push({artist: result, tracks: []})
-            })
-            .fail( err => {
-              console.error(err);
-            })
-
-        $.when(setArtist).done( () => {
-          for (let j = 0; j < highLevelDetails[i][1].length; j++) {
-            let trackID = highLevelDetails[i][1][j];
-            $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
-            .done( result => {
-              chartDataRaw[i]['tracks'].push(result);
-            })
+      let chartData = {
+          labels: [],
+          datasets: [{
+            label: 'Tracks',
+            data: []
+          }]
+        };
+      let chartDataRaw = [];
+      return Promise.all(highLevelDetails.map(i => {
+        let artistID = i[0];
+        return $.get('http://localhost:3000/artists/getArtistByID/' + artistID)
+      }))
+      .then(response => {
+        for (let i = 0; i < response.length; i++) {
+          if(response[i].artist_name.length > 15) {
+            chartData['labels'].push(response[i].artist_name.slice(0,15)+'...')
+          } else {
+            chartData['labels'].push(response[i].artist_name)
           }
+          chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+          chartDataRaw.push({artist: response[i], tracks: []})
+        }
+        // console.log(chartData)
+        // console.log(chartDataRaw)
+      })
+      .then(()=> {
+        console.log('after setting artists')
+        // for (let i = 0; i < chartDataRaw.length; i++) {
+        return Promise.all(highLevelDetails.map(i => {
+        // console.log(i)
+          return Promise.all(i[1].map(trackID => {
+            return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+          }))
+          .then((response) => {
+            // console.log(i[0])
+            // console.log((response))
+            for (let j = 0; j < chartDataRaw.length; j++) {
+              if(chartDataRaw[j]['artist']['id'] === i[0]) {
+                chartDataRaw[j]['tracks'] = response
+              }
+            }
+
+          })
+        }))
+        .then(() => {
+          console.log(chartDataRaw)
+          this.setState({chartData})
+          this.setState({chartDataRaw})
         })
-      }
-      setTimeout(() => resolve([chartData, chartDataRaw]), 500);
+      })
     })
-    .then( result => {
-      this.setState({chartData: result[0]})
-      this.setState({chartDataRaw: result[1]})
-    })
+      // .then( result => {
+      //   this.setState({chartData: result[0]})
+      //   this.setState({chartDataRaw: result[1]})
+      // })
   }
 
 /* artist sorting, filtering, and top five-ing */
@@ -496,11 +508,11 @@ class CurrentUser extends Component {
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      // let label = this.state.chartDataRaw[index]['artist']['artist_name'];
+      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
       // let insightData = `INDEX: ${index} => ${label}`;
 
       let insightData = this.state.chartDataRaw[index]
-
+      console.log(insightData);
       this.setState({ insightData: insightData });
     }
   }
@@ -517,28 +529,34 @@ class CurrentUser extends Component {
       user_name = this.props.currentLocal.display_name
     }
 
-    let title = 'Loading Your Top Artist Data...'
-    let data = {
-      labels: [
-        'LOADING',
-        'LOADING',
-        'LOADING',
-        'LOADING',
-        'LOADING'],
-        datasets:[{ label:'Loading...',
-        data:[
-          Math.random(),
-          Math.random(),
-          Math.random(),
-          Math.random(),
-          Math.random()
-        ]
-      }]
-    };
 
-    if(this.state.chartData) {
+    let title = '';
+    let data = null;
+
+    if(!this.state.chartData) {
+      title = 'Loading Your Top Artist Data...'
+      data = {
+        labels: [
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING'],
+          datasets:[{ label:'Loading...',
+          data:[
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random()
+          ]
+        }]
+      };
+
+    } else {
       data = this.state.chartData
       title = 'Your Top Artists'
+
     }
 
 
