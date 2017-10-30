@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import UserBoxAnalytics from '../Dashboard/UserBoxAnalytics.jsx';
+import {withRouter} from 'react-router-dom'
 
 
 class User extends Component{
@@ -127,6 +128,8 @@ generatePlaylist = (trackIDs) => {
     })
     .then(() => {
       console.log('playlist generated')
+      // console.log(this.props.history.push)
+      this.props.history.push('/playlists')
     })
   })
 
