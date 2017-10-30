@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import UserBoxAnalytics from '../Dashboard/UserBoxAnalytics.jsx';
+
 
 class User extends Component{
   constructor(props) {
@@ -7,7 +9,8 @@ class User extends Component{
       user: {
         display_name: '',
         image_urls: {}
-      }
+      },
+      userAudioTrackFeatures: null
     }
   }
   getUser = () => {
@@ -157,7 +160,6 @@ generatePlaylist = (trackIDs) => {
               }
 
               playlist = this.removeDuplicates(playlist)
-              console.log(playlist)
               return playlist
             } else {
               return 0
@@ -290,7 +292,15 @@ generatePlaylist = (trackIDs) => {
 
 
   componentWillMount () {
-    this.getUser().then( user => { this.setState({user}) })
+    this.getUser()
+    .then( user => { this.setState({user}) })
+    .then(() => {
+      this.getUserComparisonData(this.state.user.id)
+        .then((response) => {
+          this.setState({userAudioTrackFeatures: response.userTrackAudioFeatures})
+        })
+    })
+
   }
 
 
@@ -298,23 +308,25 @@ generatePlaylist = (trackIDs) => {
     let isLoaded = this.state.user
     let displayName = null
     let explanation = null
+    let analytics = null
 
     if (isLoaded) {
       displayName = <h1>{this.state.user.display_name}</h1>
       explanation = <div className='w-100 row align-items-center'>
         <div className="col u-complete-me-text">Generate a playlist based on yours and {this.state.user.display_name}'s top tracks!</div>
       </div>
-
-      this.getUserComparisonData(this.state.user.id)
-        .then((response) => {
-          console.log(response)
-        })
     } else {
       let name = 'Lando Calorisian'
       displayName = name
       explanation = <div className='col-md-12 u-complete-me-text'>
         <p>Generate a playlist based on yours and {name}'s top tracks!</p>
       </div>
+    }
+
+    if (this.state.userAudioTrackFeatures) {
+      analytics = <UserBoxAnalytics userAudioTrackFeatures={this.state.userAudioTrackFeatures} />
+    } else {
+      analytics = <div>Loading...</div>
     }
 
     return(
@@ -329,6 +341,7 @@ generatePlaylist = (trackIDs) => {
             {explanation}
           </div>
         </div>
+        {analytics}
       </div>
     )
   }
