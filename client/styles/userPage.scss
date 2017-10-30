@@ -45,19 +45,27 @@
   color: white;
 }
 .u-complete-me {
-  position:absolute;
-  left:40%;
-  top:80%;
-  margin-top:-10px; /* -1/2 height */
+  text-align: center;
   color: white;
   font-family: $headerText;
   text-decoration: none;
   background-color: $spotifyGreen;
-  padding: 10px 35px;
   font-size: 16px;
   line-height: 1;
   border-radius: 500px;
   padding: 21px 56px 19px;
+}
+
+.u-complete-me:hover {
+  cursor: pointer
+}
+
+.u-complete-me-text {
+  font-size: 16px;
+  -moz-text-align-last: center;
+  text-align-last: center;
+  text-align: center;
+  font-family: $headerText;
 }
 
 h2,h3,h4,h5 {
@@ -124,14 +132,13 @@ h2,h3,h4,h5 {
 .user-profile {
   display: block;
   margin: auto;
-  // margin-top: 5em;
-  // border-radius: 50%;
-  // box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+  margin-top: 5em;
+  border-radius: 50%;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
 }
 
 .analytic {
   text-align: center;
-  padding-left: 4em;
   padding-top: 3em;
 }
 

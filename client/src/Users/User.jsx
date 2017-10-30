@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import UserBoxAnalytics from '../Dashboard/UserBoxAnalytics.jsx';
+import {withRouter} from 'react-router-dom'
+
 
 class User extends Component{
   constructor(props) {
@@ -7,7 +10,8 @@ class User extends Component{
       user: {
         display_name: '',
         image_urls: {}
-      }
+      },
+      userAudioTrackFeatures: null
     }
   }
   getUser = () => {
@@ -33,11 +37,8 @@ class User extends Component{
     for (let i = 0; i < primary.length; i++) {
       let common = false
       for (let j = 0; j < secondary.length; j++) {
-        if (primary[i] === secondary[j]) {
+        if (primary[i].id === secondary[j].id) {
           common = true
-          break
-        }
-        if (secondary[j] > primary[i]) {
           break
         }
       }
@@ -75,7 +76,7 @@ normalize = (yourTopTracks, myTopTracks) => {
 removeDuplicates = (arr) => {
   arr.forEach((track, index) => {
     for (let j = index + 1; j < arr.length; j++) {
-      if (arr[j] === track) {
+      if (arr[j].id === track.id) {
         arr.splice(j,1)
 
         j -= 1
@@ -127,6 +128,8 @@ generatePlaylist = (trackIDs) => {
     })
     .then(() => {
       console.log('playlist generated')
+      // console.log(this.props.history.push)
+      this.props.history.push('/playlists')
     })
   })
 
@@ -146,56 +149,212 @@ generatePlaylist = (trackIDs) => {
       .then((yourResponse) => {
         yourTopTracks = yourResponse
       })
-      .done(() => {
+      .then(() => {
         $.get(`http://localhost:3000/users/getUserTopTracks/${me.id}`)
           .then((myResponse) => {
             myTopTracks = myResponse
           })
           .then(() => {
-
             let playlistPool = this.findUncommonTracks(yourTopTracks, myTopTracks)
-            let playlistPoolNormalized = this.normalize(myTopTracks, yourTopTracks)
-            for (let i = 0; i < 20; i++) {
-              playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPoolNormalized.length - 1))])
-            }
+            if (playlistPool.length) {
+              let playlistPoolNormalized = this.normalize(myTopTracks, yourTopTracks)
+              for (let i = 0; i < 23; i++) {
+                playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPoolNormalized.length - 1))])
+              }
 
-            playlist = this.removeDuplicates(playlist)
-            return playlist
+              playlist = this.removeDuplicates(playlist)
+              return playlist
+            } else {
+              return 0
+            }
           })
           .then((response) => {
-            return Promise.all(response.map(track => {
-              return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
-            }))
+            if (response !== 0) {
+              return Promise.all(response.map(track => {
+                return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
+              }))
+            } else {
+              return 0
+            }
           })
           .then((response) => {
-            response.forEach(track => {
-              playlistSpotifyIDs.push(track.spotify_id)
-            })
-            this.generatePlaylist(playlistSpotifyIDs)
+            if (response !== 0) {
+              response.forEach(track => {
+                playlistSpotifyIDs.push(track.spotify_id)
+              })
+              this.generatePlaylist(playlistSpotifyIDs)
+            } else {
+              console.log('No playlist available!')
+            }
           })
       })
   }
 
 
 
+  getUserTrackAudioFeatures = (topTracks) => {
+    let danceability = 0
+    let energy = 0
+    let key = 0
+    let loudness = 0
+    let mode = 0
+    let speechiness = 0
+    let acousticness = 0
+    let instrumentalness = 0
+    let liveness = 0
+    let valence = 0
+    let tempo = 0
 
-  componentWillMount () {
-    this.getUser().then( user => { this.setState({user}) })
+    for (let track in topTracks) {
+      danceability += topTracks[track].danceability
+      energy += topTracks[track].energy
+      key += topTracks[track].key
+      loudness += topTracks[track].loudness
+      mode += topTracks[track].mode
+      speechiness += topTracks[track].speechiness
+      acousticness += topTracks[track].acousticness
+      instrumentalness += topTracks[track].instrumentalness
+      liveness += topTracks[track].liveness
+      valence += topTracks[track].valence
+      tempo += topTracks[track].tempo
+    }
+
+    key = Math.round(key/topTracks.length)
+    mode = Math.round(mode/topTracks.length)
+
+    let musicalKeys = {
+      1: 'C',
+      2: 'C#/Db',
+      3: 'D',
+      4: 'D#/Eb',
+      5: 'E',
+      6: 'F',
+      7: 'F#/Gb',
+      8: 'G',
+      9: 'G#/Ab',
+      10: 'A',
+      11: 'A#/Bb',
+      12: 'B'
+    }
+
+    let keyString = ''
+
+    for (let musicalKey in musicalKeys) {
+      if (musicalKey == key) {
+        keyString = musicalKeys[musicalKey]
+      }
+    }
+
+    let modeString = ''
+
+    if (mode == 1) {
+      modeString = 'Maj'
+    } else {
+      modeString = 'Min'
+    }
+
+
+    let userAudioTrackFeaturesAverages = {
+      danceability: danceability/topTracks.length,
+      energy: energy/topTracks.length,
+      key: keyString,
+      loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
+      mode: modeString,
+      speechiness: speechiness/topTracks.length,
+      acousticness: acousticness/topTracks.length,
+      instrumentalness: instrumentalness/topTracks.length,
+      liveness: liveness/topTracks.length,
+      valence: valence/topTracks.length,
+      tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
+    }
+    return userAudioTrackFeaturesAverages
+  }
+
+  getUserComparisonData(id){
+    return new Promise((res, rej) => {
+    let userInfo = {
+      userID: id,
+      topTracks: null,
+      topArtists:null,
+      userTrackAudioFeatures: null
+    }
+    $.get('http://localhost:3000/users/getUserTopFullTracks/'+ id)
+      .done(topTracks => {
+        userInfo.topTracks = topTracks
+        userInfo.userTrackAudioFeatures = this.getUserTrackAudioFeatures(topTracks)
+        $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
+        .done(absArtists => {
+          userInfo.topArtists = absArtists
+          res(userInfo)
+        })
+      })
+    })
   }
 
 
-  render (){
+
+
+  componentWillMount () {
+    this.getUser()
+    .then( user => { this.setState({user}) })
+    .then(() => {
+      this.getUserComparisonData(this.state.user.id)
+        .then((response) => {
+          this.setState({userAudioTrackFeatures: response.userTrackAudioFeatures})
+        })
+    })
+
+  }
+
+
+  render () {
+    let isLoaded = this.state.user
+    let displayName = null
+    let explanation = null
+    let analytics = null
+
+    if (isLoaded) {
+      displayName = <h1>{this.state.user.display_name}</h1>
+      explanation = <p className='u-complete-me-text'>Generate a playlist based on yours and {this.state.user.display_name}'s top tracks!</p>
+    } else {
+      let name = 'Lando Calorisian'
+      displayName = name
+      explanation = <p className='u-complete-me-text'>Generate a playlist based on yours and {name}'s top tracks!</p>
+    }
+
+    if (this.state.userAudioTrackFeatures) {
+      analytics = <UserBoxAnalytics userAudioTrackFeatures={this.state.userAudioTrackFeatures} />
+    } else {
+      analytics = <div>Loading...</div>
+    }
+
     return(
-        <div>
-          <div className='row'>
-            <div className='col-md-12 user-profile'>
-              <img src={this.state.user.image_urls.image} />
-              <h1>{this.state.user.display_name}</h1>
-              <button className="col-xl-2 text-center btn btn-primary u-complete-me" onClick={this.uCompleteMe}>U Complete Me Playlist</button>
-            </div>
+      <div>
+        <div className='row'>
+          <div className='col-md-12 user-profile'>
+            <img className='user-profile' src={this.state.user.image_urls.image} />
+            {displayName}
+
           </div>
         </div>
-      )
+        <div className="row">
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+            <div className="col-md-4 col-sm-4 col-xs-8">
+              <p className="u-complete-me" onClick={this.uCompleteMe}>U Complete Me Playlist</p>
+            </div>
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+            <div className="col-md-4 col-sm-4 col-xs-8">
+            {explanation}
+            </div>
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+        </div>
+        {analytics}
+      </div>
+    )
   }
 }
 
