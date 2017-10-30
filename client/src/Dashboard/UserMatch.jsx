@@ -30,6 +30,7 @@ class UserMatch extends Component{
 
   render (){
     let profileLoaded = this.state.userProfile
+
     let displayName = null
     let userImage = null
 

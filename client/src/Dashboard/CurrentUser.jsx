@@ -11,7 +11,7 @@ import BarChart from '../Charts/_Bar.jsx'
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
 import { parse } from 'query-string'
-// import compatibilityFunctions from '../../../user-compatibility.js'
+
 
 
 
@@ -150,31 +150,24 @@ class CurrentUser extends Component {
       let artistMatches = 0
       let genreMatch = 0.85
       let genreMatches = 0
-      // let audioFeaturesMatch = 0
-      // let audioFeaturesMatches = 0
 
       let trackPercentileIncrease = 1/((currentUserTopTracks.length + user2tracks.length) / 2)
 
       for (let i in currentUserTopTracks) {
         for (let j in user2tracks) {
           if (currentUserTopTracks[i].track_name === user2tracks[j].track_name) {
-            // console.log(user2tracks.items[j].name)
             trackMatches += trackPercentileIncrease
             break;
-            // console.log(trackMatches)
           }
         }
       }
 
-      // console.log(trackMatch*trackMatches)
       let artistPercentileIncrease = 1/((currentUserTopArtists.length + user2artists.length) / 2)
 
       for (let i = 0; i < currentUserTopArtists.length; i++) {
         for (let j = 0; j < user2artists.length; j++) {
           if (currentUserTopArtists[i].artist_name === user2artists[j].artist_name) {
-            // console.log(user2artists.items[j].name)
             artistMatches += artistPercentileIncrease
-            // console.log(artistMatches)
           }
         }
       }
@@ -262,7 +255,6 @@ class CurrentUser extends Component {
         percentMatch += 0.05
       }
 
-      // console.log(`Audio Parameter Percent Increase: ${percentMatch}`)
       // console.log(matchesArr)
 
       matchesArr.map((match) => {
@@ -281,12 +273,14 @@ class CurrentUser extends Component {
     return new Promise((res,rej) => {
       let comparedUsers = []
       for (let user in this.props.allUsers) {
+        if (this.props.allUsers[user].id !== this.props.currentLocal.id) {
         this.getUserComparisonData(this.props.allUsers[user].id)
           .then(userComparisonData => {
             comparedUsers.push(userCompatibilityFunction(this.state.topTracks, this.state.topArtists, this.state.userAudioTrackFeatures, userComparisonData))
           })
+        }
       }
-      setTimeout(() => res(comparedUsers), 1000)
+      setTimeout(() => res(comparedUsers), 2000)
     })
     }
   }

@@ -2,6 +2,28 @@
 //   height:100vh;
 //   overflow: scroll;
 // }
+
+.logo {
+  position:absolute;
+  left:30%;
+  top:30%;
+  margin-top:-10px; /* -1/2 height */
+}
+
+.logo img {
+  padding-top: 0.2em;
+  height: 50px;
+  width: 50px;
+}
+
+.logo-text {
+  font-family: $headerText;
+  float: left;
+  color: white;
+  font-size: 700%;
+  padding-right: 0.2em;
+}
+
 .login-button {
   position:absolute;
   left:40%;
@@ -11,7 +33,6 @@
   font-family: $headerText;
   text-decoration: none;
   background-color: $spotifyGreen;
-  padding: 20px 56px;
   font-size: 16px;
   line-height: 1;
   border-radius: 500px;
@@ -49,7 +70,8 @@ h2,h3,h4,h5 {
 }
 
 .user-profile {
-  margin-top: 6em;
+  margin-top: 7em;
+  padding-top: 2em;
   color: white;
   // background-image:
   //   $topDivGradient;
@@ -58,6 +80,8 @@ h2,h3,h4,h5 {
 
 .user-profile h1 {
   font-family: $headerText;
+  display: block;
+  margin: auto;
   text-align: center;
   font-size: 450%;
   color: white;
@@ -69,8 +93,8 @@ h2,h3,h4,h5 {
   // text-align: center;
   display: block;
   // position: relative;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   overflow: hidden;
   border-radius: 50%;
   img {
@@ -78,13 +102,12 @@ h2,h3,h4,h5 {
     text-align: center;
     width: auto;
     height: 100%;
-    margin-left: -25%;
   }
 }
 
 .user-profile {
   display: block;
-  // margin: auto;
+  margin: auto;
   // margin-top: 5em;
   // border-radius: 50%;
   // box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
@@ -100,6 +123,8 @@ h2,h3,h4,h5 {
   text-align: center;
 }
 .user-match-profile img{
+  height: 200px;
+  width: 200px;
   display: block;
   margin: auto;
   border-radius: 50%;

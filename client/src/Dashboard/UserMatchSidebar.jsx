@@ -13,8 +13,8 @@ class UserMatchSidebar extends React.Component {
       slidesToScroll: 1
     };
 
-    const listUsers = this.props.allUsersCompared.map(user => {
-      return <div><UserMatch key={user.id} percent={user.percentMatch} id={user.id}/></div>
+    const listUsers = this.props.allUsersCompared.map((user,index) => {
+      return <div key={user.id} ><UserMatch percent={user.percentMatch} id={user.id}/></div>
     })
 
 
