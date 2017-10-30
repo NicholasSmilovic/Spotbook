@@ -295,10 +295,10 @@ class CurrentUser extends Component {
     } else {
     this.setState({allUsersComparisonData: this.props.allUsers.map(u => ({id: u.id}))})
     this.setCurrentUserTopAbsArtists(),
-    this.setCurrentUserTopTracks().then(()=> {
-      return this.userCompatibility()
-
-    })
+    // this.setCurrentUserTopTracks().then(()=> {
+    //   return this.userCompatibility()
+    // })
+    this.setCurrentUserTopTracks()
 
 
     }
@@ -370,19 +370,13 @@ class CurrentUser extends Component {
         let artistID = highLevelDetails[i][0];
         let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
             .done( result => {
-
-              // let chartData = this.state.chartData;
               if(result.artist_name.length > 15) {
                 chartData['labels'].push(result.artist_name.slice(0,15)+'...')
               } else {
                 chartData['labels'].push(result.artist_name)
               }
               chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
-              // this.setState({chartData});
-
-              // let chartDataRaw = this.state.chartDataRaw;
               chartDataRaw.push({artist: result, tracks: []})
-              // this.setState({chartDataRaw});
             })
             .fail( err => {
               console.error(err);
@@ -390,27 +384,20 @@ class CurrentUser extends Component {
 
         $.when(setArtist).done( () => {
           for (let j = 0; j < highLevelDetails[i][1].length; j++) {
-            // console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
             let trackID = highLevelDetails[i][1][j];
             $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
             .done( result => {
-              // let chartDataRaw = this.state.chartDataRaw;
               chartDataRaw[i]['tracks'].push(result);
-              // this.setState({chartDataRaw});
             })
           }
         })
       }
-      setTimeout(() => resolve([chartData, chartDataRaw]), 100);
-      // resolve([chartData, chartDataRaw]);
-
+      setTimeout(() => resolve([chartData, chartDataRaw]), 500);
     })
     .then( result => {
       this.setState({chartData: result[0]})
       this.setState({chartDataRaw: result[1]})
     })
-
-
   }
 
 /* artist sorting, filtering, and top five-ing */
@@ -450,7 +437,6 @@ class CurrentUser extends Component {
         }
       }
     }
-
     return finalTally;
   }
 
@@ -510,8 +496,10 @@ class CurrentUser extends Component {
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
-      let insightData = `INDEX: ${index} => ${label}`;
+      // let label = this.state.chartDataRaw[index]['artist']['artist_name'];
+      // let insightData = `INDEX: ${index} => ${label}`;
+
+      let insightData = this.state.chartDataRaw[index]
 
       this.setState({ insightData: insightData });
     }
@@ -531,7 +519,12 @@ class CurrentUser extends Component {
 
     let title = 'Loading Your Top Artist Data...'
     let data = {
-      labels: ['LOADING','YOUR','TOP','ARTIST','DATA'],
+      labels: [
+        'LOADING',
+        'LOADING',
+        'LOADING',
+        'LOADING',
+        'LOADING'],
         datasets:[{ label:'Loading...',
         data:[
           Math.random(),
