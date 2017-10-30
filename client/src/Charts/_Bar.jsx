@@ -25,7 +25,7 @@ class BarChart extends Component {
   }
 
   handleChartData(){
-    let chart = Prettiness(this.state.chartData, Palette().cool_10);
+    let chart = Prettiness(this.state.chartData, Palette().cool_5);
     this.setState({ chartData: chart.data });
   }
 
@@ -63,6 +63,11 @@ class BarChart extends Component {
             legend:{ display: false },
 
             scales: {
+
+              pointLabels: {
+                fontSize: 20,
+              },
+
               yAxes: [{
                 gridLines:{
                   display: false,
@@ -90,7 +95,8 @@ class BarChart extends Component {
                   fontColor: fontColor
                 },
                 ticks: {
-                  fontColor: fontColor
+                  fontColor: fontColor,
+                  fontSize: 15
                 }
               }]
             },
