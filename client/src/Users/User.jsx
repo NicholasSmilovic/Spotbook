@@ -49,11 +49,50 @@ class User extends Component{
 
   }
 
+
+normalize = (yourTopTracks, myTopTracks) => {
+  let larger = yourTopTracks
+  let smaller = myTopTracks
+
+  if (larger.length < smaller.length) {
+    larger = myTopTracks
+    smaller = yourTopTracks
+  }
+
+  let scale = Math.floor(larger.length/smaller.length)
+  let smallerCombo = []
+
+  while (scale) {
+    smallerCombo = smallerCombo.concat(smaller)
+    scale--
+  }
+
+  return larger.concat(smallerCombo)
+
+}
+
+
+removeDuplicates = (arr) => {
+  arr.forEach((track, index) => {
+    for (let j = index + 1; j < arr.length; j++) {
+      if (arr[j] === track) {
+        arr.splice(j,1)
+
+        j -= 1
+      }
+    }
+  })
+  return arr
+}
+
   uCompleteMe = () => {
     let you = this.state.user
     let me = this.props.currentLocal
     let yourTopTracks = []
     let myTopTracks = []
+    let playlist = []
+    let playlistSpotifyIDs = []
+
     $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
       .done((yourResponse) => {
         yourTopTracks = yourResponse
@@ -64,23 +103,29 @@ class User extends Component{
             myTopTracks = myResponse
           })
           .then(() => {
-            let playlist = []
-            let playlistPool = this.findUncommonTracks(yourTopTracks, myTopTracks)
-            for (let i = 0; i < 20; i++) {
-              playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPool.length - 1))])
-            }
-            console.log(`Your playlist with ${you.display_name} is...`)
-            playlist.map(track => {
-              return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
-                .done((response) => {
-                  console.log(response.track_name)
-                })
-            })
 
+            let playlistPool = this.findUncommonTracks(yourTopTracks, myTopTracks)
+            let playlistPoolNormalized = this.normalize(myTopTracks, yourTopTracks)
+            for (let i = 0; i < 20; i++) {
+              playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPoolNormalized.length - 1))])
+            }
+
+            playlist = this.removeDuplicates(playlist)
+            return playlist
+          })
+          .then((response) => {
+            console.log(response)
+            return Promise.all(response.map(track => {
+              return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
+            }))
+          })
+          .then((response) => {
+            response.forEach(track => {
+              playlistSpotifyIDs.push(track.spotify_id)
+            })
+            console.log(playlistSpotifyIDs)
           })
       })
-
-
   }
 
 
