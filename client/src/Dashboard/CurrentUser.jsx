@@ -494,7 +494,7 @@ class CurrentUser extends Component {
       // let insightData = `INDEX: ${index} => ${label}`;
 
       let insightData = this.state.chartDataRaw[index]
-      console.log(insightData);
+      // console.log(insightData);
       this.setState({ insightData: insightData });
     }
   }

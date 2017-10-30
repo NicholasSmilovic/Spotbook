@@ -2,6 +2,16 @@ import React, {Component} from 'react';
 
 const Palette = () => {
   return {
+    cool_5: [
+    '#48917A',
+    '#2E48B8',
+    '#59F64B',
+    '#6200EA',
+    '#0CE486',
+    '#4E9CF5',
+    '#B2FF59',
+    '#9CF1E0',
+    ],
     cool_10: [
     '#005A44',
     '#172E5D',
