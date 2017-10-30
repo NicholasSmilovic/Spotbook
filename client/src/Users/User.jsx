@@ -312,15 +312,11 @@ generatePlaylist = (trackIDs) => {
 
     if (isLoaded) {
       displayName = <h1>{this.state.user.display_name}</h1>
-      explanation = <div className='w-100 row align-items-center'>
-        <div className="col u-complete-me-text">Generate a playlist based on yours and {this.state.user.display_name}'s top tracks!</div>
-      </div>
+      explanation = <p className='u-complete-me-text'>Generate a playlist based on yours and {this.state.user.display_name}'s top tracks!</p>
     } else {
       let name = 'Lando Calorisian'
       displayName = name
-      explanation = <div className='col-md-12 u-complete-me-text'>
-        <p>Generate a playlist based on yours and {name}'s top tracks!</p>
-      </div>
+      explanation = <p className='u-complete-me-text'>Generate a playlist based on yours and {name}'s top tracks!</p>
     }
 
     if (this.state.userAudioTrackFeatures) {
@@ -335,11 +331,23 @@ generatePlaylist = (trackIDs) => {
           <div className='col-md-12 user-profile'>
             <img className='user-profile' src={this.state.user.image_urls.image} />
             {displayName}
-            <div className='w-100 row align-items-center'>
-              <button className="text-center btn btn-primary u-complete-me" onClick={this.uCompleteMe}>U Complete Me Playlist</button>
-            </div>
-            {explanation}
+
           </div>
+        </div>
+        <div className="row">
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+            <div className="col-md-4 col-sm-4 col-xs-8">
+              <p className="u-complete-me" onClick={this.uCompleteMe}>U Complete Me Playlist</p>
+            </div>
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
+            <div className="col-md-4 col-sm-4 col-xs-8">
+            {explanation}
+            </div>
+          <div className="col-md-4 col-sm-4 col-xs-2"></div>
         </div>
         {analytics}
       </div>

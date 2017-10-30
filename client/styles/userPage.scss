@@ -24,10 +24,7 @@
   color: white;
 }
 .u-complete-me {
-  position:absolute;
-  left:30%;
-  top:80%;
-  margin-top:-10px; /* -1/2 height */
+  text-align: center;
   color: white;
   font-family: $headerText;
   text-decoration: none;
@@ -38,13 +35,16 @@
   padding: 21px 56px 19px;
 }
 
+.u-complete-me:hover {
+  cursor: pointer
+}
+
 .u-complete-me-text {
-  position:absolute;
-  left:30%;
-  top:95%;
-  margin-top:-10px; /* -1/2 height */
   font-size: 16px;
-  margin: auto;
+  -moz-text-align-last: center;
+  text-align-last: center;
+  text-align: center;
+  font-family: $headerText;
 }
 
 h2,h3,h4,h5 {
@@ -116,7 +116,6 @@ h2,h3,h4,h5 {
 
 .analytic {
   text-align: center;
-  padding-left: 4em;
   padding-top: 3em;
 }
 
