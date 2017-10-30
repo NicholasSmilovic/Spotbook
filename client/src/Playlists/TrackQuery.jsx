@@ -9,6 +9,10 @@ class TrackQuery extends Component{
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(this.props.query === nextProps.query)
+  }
+
   componentWillReceiveProps() {
     let accessToken = this.props.accessToken
     let query = this.props.query

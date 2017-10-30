@@ -1,75 +1,9 @@
 var request = require('request');
 
-let playlists ={
-  "activeplaylists1":{
-    userSpotifyId: "nicholas_smilovic",
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "activeplaylists2":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "activeplaylists3":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "asd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "asd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  },
-  "s;sdjflksd":{
-    password: "password1",
-    tracks: [
-    {
-      spotifyURI: "asd"
-    },
-    {
-      spotifyURI: "asd"
-    }]
-  }
-}
+let playlists = require('./starterDB.js')
 
 const getSecurePlaylist = (name) =>{
-  let obj = {
-      name: name,
-      spotifyObject:playlists[name].spotifyObject,
-      password: playlists[name].password
-    }
+  let obj = playlists[name]
   return obj
 }
 
@@ -78,9 +12,11 @@ const getAllPlaylists = () => {
   for(let playlist in playlists){
     let obj = {
       name:playlist,
-      spotifyObject:playlists[playlist].spotifyObject
+      spotifyObject:playlists[playlist].spotifyObject,
+      users:playlists[playlist].users
     }
-    arrayOfPlaylists.push(obj)
+    // arrayOfPlaylists.push(obj)
+    arrayOfPlaylists.push(playlists[playlist])
   }
   return arrayOfPlaylists
 }
@@ -116,9 +52,63 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
       name: playlist.name,
       password: playlist.password,
       spotifyObject: body,
-      accessToken
+      accessToken: accessToken,
+      users:[],
+      currentlyPlaying: {
+        id: "",
+        name: "",
+        duration_ms: "",
+        progress_ms: "",
+        skip: {}
+      }
     }
+    nextTrack(playlist.name, accessToken, callback)
     callback()
+  })
+}
+
+const currentTrack = (accessToken, callback) => {
+  let options = {
+    url: `https://api.spotify.com/v1/me/player/currently-playing`,
+    method: "GET",
+    json: true,
+    headers: {
+      Authorization: "Bearer " + accessToken
+    }
+  }
+
+  request(options,(error, response, body) => {
+    if (error) {
+      callback("bad request to spotify")
+      return
+    }
+    if(body && body.item) {
+      callback(body.item.id, body.item.name, body.progress_ms, body.item.duration_ms)
+    } else {
+      currentTrack(accessToken, callback)
+    }
+  })
+}
+
+const isNewTrack = (playlistName, retrievedId) => {
+  return !(playlists[playlistName].currentlyPlaying.id === retrievedId)
+}
+
+const nextTrack = (playlistName, accessToken, callback) => {
+  currentTrack(accessToken, (id, name, progress_ms, duration_ms) => {
+    if(isNewTrack(playlistName, id)) {
+      playlists[playlistName].currentlyPlaying.skip = {}
+      console.log(id, name, progress_ms, duration_ms)
+      playlists[playlistName].currentlyPlaying = {
+        id: id,
+        name: name,
+        duration_ms: duration_ms,
+        progress_ms: progress_ms,
+        skip: {}
+      }
+      callback(null, playlistName, playlists[playlistName].currentlyPlaying)
+    }
+    nextTrack(playlistName, accessToken, callback)
   })
 }
 
@@ -145,7 +135,6 @@ const addSongToPlaylist =  (playlist, track, callback) => {
       callback(null, "bad request to spotify")
       return
     }
-    console.log("body: ", response.toJSON())
     callback(playlist.name)
   })
 
@@ -163,10 +152,75 @@ const verify = (playlist, callback) => {
   callback(null, "invalid credentials")
 }
 
+
+const updateRoomPopulations = (sockets) => {
+  for(let socket in sockets) {
+    let playlistName = sockets[socket].playlist
+    console.log("inside update server function")
+    console.log(sockets[socket].id)
+    console.log(sockets[socket].playlist)
+    if (playlists[playlistName]) {
+      playlists[playlistName].users.push(socket)
+    }
+  }
+}
+
+const shouldPlaylistSkip = (playlistName) => {
+  let skippers = Object.keys(playlists[playlistName].currentlyPlaying.skip).length
+  let users = playlists[playlistName].users.length * 3 /5
+  console.log(skippers, " vs ", users)
+  return (skippers > users)
+}
+
+const skipSong = (playlistName, callback) => {
+  let options = {
+    url: `https://api.spotify.com/v1/me/player/pause`,
+    method: "put",
+    json: true,
+    headers: {
+      Authorization: "Bearer " + playlists[playlistName].accessToken
+    }
+  }
+
+  request(options,(error, response, body) => {
+    console.log(response.toJSON())
+    if (error) {
+      callback("bad request to spotify")
+      return
+    }
+    callback()
+  })
+}
+
+const voteToSkip = (playlistName, socketId, callback) => {
+  if(playlists[playlistName].currentlyPlaying.skip[socketId]){
+    callback("already voted")
+  }
+  playlists[playlistName].currentlyPlaying.skip[socketId]= true;
+  if (shouldPlaylistSkip(playlistName)) {
+    skipSong(playlistName, () => {
+      callback(null, playlists[playlistName])
+    })
+    return
+  }
+  callback(null, playlists[playlistName])
+}
+
+const updateRoomData = (sockets, callback) => {
+  for(playlist in playlists){
+    playlists[playlist].users = []
+  }
+  updateRoomPopulations(sockets)
+  callback()
+}
+
+
 module.exports = {
   getAllPlaylists: getAllPlaylists,
   addNewPlaylist: addNewPlaylist,
   verify: verify,
   getSecurePlaylist: getSecurePlaylist,
-  addSongToPlaylist: addSongToPlaylist
+  addSongToPlaylist: addSongToPlaylist,
+  voteToSkip: voteToSkip,
+  updateRoomData: updateRoomData
 }

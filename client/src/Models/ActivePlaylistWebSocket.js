@@ -41,6 +41,16 @@ module.exports = (stateOperations) => {
         playlist: playlist,
         track: track
       }))
+    },
+    voteToSkipSong: (credentials, playlist) => {
+      socket.send(JSON.stringify({
+        type: "skipSong",
+        credentials: credentials,
+        playlist: playlist
+      }))
+    },
+    leaveRoom: () => {
+      socket.send(JSON.stringify({type:"leaveRoom"}))
     }
   }
 }
