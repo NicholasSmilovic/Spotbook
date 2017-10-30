@@ -7,13 +7,19 @@
 }
 
 .playlist-header{
+  font-family: $headerText;
   text-align: center;
   vertical-align: middle;
   z-index: 2;
-  background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
-  border-radius: 5px;
-  border: 2px solid;
+  background: transparent;
+  // background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
+  // border-radius: 5px;
+  // border: 2px solid;
   // background-color: $slightly-black;
+}
+
+.playlist-header h1 {
+  color: white;
 }
 
 .auto-size{
@@ -122,7 +128,10 @@ a:visited{
 }
 
 .show-tracks-button {
+  margin: auto;
+  width: 60%;
   color: white;
+  text-align: center;
   font-family: $headerText;
   text-decoration: none;
   background-color: $spotifyGreen;
@@ -131,6 +140,10 @@ a:visited{
   line-height: 1;
   border-radius: 500px;
   padding: 21px 56px 19px;
+}
+
+.show-tracks-button:hover {
+  cursor:pointer;
 }
 
 .new-active-button {
