@@ -55,6 +55,16 @@ class Routes extends React.Component {
         )
     }
 
+    const UserPage = (props) => {
+      return (
+        <User
+          {...props}
+          currentLocal={this.props.currentLocal}
+          accessToken = {this.props.accessToken}
+        />
+      )
+    }
+
     return (
       <Router>
         <div>
@@ -65,7 +75,7 @@ class Routes extends React.Component {
           <Route exact path="/playlists" component={PlaylistsPage}/>
 
           <Route exact path="/users" component={UsersExplorerPage}/>
-          <Route path="/users/:id" component={User}/>
+          <Route path="/users/:id" component={UserPage}/>
 
         </div>
       </Router>
