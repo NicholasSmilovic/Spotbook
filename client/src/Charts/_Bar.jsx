@@ -96,7 +96,7 @@ class BarChart extends Component {
                 },
                 ticks: {
                   fontColor: fontColor,
-                  fontSize: 15
+                  fontSize: 12
                 }
               }]
             },
