@@ -12,7 +12,9 @@ class CurrentPlaylist extends Component{
     this.props.addSong(this.props.playlist, JSON.parse(event.dataTransfer.getData('track')))
   }
 
-
+  leaveRoom = () =>{
+    this.props.leaveRoom()
+  }
 
   render (){
     const renderSongs = <Songs
@@ -27,6 +29,7 @@ class CurrentPlaylist extends Component{
             <header className="playlist-header row text-center sticky-block">
             <div className='col-xl-6 text-center'>
               <h1>{this.props.playlist.name}</h1>
+              <button onClick={this.leaveRoom} className="leave-active-button">Leave</button>
             </div>
           </header>
           {renderSongs}

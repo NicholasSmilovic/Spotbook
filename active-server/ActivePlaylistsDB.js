@@ -62,7 +62,6 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
         skip: {}
       }
     }
-    console.log(body)
     nextTrack(playlist.name, accessToken, callback)
     callback()
   })
@@ -84,7 +83,8 @@ const currentTrack = (accessToken, callback) => {
       return
     }
     if(body && body.item) {
-      callback(body.item.id, body.item.name, body.progress_ms, body.item.duration_ms)
+      let albumArt = body.item.album.images[0].url
+      callback(body.item.id, body.item.name, albumArt, body.progress_ms, body.item.duration_ms)
     } else {
       currentTrack(accessToken, callback)
     }
@@ -96,20 +96,23 @@ const isNewTrack = (playlistName, retrievedId) => {
 }
 
 const nextTrack = (playlistName, accessToken, callback) => {
-  currentTrack(accessToken, (id, name, progress_ms, duration_ms) => {
+  currentTrack(accessToken, (id, name, albumArt, progress_ms, duration_ms) => {
     if(isNewTrack(playlistName, id)) {
       playlists[playlistName].currentlyPlaying.skip = {}
-      console.log(id, name, progress_ms, duration_ms)
       playlists[playlistName].currentlyPlaying = {
         id: id,
         name: name,
         duration_ms: duration_ms,
         progress_ms: progress_ms,
+        albumArt:albumArt,
         skip: {}
       }
       callback(null, playlistName, playlists[playlistName].currentlyPlaying)
     }
-    nextTrack(playlistName, accessToken, callback)
+    setTimeout(function(){
+      console.log("checking")
+      nextTrack(playlistName, accessToken, callback)
+    }, 3000);
   })
 }
 
