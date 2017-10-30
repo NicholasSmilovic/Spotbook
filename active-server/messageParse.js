@@ -20,14 +20,14 @@ module.exports = (message, ws, callback) =>{
 
 
     case "startPlaylist":
-      db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error, playlistUpdate) => {
+      db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error, playlistName, playlistUpdate) => {
         if(error){
           callback(null, null, null, error, ws)
           return;
         }
 
         if(playlistUpdate) {
-          callback(playlistUpdate, playlistUpdate.name, "currentlyPlaying", null, ws)
+          callback(playlistUpdate, playlistName, "playerUpdate", error, ws);
           return
         }
 

@@ -2,13 +2,13 @@ module.exports = {
   'asdasd': {
     name: 'asdasd',
     password: '',
-    users:[],
-    skip: {},
     currentlyPlaying: {
       id: "aasffsdf",
       name: "asdfasdf",
       duration_ms: "34",
-      progress_ms: "234234"
+      progress_ms: "234234",
+    users:[],
+      skip: {}
     },
     accessToken:"aldshfahfdasf",
     spotifyObject: {

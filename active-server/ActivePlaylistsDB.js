@@ -4,7 +4,6 @@ let playlists = require('./starterDB.js')
 
 const getSecurePlaylist = (name) =>{
   let obj = playlists[name]
-  delete obj.accessToken
   return obj
 }
 
@@ -16,7 +15,8 @@ const getAllPlaylists = () => {
       spotifyObject:playlists[playlist].spotifyObject,
       users:playlists[playlist].users
     }
-    arrayOfPlaylists.push(obj)
+    // arrayOfPlaylists.push(obj)
+    arrayOfPlaylists.push(playlists[playlist])
   }
   return arrayOfPlaylists
 }
@@ -54,15 +54,15 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
       spotifyObject: body,
       accessToken: accessToken,
       users:[],
-      skip: {},
       currentlyPlaying: {
         id: "",
         name: "",
         duration_ms: "",
-        progress_ms: ""
+        progress_ms: "",
+        skip: {}
       }
     }
-    // nextTrack(playlist.name, accessToken, callback)
+    nextTrack(playlist.name, accessToken, callback)
     callback()
   })
 }
@@ -78,14 +78,12 @@ const currentTrack = (accessToken, callback) => {
   }
 
   request(options,(error, response, body) => {
-    console.log(response.statusCode)
     if (error) {
       callback("bad request to spotify")
       return
     }
-    if(body) {
-      callback(body.item.id, body.item.name, body.item.progress_ms, body.item.duration_ms)
-      console.log(body.item.id, "*****", body.item.name)
+    if(body && body.item) {
+      callback(body.item.id, body.item.name, body.progress_ms, body.item.duration_ms)
     } else {
       currentTrack(accessToken, callback)
     }
@@ -93,20 +91,22 @@ const currentTrack = (accessToken, callback) => {
 }
 
 const isNewTrack = (playlistName, retrievedId) => {
-  return !(playlists[playlistName].currentPlayingId === retrievedId)
+  return !(playlists[playlistName].currentlyPlaying.id === retrievedId)
 }
 
 const nextTrack = (playlistName, accessToken, callback) => {
   currentTrack(accessToken, (id, name, progress_ms, duration_ms) => {
     if(isNewTrack(playlistName, id)) {
       playlists[playlistName].currentlyPlaying.skip = {}
-      callback(null, getSecurePlaylist(playlistName))
+      console.log(id, name, progress_ms, duration_ms)
       playlists[playlistName].currentlyPlaying = {
         id: id,
         name: name,
         duration_ms: duration_ms,
-        progress_ms: progress_ms
+        progress_ms: progress_ms,
+        skip: {}
       }
+      callback(null, playlistName, playlists[playlistName].currentlyPlaying)
     }
     nextTrack(playlistName, accessToken, callback)
   })
