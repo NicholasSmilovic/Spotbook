@@ -12,8 +12,22 @@ module.exports = (DataHelpers) => {
     let track_id = req.params.id;
 
     DataHelpers.trackHelpers.getTrackByID(track_id)
-    .then((user) => {
-      res.send(user)
+    .then((track) => {
+      res.send(track)
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+
+  });
+
+  router.get('/getArtistFromTrack/:id', (req, res) => {
+// console.log('***** INSIDE ROUTE *****')
+    let track_id = req.params.id;
+
+    DataHelpers.trackHelpers.getArtistFromTrack(track_id)
+    .then((artist) => {
+      res.send(artist)
     })
     .catch((e) => {
       console.error(e);

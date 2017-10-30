@@ -1,4 +1,4 @@
- import React from 'react'
+import React from 'react'
 import {
   HashRouter as Router,
   Route,
@@ -45,6 +45,7 @@ class Routes extends React.Component {
         />
       )
     }
+
 
     const RenderActivePlaylists = () => {
       return (

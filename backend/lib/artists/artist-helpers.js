@@ -59,6 +59,9 @@ module.exports = (knex) => {
 
   function getArtistByID(id) {
     return new Promise(function(resolve, reject) {
+
+      // console.log('***** inside getArtistByID helper *****')
+
       let artist = {}
       knex('artists').where('id', id)
         .then((val) => {

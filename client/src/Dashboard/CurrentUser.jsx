@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
-
+import $ from 'jquery'
 import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-import SampleData from '../Charts/SampleChartData.jsx'
-
-import Prettiness from '../Charts/Prettiness.jsx'
-import Palette from '../Charts/Palette.jsx'
+// import Prettiness from '../Charts/Prettiness.jsx'
+// import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
 import { parse } from 'query-string'
-import compatibilityFunctions from '../../../user-compatibility.js'
+// import compatibilityFunctions from '../../../user-compatibility.js'
 
 
 
@@ -22,11 +20,24 @@ class CurrentUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chartData:{},
+      chartData: null,
+      chartDataRaw: null,
+
+      // chartData:{
+      //   labels: [],
+      //   datasets: [{
+      //     label: 'Tracks',
+      //     data: []
+      //   }]
+      // },
+
+      // chartDataRaw: [],
+
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
+      allUsersCompared: null,
       insightData:'Stuff',
       compatibleUsers: []
     }
@@ -93,79 +104,383 @@ class CurrentUser extends Component {
       }
 
 
-      let userAudioTrackFeaturesAverages = { danceability: danceability/topTracks.length,
-                                             energy: energy/topTracks.length,
-                                             key: keyString,
-                                             loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
-                                             mode: modeString,
-                                             speechiness: speechiness/topTracks.length,
-                                             acousticness: acousticness/topTracks.length,
-                                             instrumentalness: instrumentalness/topTracks.length,
-                                             liveness: liveness/topTracks.length,
-                                             valence: valence/topTracks.length,
-                                             tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
-                                            }
+      let userAudioTrackFeaturesAverages = {
+        danceability: danceability/topTracks.length,
+        energy: energy/topTracks.length,
+        key: keyString,
+        loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
+        mode: modeString,
+        speechiness: speechiness/topTracks.length,
+        acousticness: acousticness/topTracks.length,
+        instrumentalness: instrumentalness/topTracks.length,
+        liveness: liveness/topTracks.length,
+        valence: valence/topTracks.length,
+        tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
+      }
       return userAudioTrackFeaturesAverages
+    }
+    const getUniqueUserGenres = function(user1artists) {
+      let uniqueGenres = []
+      for (let i = 0; i < user1artists.length; i++) {
+        for (let j = 0; j < user1artists[i].genres.genres_array.length; j++) {
+          if (uniqueGenres.indexOf(user1artists[i].genres.genres_array[j]) === -1) {
+            uniqueGenres.push(user1artists[i].genres.genres_array[j])
+          }
+        }
+      }
+      return uniqueGenres
+    }
+
+    const userCompatibilityFunction = function(currentUserTopTracks, currentUserTopArtists, currentUserAudioTrackFeatures, otherUserComparisonData) {
+      let userComparison = {
+        id: otherUserComparisonData.userID,
+        percentMatch: null
+      }
+
+      let user2artists = otherUserComparisonData.topArtists
+      let user2tracks = otherUserComparisonData.topTracks
+      let user2AudioTrackFeatures = otherUserComparisonData.userTrackAudioFeatures
+
+
+      let matchesArr = []
+      let percentMatch = 0
+      let trackMatch = 0.05
+      let trackMatches = 0
+      let artistMatch = 0.05
+      let artistMatches = 0
+      let genreMatch = 0.85
+      let genreMatches = 0
+      // let audioFeaturesMatch = 0
+      // let audioFeaturesMatches = 0
+
+      let trackPercentileIncrease = 1/((currentUserTopTracks.length + user2tracks.length) / 2)
+
+      for (let i in currentUserTopTracks) {
+        for (let j in user2tracks) {
+          if (currentUserTopTracks[i].track_name === user2tracks[j].track_name) {
+            // console.log(user2tracks.items[j].name)
+            trackMatches += trackPercentileIncrease
+            break;
+            // console.log(trackMatches)
+          }
+        }
+      }
+
+      // console.log(trackMatch*trackMatches)
+      let artistPercentileIncrease = 1/((currentUserTopArtists.length + user2artists.length) / 2)
+
+      for (let i = 0; i < currentUserTopArtists.length; i++) {
+        for (let j = 0; j < user2artists.length; j++) {
+          if (currentUserTopArtists[i].artist_name === user2artists[j].artist_name) {
+            // console.log(user2artists.items[j].name)
+            artistMatches += artistPercentileIncrease
+            // console.log(artistMatches)
+          }
+        }
+      }
+      // console.log(artistMatches)
+
+      let user1genres = getUniqueUserGenres(currentUserTopArtists)
+      let user2genres = getUniqueUserGenres(user2artists)
+
+      // console.log(user1genres.length)
+      // console.log(user2genres.length)
+
+
+
+      let genrePercentileIncrease = 1/((user1genres.length + user2genres.length) / 2)
+      // console.log(genrePercentileIncrease)
+
+      for (let i = 0; i < user1genres.length; i++) {
+        for (let j = 0; j < user2genres.length; j++) {
+          if (user1genres[i] === user2genres[j]) {
+            // console.log(user2genres[j])
+            genreMatches += genrePercentileIncrease
+          }
+        }
+      }
+
+      // console.log(trackMatches*trackMatch)
+      // if (trackMatches < 0.2) {
+      //   trackMatch = 0.2
+      //   artistMatch = 0.2
+      //   genreMatch = 0.3
+      // }
+      // if (artistMatches < 0.2 && trackMatches < 0.2) {
+      //   trackMatch = 0.025
+      //   artistMatch = 0.025
+      //   genreMatch = 0.85
+      // }
+      // console.log(genreMatch)
+      // console.log(`Track matches: ${trackMatches}`)
+      // console.log(`Artist Matches: ${artistMatches}`)
+      matchesArr.push(trackMatch*trackMatches)
+      matchesArr.push(artistMatch*artistMatches)
+      matchesArr.push(genreMatch*genreMatches)
+
+      // console.log(user1AudioTrackFeatures)
+      // console.log(user2AudioTrackFeatures)
+
+      if (currentUserAudioTrackFeatures.danceability - user2AudioTrackFeatures.danceability < 0.05 && currentUserAudioTrackFeatures.danceability - user2AudioTrackFeatures.danceability > -0.05 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.energy - user2AudioTrackFeatures.energy < 0.05 && currentUserAudioTrackFeatures.energy - user2AudioTrackFeatures.energy > -0.05 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.key - user2AudioTrackFeatures.key < 1 && currentUserAudioTrackFeatures.key - user2AudioTrackFeatures.key > -1
+        && currentUserAudioTrackFeatures.mode - user2AudioTrackFeatures.mode < 0.5 && currentUserAudioTrackFeatures.mode - user2AudioTrackFeatures.mode > -0.5 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.loudness - user2AudioTrackFeatures.loudness < 3 && currentUserAudioTrackFeatures.loudness - user2AudioTrackFeatures.loudness > -3 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.speechiness - user2AudioTrackFeatures.speechiness < 0.05 && currentUserAudioTrackFeatures.speechiness - user2AudioTrackFeatures.speechiness > -0.05 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.acousticness - user2AudioTrackFeatures.acousticness < 0.05 && currentUserAudioTrackFeatures.acousticness - user2AudioTrackFeatures.acousticness > -0.05 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.instrumentalness - user2AudioTrackFeatures.instrumentalness < 0.1 && currentUserAudioTrackFeatures.instrumentalness - user2AudioTrackFeatures.instrumentalness > -0.1 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.liveness - user2AudioTrackFeatures.liveness < 0.05 && currentUserAudioTrackFeatures.liveness - user2AudioTrackFeatures.liveness > -0.05 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.valence - user2AudioTrackFeatures.valence < 0.1 && currentUserAudioTrackFeatures.valence - user2AudioTrackFeatures.valence > -0.1 ) {
+        percentMatch += 0.05
+      }
+
+      if (currentUserAudioTrackFeatures.tempo - user2AudioTrackFeatures.tempo < 10 && currentUserAudioTrackFeatures.tempo - user2AudioTrackFeatures.tempo > -10 ) {
+        percentMatch += 0.05
+      }
+
+      // console.log(`Audio Parameter Percent Increase: ${percentMatch}`)
+      // console.log(matchesArr)
+
+      matchesArr.map((match) => {
+        return percentMatch += match
+      })
+
+      if (percentMatch > 1) {
+        percentMatch = 1
+      }
+      userComparison.percentMatch = Math.round(percentMatch*100)
+
+      return userComparison
+    }
+
+    this.userCompatibility = () => {
+    return new Promise((res,rej) => {
+      let comparedUsers = []
+      for (let user in this.props.allUsers) {
+        this.getUserComparisonData(this.props.allUsers[user].id)
+          .then(userComparisonData => {
+            comparedUsers.push(userCompatibilityFunction(this.state.topTracks, this.state.topArtists, this.state.userAudioTrackFeatures, userComparisonData))
+          })
+      }
+      setTimeout(() => res(comparedUsers), 1000)
+    })
     }
   }
 
-
-
-
   componentWillMount(){
-    this.getChartData();
+
+
+    // this.getChartData();
 
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
     } else {
       // console.log("We got it. The thing that you need immediately follows this sentence.")
       // console.log(this.props.currentLocal);
-      this.getUserTopAbsArtists()
-      this.getUserTopTracks()
-// ***** ***** ***** ***** *****
-      // this.testRoute();
-// ***** ***** ***** ***** *****
+    this.setCurrentUserTopAbsArtists(),
+    this.setCurrentUserTopTracks().then(()=> {
+      return this.userCompatibility()
+    }).then(allUsersComparedArray => {
+      this.setState({allUsersCompared: allUsersComparedArray})
+    })
+
+
     }
   }
 
-  componentDidMount() {
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log(this.state.chartData)
+  // }
 
-  }
 
 
-  testRoute() {
-    $.get('http://localhost:3000/users/getUserTopTrackArtists/'+this.props.currentLocal.id)
-    .done( topTrackArtists => {
-      console.log(topTrackArtists);
-    })
-    .fail( err => {
-      console.error(err);
-    })
-  }
 
-  // Grab user's top tracks
-  getUserTopTracks(){
+  // CURRENT USER
+  setCurrentUserTopTracks = () => {
     return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
+
+      let artistIDs = [];
+      let artist_track = [];
+      let artistByTrack;
       for (let i = 0; i < topTrackIDs.length; i++) {
+
+// GET TRACK DETAILS BY TRACK_ID
         $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
-          let topTracks = this.state.topTracks;
-          topTracks.push(result);
-          this.setState({ topTracks: topTracks });
+          let currentUserTopTracks = this.state.topTracks;
+          currentUserTopTracks.push(result);
+          this.setState({ topTracks: currentUserTopTracks });
           this.setState({userAudioTrackFeatures: this.getUserTrackAudioFeatures(this.state.topTracks)})
         })
         .fail( err => {
           console.error(err);
         })
+
+// GET ARTIST_ID BY TRACK_ID
+        artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        .done( result => {
+          artistIDs.push(result.id);
+          artist_track.push([result.id, topTrackIDs[i].id])
+        })
+        .fail( err => {
+          console.error(err);
+        })
       }
+
+      let chartDetails = $.when(artistByTrack).done( () => {
+        let chartDetails = this.sortArtists(artist_track);
+        // console.log(chartDetails);
+        this.setChartDataRaw(chartDetails);
+        // console.log(this.state.chartDataRaw)
+
+      });
+
+      $.when(chartDetails).done( () => {
+
+        // console.log(this.state.chartData);
+      })
+
     })
     .fail( err => {
       console.error(err);
     });
   }
 
-  getUserTopAbsArtists() {
+/* artist detail fetching, associated track fetching, setting */
+  setChartDataRaw(highLevelDetails) {
+
+    return new Promise( (resolve, reject) => {
+
+    let chartData = {
+        labels: [],
+        datasets: [{
+          label: 'Tracks',
+          data: []
+        }]
+      };
+
+    let chartDataRaw = [];
+
+      for (let i = 0; i < highLevelDetails.length; i++) {
+        let artistID = highLevelDetails[i][0];
+        let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
+            .done( result => {
+
+              // let chartData = this.state.chartData;
+              if(result.artist_name.length > 15) {
+                chartData['labels'].push(result.artist_name.slice(0,15)+'...')
+              } else {
+                chartData['labels'].push(result.artist_name)
+              }
+              chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+              // this.setState({chartData});
+
+              // let chartDataRaw = this.state.chartDataRaw;
+              chartDataRaw.push({artist: result, tracks: []})
+              // this.setState({chartDataRaw});
+            })
+            .fail( err => {
+              console.error(err);
+            })
+
+        $.when(setArtist).done( () => {
+          for (let j = 0; j < highLevelDetails[i][1].length; j++) {
+            // console.log(`artist ${highLevelDetails[i][0]} performs track ${highLevelDetails[i][1][j]}`)
+            let trackID = highLevelDetails[i][1][j];
+            $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+            .done( result => {
+              // let chartDataRaw = this.state.chartDataRaw;
+              chartDataRaw[i]['tracks'].push(result);
+              // this.setState({chartDataRaw});
+            })
+          }
+        })
+      }
+      setTimeout(() => resolve([chartData, chartDataRaw]), 100);
+      // resolve([chartData, chartDataRaw]);
+
+    })
+    .then( result => {
+      // console.log(result[0].labels.length)
+      // console.log(result[0].labels)
+      // console.log(result[1])
+      this.setState({chartData: result[0]})
+      this.setState({chartDataRaw: result[1]})
+    })
+    // console.log(chartData)
+    // console.log(chartDataRaw)
+    // console.log('***** inside setChartDataRaw() *****')
+
+  }
+
+/* artist sorting, filtering, and top five-ing */
+  sortArtists(artist_track) {
+    let sorted = artist_track.sort();
+    let tally = [];
+    let count = 1;
+
+    for (let i = 0; i < sorted.length; i++) {
+      let artist = [sorted[i][0], count];
+      if (sorted[i+1] === undefined) {
+        break;
+      } else if (sorted[i][0] === sorted[i+1][0]) {
+        count++;
+      } else {
+        tally.push(artist)
+        count = 1;
+      }
+    }
+
+    tally.sort( (a,b) => {
+      return b[1] - a[1];
+    });
+
+    tally.splice(5);
+
+    let finalTally = [];
+
+    for (let i = 0; i < tally.length; i++) {
+      finalTally.push([tally[i][0], []])
+    }
+
+    for (let i = 0; i < sorted.length; i++) {
+      for (let j = 0; j < finalTally.length; j++) {
+        if (sorted[i][0] === finalTally[j][0]) {
+          finalTally[j][1].push(sorted[i][1]);
+        }
+      }
+    }
+
+    return finalTally;
+  }
+
+
+  setCurrentUserTopAbsArtists = () => {
     return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
     .done(absArtistIDs => {
       // console.log(absArtistIDs)
@@ -187,24 +502,48 @@ class CurrentUser extends Component {
   }
 
 
-
-  getChartData(){
-    let chart = Prettiness(SampleData(), Palette().cool_10);
-    this.setState({ chartData: chart.data });
+  //ALL OTHER USERS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  getUserComparisonData(id){
+    return new Promise((res, rej) => {
+    let userInfo = {
+      userID: id,
+      topTracks: null,
+      topArtists:null,
+      userTrackAudioFeatures: null
+    }
+      $.get('http://localhost:3000/users/getUserTopFullTracks/'+ id)
+      .done( topTracks => {
+        userInfo.topTracks = topTracks
+        userInfo.userTrackAudioFeatures = this.getUserTrackAudioFeatures(topTracks)
+        $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
+        .done(absArtists => {
+          userInfo.topArtists = absArtists
+          res(userInfo)
+        })
+      })
+    })
   }
+
+  // getUserTopAbsArtists(id) {
+  //   return $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
+  //   .done(absArtists => {
+  //     console.log(absArtists)
+  //   })
+  // }
+
 
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
-      let label = this.state.chartData.labels[index];
+      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
       let insightData = `INDEX: ${index} => ${label}`;
-      // alert(`INDEX: ${index} => ${label}`);
 
       this.setState({ insightData: insightData });
     }
   }
 
   render (){
+
     let user_img = '#'
     let user_name = null;
 
@@ -214,6 +553,27 @@ class CurrentUser extends Component {
       user_img = this.props.currentLocal.image_urls.image;
       user_name = this.props.currentLocal.display_name
     }
+
+    const comparedUsers = this.state.allUsersCompared;
+
+    let userSidebar = null;
+      if (comparedUsers) {
+        userSidebar = <UserMatchSidebar allUsersCompared={this.state.allUsersCompared}/>
+      } else {
+        userSidebar = <div>Loading</div>
+      }
+
+    let title = 'Loading Your Top Artist Data...'
+    let data = {
+      labels: ['','','','',''],
+        datasets:[{ label:'Loading...', data:[0,0,0,0,0]}]
+      };
+
+    if(this.state.chartData) {
+      data = this.state.chartData
+      title = 'Your Top Artists'
+    }
+
 
     return(
       <div>
@@ -235,19 +595,19 @@ class CurrentUser extends Component {
           </div>
         </div>
 
-          <UserMatchSidebar />
+          {userSidebar}
 
         <div className='row'>
           <div className='col-md-6'>
             <BarChart
-              chartData={this.state.chartData}
+                chartData={data}
 
-              title="Left Chart"
-              y_label="Y-AXIS"
-              x_label="X-AXIS"
+                title={title}
+                y_label=""
+                x_label=""
 
-              handleClick={ event => this.handleClickElement(event) }
-            />
+                handleClick={ event => this.handleClickElement(event) }
+              />
           </div>
 
           <div className='col-md-6'>
