@@ -2,11 +2,18 @@ import React, {Component} from 'react';
 import UserBoxAnalytics from '../Dashboard/UserBoxAnalytics.jsx';
 import {withRouter} from 'react-router-dom'
 
+import BarChart from '../Charts/_Bar.jsx'
+import TopArtistInsight from '../Insights/_TopArtist.jsx'
 
 class User extends Component{
   constructor(props) {
     super(props)
     this.state = {
+
+      chartData: null,
+      chartDataRaw: null,
+      insightData: null,
+
       user: {
         display_name: '',
         image_urls: {}
@@ -14,6 +21,7 @@ class User extends Component{
       userAudioTrackFeatures: null
     }
   }
+
   getUser = () => {
     return new Promise( (resolve, reject) => {
       fetch(`http://localhost:3000/users/getUserByID/${this.props.match.params.id}`)
@@ -298,12 +306,166 @@ generatePlaylist = (trackIDs) => {
     this.getUser()
     .then( user => { this.setState({user}) })
     .then(() => {
+
       this.getUserComparisonData(this.state.user.id)
         .then((response) => {
           this.setState({userAudioTrackFeatures: response.userTrackAudioFeatures})
         })
     })
+    .then(() => {
+      this.getUserTopArtistChartData();
+    })
 
+  }
+
+
+// CURRENT USER
+  getUserTopArtistChartData = () => {
+    return $.get('http://localhost:3000/users/getUserTopTracks/'+this.state.user.id)
+    .done( topTrackIDs => {
+
+      let artistIDs = [];
+      let artist_track = [];
+      let artistByTrack;
+      for (let i = 0; i < topTrackIDs.length; i++) {
+
+// GET ARTIST_ID BY TRACK_ID
+        artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        .done( result => {
+          artistIDs.push(result.id);
+          artist_track.push([result.id, topTrackIDs[i].id])
+        })
+        .fail( err => {
+          console.error(err);
+        })
+      }
+
+      $.when(artistByTrack).done( () => {
+        let chartDetails = this.sortArtists(artist_track);
+        // console.log(chartDetails);
+        this.setChartDataRaw(chartDetails);
+        // console.log(this.state.chartDataRaw)
+
+      });
+
+    })
+    .fail( err => {
+      console.error(err);
+    });
+  }
+
+/* artist detail fetching, associated track fetching, setting */
+  setChartDataRaw(highLevelDetails) {
+
+    return new Promise( (resolve, reject) => {
+      let chartData = {
+          labels: [],
+          datasets: [{
+            label: 'Tracks',
+            data: []
+          }]
+        };
+      let chartDataRaw = [];
+      return Promise.all(highLevelDetails.map(i => {
+        let artistID = i[0];
+        return $.get('http://localhost:3000/artists/getArtistByID/' + artistID)
+      }))
+      .then(response => {
+        for (let i = 0; i < response.length; i++) {
+          if(response[i].artist_name.length > 15) {
+            chartData['labels'].push(response[i].artist_name.slice(0,15)+'...')
+          } else {
+            chartData['labels'].push(response[i].artist_name)
+          }
+          chartData['datasets'][0]['data'].push(highLevelDetails[i][1].length)
+          chartDataRaw.push({artist: response[i], tracks: []})
+        }
+        // console.log(chartData)
+        // console.log(chartDataRaw)
+      })
+      .then(()=> {
+        // console.log('after setting artists')
+        // for (let i = 0; i < chartDataRaw.length; i++) {
+        return Promise.all(highLevelDetails.map(i => {
+        // console.log(i)
+          return Promise.all(i[1].map(trackID => {
+            return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+          }))
+          .then((response) => {
+            // console.log(i[0])
+            // console.log((response))
+            for (let j = 0; j < chartDataRaw.length; j++) {
+              if(chartDataRaw[j]['artist']['id'] === i[0]) {
+                chartDataRaw[j]['tracks'] = response
+              }
+            }
+
+          })
+        }))
+        .then(() => {
+          // console.log(chartDataRaw)
+          this.setState({chartData})
+          this.setState({chartDataRaw})
+        })
+      })
+    })
+      // .then( result => {
+      //   this.setState({chartData: result[0]})
+      //   this.setState({chartDataRaw: result[1]})
+      // })
+  }
+
+/* artist sorting, filtering, and top five-ing */
+  sortArtists(artist_track) {
+    let sorted = artist_track.sort();
+    let tally = [];
+    let count = 1;
+
+    for (let i = 0; i < sorted.length; i++) {
+      let artist = [sorted[i][0], count];
+      if (sorted[i+1] === undefined) {
+        break;
+      } else if (sorted[i][0] === sorted[i+1][0]) {
+        count++;
+      } else {
+        tally.push(artist)
+        count = 1;
+      }
+    }
+
+    tally.sort( (a,b) => {
+      return b[1] - a[1];
+    });
+
+    tally.splice(5);
+
+    let finalTally = [];
+
+    for (let i = 0; i < tally.length; i++) {
+      finalTally.push([tally[i][0], []])
+    }
+
+    for (let i = 0; i < sorted.length; i++) {
+      for (let j = 0; j < finalTally.length; j++) {
+        if (sorted[i][0] === finalTally[j][0]) {
+          finalTally[j][1].push(sorted[i][1]);
+        }
+      }
+    }
+    return finalTally;
+  }
+
+
+  handleClickElement = (event) => {
+    if (event[0]) {
+      let index = event[0]['_index'];
+      let label = this.state.chartDataRaw[index]['artist']['artist_name'];
+      // let insightData = `INDEX: ${index} => ${label}`;
+
+      let insightData = this.state.chartDataRaw[index]
+      // console.log(insightData);
+      this.setState({ insightData: insightData });
+    }
   }
 
 
@@ -326,6 +488,33 @@ generatePlaylist = (trackIDs) => {
       analytics = <UserBoxAnalytics userAudioTrackFeatures={this.state.userAudioTrackFeatures} />
     } else {
       analytics = <div>Loading...</div>
+    }
+
+    let title = '';
+    let data = null;
+
+    if(!this.state.chartData) {
+      title = `${this.state.user.display_name}'s Loading  Top Artist Data...`
+      data = {
+        labels: [
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING'],
+          datasets:[{ label:'Loading...',
+          data:[
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random()
+          ]
+        }]
+      }
+    } else {
+      data = this.state.chartData
+      title = `${this.state.user.display_name}'s Top Artists`
     }
 
     return(
@@ -352,6 +541,28 @@ generatePlaylist = (trackIDs) => {
             </div>
           <div className="col-md-4 col-sm-4 col-xs-2"></div>
         </div>
+
+        <br/><br/><br/>
+
+        <div className='row'>
+          <div className='col-md-6'>
+            <BarChart
+                chartData={data}
+
+                title={title}
+                y_label=""
+                x_label=""
+
+                handleClick={ event => this.handleClickElement(event) }
+              />
+          </div>
+
+          <div className='col-md-6'>
+            <TopArtistInsight insightData={this.state.insightData}/>
+          </div>
+        </div>
+
+
         {analytics}
       </div>
     )
