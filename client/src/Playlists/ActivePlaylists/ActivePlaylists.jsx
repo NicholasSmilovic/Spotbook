@@ -18,6 +18,12 @@ class ActivePlaylists extends Component{
       currentPlaylist: "",
       currentPassword: "",
       playlists: null,
+      currentlyPlaying: {
+        id: "",
+        name: "",
+        progress_ms: "",
+        duration_ms: ""
+      },
       flash:{
         data: null,
         error: null
@@ -26,15 +32,42 @@ class ActivePlaylists extends Component{
     }
   }
 
+  _updatePlayer = (reciever, data) => {
+    if(reciever === this.state.currentPlaylist) {
+      this.setState({
+        currentlyPlaying:{
+          id: data.id,
+          name: data.name,
+          progress_ms: data.progress_ms,
+          duration_ms: data.duration_ms,
+          skip: data.skip
+        }
+      })
+      console.log(data)
+    }
+  }
+
   _newPlaylists = (data) => {
     this.setState({ playlists: data })
+    let playlistName = this.state.currentPlaylist
+    if(playlistName) {
+      for(let playlist = 0; playlist < this.state.playlists.length; playlist++){
+        if (this.state.playlists[playlist].name === playlistName){
+          this._joinPlaylist(this.state.playlists[playlist])
+          this._updatePlayer(this.state.playlists[playlist])
+
+        }
+      }
+    }
   }
 
   _joinPlaylist = (playlist) =>{
     this.setState({
       currentPlaylist: playlist.name,
       currentPassword: playlist.password,
-      currentPlaylistData: playlist.spotifyObject
+      currentPlaylistData: playlist.spotifyObject,
+      currentlyPlaying: playlist.currentlyPlaying,
+      users: playlist.users
     })
   }
 
@@ -45,6 +78,9 @@ class ActivePlaylists extends Component{
 
   _attemptJoin = (name, password) => {
     this.webSocket.verify({ name:name, password:password })
+  }
+  _voteSkip = () => {
+    this.webSocket.voteToSkipSong({ name:this.state.currentPlaylist, password:this.state.currentPassword })
   }
 
   _flashMessage = (data, error) =>{
@@ -86,6 +122,7 @@ class ActivePlaylists extends Component{
       joinPlaylist: this._joinPlaylist,
       update: this._update,
       attemptJoin: this._attemptJoin,
+      updatePlayer: this._updatePlayer,
       flashMessage: this._flashMessage
     }
     this.webSocket = genWebSocket(stateOperations)
@@ -121,7 +158,10 @@ class ActivePlaylists extends Component{
           accessToken = {this.props.accessToken}
           addSong = {this.addSongToPlaylist}
           rerendered = {this.rerendered}
-          update = {this.state.update}/>
+          update = {this.state.update}
+          users = {this.state.users}
+          currentlyPlaying = {this.state.currentlyPlaying}
+          voteToSkipSong = {this._voteSkip}/>
       </div>
       )
   }

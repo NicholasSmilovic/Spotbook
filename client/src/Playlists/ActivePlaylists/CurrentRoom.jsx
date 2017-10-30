@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import CurrentPlaylist from "./CurrentPlaylist.jsx"
 import StickySideBar from "../StickySideBar.jsx"
 
-import { Line, Circle } from 'rc-progress';
+import Player from './Player.jsx';
 
 class Room extends Component{
   leaveRoom = () =>{
@@ -15,6 +15,15 @@ class Room extends Component{
   }
 
   render (){
+    let player = null;
+    if(this.props.currentlyPlaying) {
+      player = <Player
+                  currentlyPlaying = {this.props.currentlyPlaying}
+                  users={this.props.users}
+                  voteToSkipSong = {this.props.voteToSkipSong}/>
+    }
+
+
     return(
       <div>
         <div className="row">
@@ -23,18 +32,7 @@ class Room extends Component{
           </div>
           <div className="col-md-10 col-xs-6 sticky-container">
             <button onClick={this.leaveRoom} className="btn btn-danger">Leave</button>
-            <div className="row">
-              <div className="col-sm-4"></div>
-              <div className="col-sm-4"></div>
-              <div className="col-sm-4">
-                <div className="">
-                  <a href="#" onClick={this.preventDefault} className='over-skip-circle box'>
-                    <h3> Vote to Skip </h3>
-                    <Circle className="skip-cirle box" percent="70" strokeWidth="4" strokeColor="red" />
-                  </a>
-                </div>
-              </div>
-            </div>
+            {player}
             <CurrentPlaylist
               accessToken={this.props.accessToken}
               playlist={this.props.data}
