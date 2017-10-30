@@ -21,15 +21,16 @@ class Player extends Component{
 
     return(
         <div className="row">
+            <div className="col-sm-4">
+              <img className="img-responsive" src={this.props.currentlyPlaying.albumArt} />
+            </div>
           <div className="col-sm-4">
             <h1> Currently Playing: {this.props.currentlyPlaying.name} </h1>
             </div>
-            <div className="col-sm-4"></div>
             <div className="col-sm-4">
               <div className="">
                 <a href="#" onClick={this.handleVoteToSkip} className='over-skip-circle box'>
                   <h3> Vote to Skip </h3>
-                  {skipPercent}
                   <Circle className="skip-cirle box" percent={skipPercent} strokeWidth="4" strokeColor="red" />
                 </a>
               </div>

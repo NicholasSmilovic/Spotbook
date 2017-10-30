@@ -22,7 +22,8 @@ class ActivePlaylists extends Component{
         id: "",
         name: "",
         progress_ms: "",
-        duration_ms: ""
+        duration_ms: "",
+        albumArt: ""
       },
       flash:{
         data: null,
@@ -40,6 +41,7 @@ class ActivePlaylists extends Component{
           name: data.name,
           progress_ms: data.progress_ms,
           duration_ms: data.duration_ms,
+          albumArt: data.albumArt,
           skip: data.skip
         }
       })
