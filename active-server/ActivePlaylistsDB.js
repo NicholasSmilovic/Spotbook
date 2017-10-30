@@ -3,11 +3,8 @@ var request = require('request');
 let playlists = require('./starterDB.js')
 
 const getSecurePlaylist = (name) =>{
-  let obj = {
-    name: name,
-    spotifyObject:playlists[name].spotifyObject,
-    password: playlists[name].password
-  }
+  let obj = playlists[name]
+  delete obj.accessToken
   return obj
 }
 
@@ -56,9 +53,62 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
       password: playlist.password,
       spotifyObject: body,
       accessToken: accessToken,
-      users:[]
+      users:[],
+      skip: {},
+      currentlyPlaying: {
+        id: "",
+        name: "",
+        duration_ms: "",
+        progress_ms: ""
+      }
     }
+    // nextTrack(playlist.name, accessToken, callback)
     callback()
+  })
+}
+
+const currentTrack = (accessToken, callback) => {
+  let options = {
+    url: `https://api.spotify.com/v1/me/player/currently-playing`,
+    method: "GET",
+    json: true,
+    headers: {
+      Authorization: "Bearer " + accessToken
+    }
+  }
+
+  request(options,(error, response, body) => {
+    console.log(response.statusCode)
+    if (error) {
+      callback("bad request to spotify")
+      return
+    }
+    if(body) {
+      callback(body.item.id, body.item.name, body.item.progress_ms, body.item.duration_ms)
+      console.log(body.item.id, "*****", body.item.name)
+    } else {
+      currentTrack(accessToken, callback)
+    }
+  })
+}
+
+const isNewTrack = (playlistName, retrievedId) => {
+  return !(playlists[playlistName].currentPlayingId === retrievedId)
+}
+
+const nextTrack = (playlistName, accessToken, callback) => {
+  currentTrack(accessToken, (id, name, progress_ms, duration_ms) => {
+    if(isNewTrack(playlistName, id)) {
+      playlists[playlistName].currentlyPlaying.skip = {}
+      callback(null, getSecurePlaylist(playlistName))
+      playlists[playlistName].currentlyPlaying = {
+        id: id,
+        name: name,
+        duration_ms: duration_ms,
+        progress_ms: progress_ms
+      }
+    }
+    nextTrack(playlistName, accessToken, callback)
   })
 }
 
@@ -102,10 +152,8 @@ const verify = (playlist, callback) => {
   callback(null, "invalid credentials")
 }
 
-const updateRoomPopulations = (sockets, callback) => {
-  for(playlist in playlists){
-    playlists[playlist].users = []
-  }
+
+const updateRoomPopulations = (sockets) => {
   for(let socket in sockets) {
     let playlistName = sockets[socket].playlist
     console.log("inside update server function")
@@ -115,8 +163,16 @@ const updateRoomPopulations = (sockets, callback) => {
       playlists[playlistName].users.push(socket)
     }
   }
+}
+
+const updateRoomData = (sockets, callback) => {
+  for(playlist in playlists){
+    playlists[playlist].users = []
+  }
+  updateRoomPopulations(sockets)
   callback()
 }
+
 
 module.exports = {
   getAllPlaylists: getAllPlaylists,
@@ -124,5 +180,5 @@ module.exports = {
   verify: verify,
   getSecurePlaylist: getSecurePlaylist,
   addSongToPlaylist: addSongToPlaylist,
-  updateRoomPopulations: updateRoomPopulations
+  updateRoomData: updateRoomData
 }

@@ -20,20 +20,28 @@ module.exports = (message, ws, callback) =>{
 
 
     case "startPlaylist":
-      db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error) => {
+      db.addNewPlaylist(message.playlist, message.accessToken, message.currentUser, (error, playlistUpdate) => {
         if(error){
           callback(null, null, null, error, ws)
           return;
         }
+
+        if(playlistUpdate) {
+          callback(playlistUpdate, playlistUpdate.name, "currentlyPlaying", null, ws)
+          return
+        }
+
+        callback(db.getAllPlaylists(), "all", "playlists", error, ws);
         ws.send(JSON.stringify({
           reciever: "all",
           type: "approvedJoin",
           data: db.getSecurePlaylist(message.playlist.name),
           error: null
         }));
-        callback(db.getAllPlaylists(), "all", "playlists", error, ws);
         callback(null, null, null, null, ws, ()=> {
-          return message.playlist.name
+          ws.playlist = message.playlist.name;
+          ws.voteSkip = false;
+          return ws
         })
       });
       break;
@@ -57,7 +65,9 @@ module.exports = (message, ws, callback) =>{
           error: null
         }));
         callback(null, null, null, null, ws, () => {
-          return data.name
+          ws.playlist = data.name
+          ws.voteSkip = false;
+          return ws
         })
       })
       break;
@@ -89,10 +99,25 @@ module.exports = (message, ws, callback) =>{
       })
       break;
 
+    case "skipSong":
+      db.verify(message.credentials, (data, error) => {
+        if(error) {
+          ws.send(JSON.stringify({
+            reciever: "all",
+            type: "Invalid Credentials",
+            data: null,
+            error: error
+          }));
+          return
+        }
+      })
+      break;
 
     case "leaveRoom":
       callback(null, null, null, null, ws, () => {
-        return ""
+        ws.playlist = "";
+        ws.voteSkip = false;
+        return ws
       })
       break;
 

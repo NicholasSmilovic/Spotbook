@@ -11,7 +11,7 @@ const server = express()
 .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 const sendUpdate = (callback) => {
-  db.updateRoomPopulations(sockets, callback)
+  db.updateRoomData(sockets, callback)
 }
 
 const wss = new SocketServer({ server });
@@ -28,7 +28,7 @@ wss.broadcast = function broadcast(data, reciever, type, error, ws, callback) {
     }
   })
   if(callback) {
-    sockets[ws.id].playlist = callback()
+    sockets[ws.id] = callback()
     sendUpdate(() => {
       messageParse({type: "getPlaylists"}, ws, wss.broadcast)
     })

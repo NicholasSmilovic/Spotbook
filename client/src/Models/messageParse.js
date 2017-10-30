@@ -1,6 +1,4 @@
 module.exports = (stateOperations, response) => {
-  console.log("ayyy")
-  console.log(response)
   switch (response.type) {
     case "playlists":
       stateOperations.newPlaylists(response.data)
@@ -13,6 +11,9 @@ module.exports = (stateOperations, response) => {
     case "update":
       stateOperations.flashMessage("Added Song")
       stateOperations.update(response.reciever)
+      break;
+    case "currentlyPlaying":
+      console.log(response.data.currentlyPlaying.progress_ms)
       break;
     default:
       stateOperations.flashMessage( null, response.error )
