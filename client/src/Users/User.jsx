@@ -89,10 +89,16 @@ removeDuplicates = (arr) => {
 generatePlaylist = (trackIDs) => {
   let uriString = ''
   trackIDs.forEach(id => {
-    uriString += id
-    uriString += ','
+    uriString += `spotify%3Atrack%3A${id},`
   })
   uriString = uriString.slice(0, -1) // take off last comma
+  let newPlaylistBody = JSON.stringify(
+    {
+      "description": `My U Complete Me Playlist with ${this.state.user.display_name}`,
+      "public": true,
+      "name": `${this.props.currentLocal.display_name} <3 ${this.state.user.display_name}`
+    }
+  )
 
   fetch(`https://api.spotify.com/v1/users/${this.props.currentLocal.spotify_id}/playlists`, {
     method: "POST",
@@ -100,14 +106,28 @@ generatePlaylist = (trackIDs) => {
     headers: {
       Authorization: "Bearer " + this.props.accessToken
     },
-    body: {
-      "description": `My U Complete Me Playlist with ${this.state.user.display_name}`,
-      "public": true,
-      "name": `${this.props.currentLocal.display_name} <3 ${this.state.user.display_name}`
+    body: newPlaylistBody
+
+  })
+  .then((response) => {
+    if (response.status >= 400) {
+      console.log('Error! Playlist not generated')
+      return 0
+    } else {
+      return response.json()
     }
   })
   .then((response) => {
-    console.log('playlist generated', response)
+    fetch(`https://api.spotify.com/v1/users/${this.props.currentLocal.spotify_id}/playlists/${response.id}/tracks?uris=${uriString}`, {
+      method: "POST",
+      Accept: "application/json",
+      headers: {
+        Authorization: "Bearer " + this.props.accessToken
+      }
+    })
+    .then(() => {
+      console.log('playlist generated')
+    })
   })
 
 
@@ -165,14 +185,13 @@ generatePlaylist = (trackIDs) => {
 
 
   render (){
-    this.uCompleteMe()
-
     return(
         <div>
           <div className='row'>
             <div className='col-md-12 user-profile'>
               <img src={this.state.user.image_urls.image} />
               <h1>{this.state.user.display_name}</h1>
+              <button className="col-xl-2 text-center btn btn-primary u-complete-me" onClick={this.uCompleteMe}>U Complete Me Playlist</button>
             </div>
           </div>
         </div>
