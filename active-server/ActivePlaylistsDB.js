@@ -165,6 +165,47 @@ const updateRoomPopulations = (sockets) => {
   }
 }
 
+const shouldPlaylistSkip = (playlistName) => {
+  let skippers = Object.keys(playlists[playlistName].currentlyPlaying.skip).length
+  let users = playlists[playlistName].users.length * 3 /5
+  console.log(skippers, " vs ", users)
+  return (skippers > users)
+}
+
+const skipSong = (playlistName, callback) => {
+  let options = {
+    url: `https://api.spotify.com/v1/me/player/pause`,
+    method: "put",
+    json: true,
+    headers: {
+      Authorization: "Bearer " + playlists[playlistName].accessToken
+    }
+  }
+
+  request(options,(error, response, body) => {
+    console.log(response.toJSON())
+    if (error) {
+      callback("bad request to spotify")
+      return
+    }
+    callback()
+  })
+}
+
+const voteToSkip = (playlistName, socketId, callback) => {
+  if(playlists[playlistName].currentlyPlaying.skip[socketId]){
+    callback("already voted")
+  }
+  playlists[playlistName].currentlyPlaying.skip[socketId]= true;
+  if (shouldPlaylistSkip(playlistName)) {
+    skipSong(playlistName, () => {
+      callback(null, playlists[playlistName])
+    })
+    return
+  }
+  callback(null, playlists[playlistName])
+}
+
 const updateRoomData = (sockets, callback) => {
   for(playlist in playlists){
     playlists[playlist].users = []
@@ -180,5 +221,6 @@ module.exports = {
   verify: verify,
   getSecurePlaylist: getSecurePlaylist,
   addSongToPlaylist: addSongToPlaylist,
+  voteToSkip: voteToSkip,
   updateRoomData: updateRoomData
 }

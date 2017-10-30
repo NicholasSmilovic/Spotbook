@@ -110,6 +110,18 @@ module.exports = (message, ws, callback) =>{
           }));
           return
         }
+        db.voteToSkip(message.credentials.name, ws.id, (error, playlist) => {
+          if(error){
+            ws.send(JSON.stringify({
+              reciever: "all",
+              type: "Invalid Vote",
+              data: null,
+              error: error
+            }));
+            return
+          }
+          callback(playlist.currentlyPlaying, playlist.name, "playerUpdate", null, ws)
+        })
       })
       break;
 
