@@ -25,18 +25,26 @@
 }
 .u-complete-me {
   position:absolute;
-  left:40%;
+  left:30%;
   top:80%;
   margin-top:-10px; /* -1/2 height */
   color: white;
   font-family: $headerText;
   text-decoration: none;
   background-color: $spotifyGreen;
-  padding: 10px 35px;
   font-size: 16px;
   line-height: 1;
   border-radius: 500px;
   padding: 21px 56px 19px;
+}
+
+.u-complete-me-text {
+  position:absolute;
+  left:30%;
+  top:95%;
+  margin-top:-10px; /* -1/2 height */
+  font-size: 16px;
+  margin: auto;
 }
 
 h2,h3,h4,h5 {
@@ -100,10 +108,10 @@ h2,h3,h4,h5 {
 
 .user-profile {
   display: block;
-  // margin: auto;
-  // margin-top: 5em;
-  // border-radius: 50%;
-  // box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+  margin: auto;
+  margin-top: 5em;
+  border-radius: 50%;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
 }
 
 .analytic {
