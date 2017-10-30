@@ -26,26 +26,25 @@ class User extends Component{
     let uncommonTracks = []
     uncommonTracks = this.loops(y, m, uncommonTracks)
     uncommonTracks = this.loops(m, y, uncommonTracks)
-    console.log('uncommonTracks',uncommonTracks)
     return uncommonTracks
   }
 
-loops = (primary, secondary, uncommonTracks) => {
-  for (let i = 0; i < primary.length; i++) {
-    let common = false
-    for (let j = 0; j < secondary.length; j++) {
-      if (primary[i].id === secondary[j].id) {
-        common = true
-        break
+  loops = (primary, secondary, uncommonTracks) => {
+    for (let i = 0; i < primary.length; i++) {
+      let common = false
+      for (let j = 0; j < secondary.length; j++) {
+        if (primary[i].id === secondary[j].id) {
+          common = true
+          break
+        }
+      }
+      if (!common) {
+        uncommonTracks.push(primary[i])
       }
     }
-    if (!common) {
-      uncommonTracks.push(primary[i])
-    }
-  }
-  return uncommonTracks
+    return uncommonTracks
 
-}
+  }
 
 
 normalize = (yourTopTracks, myTopTracks) => {
@@ -73,7 +72,7 @@ normalize = (yourTopTracks, myTopTracks) => {
 removeDuplicates = (arr) => {
   arr.forEach((track, index) => {
     for (let j = index + 1; j < arr.length; j++) {
-      if (arr[j] === track) {
+      if (arr[j].id === track.id) {
         arr.splice(j,1)
 
         j -= 1
@@ -153,11 +152,12 @@ generatePlaylist = (trackIDs) => {
             let playlistPool = this.findUncommonTracks(yourTopTracks, myTopTracks)
             if (playlistPool.length) {
               let playlistPoolNormalized = this.normalize(myTopTracks, yourTopTracks)
-              for (let i = 0; i < 20; i++) {
+              for (let i = 0; i < 23; i++) {
                 playlist.push(playlistPool[Math.floor(Math.random()*Math.random()*(playlistPoolNormalized.length - 1))])
               }
 
               playlist = this.removeDuplicates(playlist)
+              console.log(playlist)
               return playlist
             } else {
               return 0
@@ -187,6 +187,107 @@ generatePlaylist = (trackIDs) => {
 
 
 
+  getUserTrackAudioFeatures = (topTracks) => {
+    let danceability = 0
+    let energy = 0
+    let key = 0
+    let loudness = 0
+    let mode = 0
+    let speechiness = 0
+    let acousticness = 0
+    let instrumentalness = 0
+    let liveness = 0
+    let valence = 0
+    let tempo = 0
+
+    for (let track in topTracks) {
+      danceability += topTracks[track].danceability
+      energy += topTracks[track].energy
+      key += topTracks[track].key
+      loudness += topTracks[track].loudness
+      mode += topTracks[track].mode
+      speechiness += topTracks[track].speechiness
+      acousticness += topTracks[track].acousticness
+      instrumentalness += topTracks[track].instrumentalness
+      liveness += topTracks[track].liveness
+      valence += topTracks[track].valence
+      tempo += topTracks[track].tempo
+    }
+
+    key = Math.round(key/topTracks.length)
+    mode = Math.round(mode/topTracks.length)
+
+    let musicalKeys = {
+      1: 'C',
+      2: 'C#/Db',
+      3: 'D',
+      4: 'D#/Eb',
+      5: 'E',
+      6: 'F',
+      7: 'F#/Gb',
+      8: 'G',
+      9: 'G#/Ab',
+      10: 'A',
+      11: 'A#/Bb',
+      12: 'B'
+    }
+
+    let keyString = ''
+
+    for (let musicalKey in musicalKeys) {
+      if (musicalKey == key) {
+        keyString = musicalKeys[musicalKey]
+      }
+    }
+
+    let modeString = ''
+
+    if (mode == 1) {
+      modeString = 'Maj'
+    } else {
+      modeString = 'Min'
+    }
+
+
+    let userAudioTrackFeaturesAverages = {
+      danceability: danceability/topTracks.length,
+      energy: energy/topTracks.length,
+      key: keyString,
+      loudness: Number(Math.round((loudness/topTracks.length)+'e2')+'e-2'),
+      mode: modeString,
+      speechiness: speechiness/topTracks.length,
+      acousticness: acousticness/topTracks.length,
+      instrumentalness: instrumentalness/topTracks.length,
+      liveness: liveness/topTracks.length,
+      valence: valence/topTracks.length,
+      tempo: Number(Math.round((tempo/topTracks.length)+'e2')+'e-2')
+    }
+    return userAudioTrackFeaturesAverages
+  }
+
+  getUserComparisonData(id){
+    return new Promise((res, rej) => {
+    let userInfo = {
+      userID: id,
+      topTracks: null,
+      topArtists:null,
+      userTrackAudioFeatures: null
+    }
+    $.get('http://localhost:3000/users/getUserTopFullTracks/'+ id)
+      .done(topTracks => {
+        userInfo.topTracks = topTracks
+        userInfo.userTrackAudioFeatures = this.getUserTrackAudioFeatures(topTracks)
+        $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
+        .done(absArtists => {
+          userInfo.topArtists = absArtists
+          res(userInfo)
+        })
+      })
+    })
+  }
+
+
+
 
   componentWillMount () {
     this.getUser().then( user => { this.setState({user}) })
@@ -203,6 +304,11 @@ generatePlaylist = (trackIDs) => {
       explanation = <div className='w-100 row align-items-center'>
         <div className="col u-complete-me-text">Generate a playlist based on yours and {this.state.user.display_name}'s top tracks!</div>
       </div>
+
+      this.getUserComparisonData(this.state.user.id)
+        .then((response) => {
+          console.log(response)
+        })
     } else {
       let name = 'Lando Calorisian'
       displayName = name
