@@ -50,6 +50,7 @@ class Routes extends React.Component {
         <User
           {...props}
           currentLocal={this.props.currentLocal}
+          accessToken = {this.props.accessToken}
         />
       )
     }

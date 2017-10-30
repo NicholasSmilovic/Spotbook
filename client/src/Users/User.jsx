@@ -85,6 +85,35 @@ removeDuplicates = (arr) => {
   return arr
 }
 
+
+generatePlaylist = (trackIDs) => {
+  let uriString = ''
+  trackIDs.forEach(id => {
+    uriString += id
+    uriString += ','
+  })
+  uriString = uriString.slice(0, -1) // take off last comma
+
+  fetch(`https://api.spotify.com/v1/users/${this.props.currentLocal.spotify_id}/playlists`, {
+    method: "POST",
+    Accept: "application/json",
+    headers: {
+      Authorization: "Bearer " + this.props.accessToken
+    },
+    body: {
+      "description": `My U Complete Me Playlist with ${this.state.user.display_name}`,
+      "public": true,
+      "name": `${this.props.currentLocal.display_name} <3 ${this.state.user.display_name}`
+    }
+  })
+  .then((response) => {
+    console.log('playlist generated', response)
+  })
+
+
+
+}
+
   uCompleteMe = () => {
     let you = this.state.user
     let me = this.props.currentLocal
@@ -94,7 +123,7 @@ removeDuplicates = (arr) => {
     let playlistSpotifyIDs = []
 
     $.get(`http://localhost:3000/users/getUserTopTracks/${you.id}`)
-      .done((yourResponse) => {
+      .then((yourResponse) => {
         yourTopTracks = yourResponse
       })
       .done(() => {
@@ -114,7 +143,6 @@ removeDuplicates = (arr) => {
             return playlist
           })
           .then((response) => {
-            console.log(response)
             return Promise.all(response.map(track => {
               return $.get(`http://localhost:3000/tracks/getTrackByID/${track.id}`)
             }))
@@ -123,7 +151,7 @@ removeDuplicates = (arr) => {
             response.forEach(track => {
               playlistSpotifyIDs.push(track.spotify_id)
             })
-            console.log(playlistSpotifyIDs)
+            this.generatePlaylist(playlistSpotifyIDs)
           })
       })
   }
