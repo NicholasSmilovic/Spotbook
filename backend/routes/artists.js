@@ -7,12 +7,12 @@ const router = express.Router();
 
 module.exports = (DataHelpers) => {
 
-  router.get('/getAbsArtistByID/:id', (req, res) => {
+  router.get('/getArtistByID/:id', (req, res) => {
 
-
+    // console.log('***** inside getArtistByID route *****')
     let artistID = req.params.id;
 
-    DataHelpers.absArtistHelpers.getAbsArtistByID(artistID)
+    DataHelpers.artistHelpers.getArtistByID(artistID)
     .then((artist) => {
       res.send(artist)
     })

@@ -324,6 +324,7 @@ module.exports = (DataHelpers) => {
 
     // set up API request for top tracks
     let limit = 50
+    trackOffset = 0
 
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
