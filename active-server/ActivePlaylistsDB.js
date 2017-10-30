@@ -62,6 +62,7 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
         skip: {}
       }
     }
+    console.log(body)
     nextTrack(playlist.name, accessToken, callback)
     callback()
   })
@@ -174,8 +175,8 @@ const shouldPlaylistSkip = (playlistName) => {
 
 const skipSong = (playlistName, callback) => {
   let options = {
-    url: `https://api.spotify.com/v1/me/player/pause`,
-    method: "put",
+    url: `https://api.spotify.com/v1/me/player/next`,
+    method: "post",
     json: true,
     headers: {
       Authorization: "Bearer " + playlists[playlistName].accessToken
