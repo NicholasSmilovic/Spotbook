@@ -518,14 +518,6 @@ class CurrentUser extends Component {
     })
   }
 
-  // getUserTopAbsArtists(id) {
-  //   return $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
-  //   .done(absArtists => {
-  //     console.log(absArtists)
-  //   })
-  // }
-
-
   handleClickElement = (event) => {
     if (event[0]) {
       let index = event[0]['_index'];
