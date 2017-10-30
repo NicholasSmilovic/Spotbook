@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import $ from 'jquery'
 import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
@@ -9,7 +9,7 @@ import BarChart from '../Charts/_Bar.jsx'
 
 import TopArtistInsight from '../Insights/_TopArtist.jsx'
 import { parse } from 'query-string'
-// import compatibilityFunctions from '../../../user-compatibility.js'
+
 
 
 
@@ -25,6 +25,7 @@ class CurrentUser extends Component {
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
+      allUsersCompared: null,
       compatibleUsers: []
     }
 
@@ -136,31 +137,24 @@ class CurrentUser extends Component {
       let artistMatches = 0
       let genreMatch = 0.85
       let genreMatches = 0
-      // let audioFeaturesMatch = 0
-      // let audioFeaturesMatches = 0
 
       let trackPercentileIncrease = 1/((currentUserTopTracks.length + user2tracks.length) / 2)
 
       for (let i in currentUserTopTracks) {
         for (let j in user2tracks) {
           if (currentUserTopTracks[i].track_name === user2tracks[j].track_name) {
-            // console.log(user2tracks.items[j].name)
             trackMatches += trackPercentileIncrease
             break;
-            // console.log(trackMatches)
           }
         }
       }
 
-      // console.log(trackMatch*trackMatches)
       let artistPercentileIncrease = 1/((currentUserTopArtists.length + user2artists.length) / 2)
 
       for (let i = 0; i < currentUserTopArtists.length; i++) {
         for (let j = 0; j < user2artists.length; j++) {
           if (currentUserTopArtists[i].artist_name === user2artists[j].artist_name) {
-            // console.log(user2artists.items[j].name)
             artistMatches += artistPercentileIncrease
-            // console.log(artistMatches)
           }
         }
       }
@@ -248,7 +242,6 @@ class CurrentUser extends Component {
         percentMatch += 0.05
       }
 
-      // console.log(`Audio Parameter Percent Increase: ${percentMatch}`)
       // console.log(matchesArr)
 
       matchesArr.map((match) => {
@@ -264,25 +257,18 @@ class CurrentUser extends Component {
     }
 
     this.userCompatibility = () => {
-      function findUserIndex(arr, uid) {
-        for(let idx in arr) {
-          // console.log(arr[idx].id)
-          if(arr[idx].id === uid) { return idx; }
-        }
-        throw "should never get here";
-      }
-
+    return new Promise((res,rej) => {
+      let comparedUsers = []
       for (let user in this.props.allUsers) {
-        let idx = findUserIndex(this.state.allUsersComparisonData, this.props.allUsers[user].id);
-        this.getUserTopTracks(this.props.allUsers[user].id)
+        if (this.props.allUsers[user].id !== this.props.currentLocal.id) {
+        this.getUserComparisonData(this.props.allUsers[user].id)
           .then(userComparisonData => {
-            let comparedUsers = this.state.allUsersCompared
             comparedUsers.push(userCompatibilityFunction(this.state.topTracks, this.state.topArtists, this.state.userAudioTrackFeatures, userComparisonData))
-            this.setState({allUsersCompared: comparedUsers})
-
           })
-
+        }
       }
+      setTimeout(() => res(comparedUsers), 2000)
+    })
     }
   }
 
@@ -293,12 +279,16 @@ class CurrentUser extends Component {
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
     } else {
-    this.setState({allUsersComparisonData: this.props.allUsers.map(u => ({id: u.id}))})
+
+      // console.log("We got it. The thing that you need immediately follows this sentence.")
+      // console.log(this.props.currentLocal);
     this.setCurrentUserTopAbsArtists(),
-    // this.setCurrentUserTopTracks().then(()=> {
-    //   return this.userCompatibility()
-    // })
-    this.setCurrentUserTopTracks()
+    // this.setCurrentUserTopTracks()
+    this.setCurrentUserTopTracks().then(()=> {
+      return this.userCompatibility()
+    }).then(allUsersComparedArray => {
+      this.setState({allUsersCompared: allUsersComparedArray})
+    })
 
 
     }
@@ -476,7 +466,7 @@ class CurrentUser extends Component {
 
 
   //ALL OTHER USERS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  getUserTopTracks(id){
+  getUserComparisonData(id){
     return new Promise((res, rej) => {
     let userInfo = {
       userID: id,
@@ -551,14 +541,20 @@ class CurrentUser extends Component {
             Math.random()
           ]
         }]
-      };
-
+      }
     } else {
       data = this.state.chartData
       title = 'Your Top Artists'
-
     }
 
+    const comparedUsers = this.state.allUsersCompared;
+
+    let userSidebar = null;
+      if (comparedUsers) {
+        userSidebar = <UserMatchSidebar allUsersCompared={this.state.allUsersCompared}/>
+      } else {
+        userSidebar = <div>Loading</div>
+      }
 
     return(
       <div>
@@ -580,7 +576,7 @@ class CurrentUser extends Component {
           </div>
         </div>
 
-          <UserMatchSidebar />
+          {userSidebar}
 
         <div className='row'>
           <div className='col-md-6'>

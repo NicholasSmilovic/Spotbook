@@ -121,6 +121,7 @@ function getUserByID(id) {
 }
 
 
+
 function getArtistFromTrack(id) {
   return new Promise(function(resolve, reject) {
     knex.select('artists.id').from('artists')
@@ -132,11 +133,40 @@ function getArtistFromTrack(id) {
       })
       .catch(() => {
         console.log(`There was an error retrieving track ${id}'s artist' from the database`)
+
+
+function getUserTopTracks(id) {
+  return new Promise(function(resolve, reject) {
+    knex.select('tracks.id').from('tracks')
+      .innerJoin('user_tracks', 'tracks.id', 'track_id')
+      .innerJoin('users', 'users.id', 'user_id')
+      .where('users.id', id)
+      .then((val) => {
+        let tracks = []
+        val.forEach((track => {
+          tracks.push(track)
+        }))
+        resolve(tracks)
+      })
+      .catch(() => {
+        console.log(`There was an error retrieving tracks by user id ${id} from the database`)
+
       })
   })
 }
 
+
 // getArtistFromTrack(200).then((response) => {console.log(response)})
+
+// getUserTopTracks(3)
+//   .then((response) => {
+//     console.log(response)
+//   })
+//   .catch((e) => {
+//     console.log(e)
+//   })
+
+
 
 
 knex.destroy()

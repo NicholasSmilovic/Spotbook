@@ -17,16 +17,19 @@ class ActivePlaylist extends Component{
   }
 
   render (){
+    let usersCount = 0
+    if(this.props.playlist.users){
+      usersCount = this.props.playlist.users.length
+    }
     return(
       <div className = "row active-playlists">
         <div className = "active-list-header">
-          {this.props.playlist.name}
+          {this.props.playlist.name} (population: {usersCount})
         </div>
         <div className = "join-active-playlist">
-            <label> Password: </label>
-            <input className="form-control" onChange={this.handlePasswordChange} value={this.state.password}/>
-          <button onClick={this.handleJoin} className = "btn btn-success"> JOIN </button>
+            <input placeholder="password" className="form-control" onChange={this.handlePasswordChange} value={this.state.password}/>
         </div>
+          <button onClick={this.handleJoin} className = "new-active-button"> JOIN </button>
       </div>
       )
   }
