@@ -4,8 +4,6 @@ import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
 
-// import Prettiness from '../Charts/Prettiness.jsx'
-// import Palette from '../Charts/Palette.jsx'
 import BarChart from '../Charts/_Bar.jsx'
 
 
@@ -22,16 +20,6 @@ class CurrentUser extends Component {
     this.state = {
       chartData: null,
       chartDataRaw: null,
-
-      // chartData:{
-      //   labels: [],
-      //   datasets: [{
-      //     label: 'Tracks',
-      //     data: []
-      //   }]
-      // },
-
-      // chartDataRaw: [],
 
       insightData: 'Click bar on chart for more info!',
       topTracks:[],
@@ -301,13 +289,10 @@ class CurrentUser extends Component {
   componentWillMount(){
 
 
-    // this.getChartData();
 
     if (!this.props.currentLocal) {
       // console.log('Please stand by while we get that thing that you need.')
     } else {
-      // console.log("We got it. The thing that you need immediately follows this sentence.")
-      // console.log(this.props.currentLocal);
     this.setState({allUsersComparisonData: this.props.allUsers.map(u => ({id: u.id}))})
     this.setCurrentUserTopAbsArtists(),
     this.setCurrentUserTopTracks().then(()=> {
@@ -318,13 +303,6 @@ class CurrentUser extends Component {
 
     }
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log(this.state.chartData)
-  // }
-
-
-
 
   // CURRENT USER
   setCurrentUserTopTracks = () => {
@@ -359,18 +337,13 @@ class CurrentUser extends Component {
         })
       }
 
-      let chartDetails = $.when(artistByTrack).done( () => {
+      $.when(artistByTrack).done( () => {
         let chartDetails = this.sortArtists(artist_track);
         // console.log(chartDetails);
         this.setChartDataRaw(chartDetails);
         // console.log(this.state.chartDataRaw)
 
       });
-
-      $.when(chartDetails).done( () => {
-
-        // console.log(this.state.chartData);
-      })
 
     })
     .fail( err => {
@@ -433,15 +406,10 @@ class CurrentUser extends Component {
 
     })
     .then( result => {
-      // console.log(result[0].labels.length)
-      // console.log(result[0].labels)
-      // console.log(result[1])
       this.setState({chartData: result[0]})
       this.setState({chartDataRaw: result[1]})
     })
-    // console.log(chartData)
-    // console.log(chartDataRaw)
-    // console.log('***** inside setChartDataRaw() *****')
+
 
   }
 
@@ -563,9 +531,17 @@ class CurrentUser extends Component {
 
     let title = 'Loading Your Top Artist Data...'
     let data = {
-      labels: ['','','','',''],
-        datasets:[{ label:'Loading...', data:[0,0,0,0,0]}]
-      };
+      labels: ['LOADING','YOUR','TOP','ARTIST','DATA'],
+        datasets:[{ label:'Loading...',
+        data:[
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          Math.random()
+        ]
+      }]
+    };
 
     if(this.state.chartData) {
       data = this.state.chartData
