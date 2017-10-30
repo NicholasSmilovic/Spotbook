@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import $ from 'jquery'
 import UserMatchSidebar from './UserMatchSidebar.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserBoxAnalytics from './UserBoxAnalytics.jsx';
@@ -27,7 +27,7 @@ class CurrentUser extends Component {
       topTracks:[],
       topArtists:[],
       userAudioTrackFeatures: {},
-      allUsersCompared: [],
+      allUsersCompared: null,
       insightData:'Stuff',
       compatibleUsers: []
     }
@@ -267,25 +267,16 @@ class CurrentUser extends Component {
     }
 
     this.userCompatibility = () => {
-      function findUserIndex(arr, uid) {
-        for(let idx in arr) {
-          // console.log(arr[idx].id)
-          if(arr[idx].id === uid) { return idx; }
-        }
-        throw "should never get here";
-      }
-
+    return new Promise((res,rej) => {
+      let comparedUsers = []
       for (let user in this.props.allUsers) {
-        let idx = findUserIndex(this.state.allUsersComparisonData, this.props.allUsers[user].id);
-        this.getUserTopTracks(this.props.allUsers[user].id)
+        this.getUserComparisonData(this.props.allUsers[user].id)
           .then(userComparisonData => {
-            let comparedUsers = this.state.allUsersCompared
             comparedUsers.push(userCompatibilityFunction(this.state.topTracks, this.state.topArtists, this.state.userAudioTrackFeatures, userComparisonData))
-            this.setState({allUsersCompared: comparedUsers})
-
           })
-
       }
+      setTimeout(() => res(comparedUsers), 1000)
+    })
     }
   }
 
@@ -297,11 +288,11 @@ class CurrentUser extends Component {
     } else {
       // console.log("We got it. The thing that you need immediately follows this sentence.")
       // console.log(this.props.currentLocal);
-    this.setState({allUsersComparisonData: this.props.allUsers.map(u => ({id: u.id}))})
     this.setCurrentUserTopAbsArtists(),
     this.setCurrentUserTopTracks().then(()=> {
       return this.userCompatibility()
-
+    }).then(allUsersComparedArray => {
+      this.setState({allUsersCompared: allUsersComparedArray})
     })
 
 
@@ -371,7 +362,7 @@ class CurrentUser extends Component {
 
 
   //ALL OTHER USERS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  getUserTopTracks(id){
+  getUserComparisonData(id){
     return new Promise((res, rej) => {
     let userInfo = {
       userID: id,
@@ -428,6 +419,15 @@ class CurrentUser extends Component {
       user_name = this.props.currentLocal.display_name
     }
 
+    const comparedUsers = this.state.allUsersCompared;
+
+    let userSidebar = null;
+      if (comparedUsers) {
+        userSidebar = <UserMatchSidebar allUsersCompared={this.state.allUsersCompared}/>
+      } else {
+        userSidebar = <div>Loading</div>
+      }
+
     return(
       <div>
 
@@ -448,7 +448,7 @@ class CurrentUser extends Component {
           </div>
         </div>
 
-          <UserMatchSidebar />
+          {userSidebar}
 
         <div className='row'>
           <div className='col-md-6'>
