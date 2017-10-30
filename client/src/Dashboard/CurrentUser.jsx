@@ -381,7 +381,7 @@ class CurrentUser extends Component {
         // console.log(chartDataRaw)
       })
       .then(()=> {
-        console.log('after setting artists')
+        // console.log('after setting artists')
         // for (let i = 0; i < chartDataRaw.length; i++) {
         return Promise.all(highLevelDetails.map(i => {
         // console.log(i)
@@ -400,7 +400,7 @@ class CurrentUser extends Component {
           })
         }))
         .then(() => {
-          console.log(chartDataRaw)
+          // console.log(chartDataRaw)
           this.setState({chartData})
           this.setState({chartDataRaw})
         })
