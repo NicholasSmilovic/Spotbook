@@ -372,8 +372,8 @@ generatePlaylist = (trackIDs) => {
       }))
       .then(response => {
         for (let i = 0; i < response.length; i++) {
-          if(response[i].artist_name.length > 10) {
-            chartData['labels'].push(response[i].artist_name.slice(0,10)+'...')
+          if(response[i].artist_name.length > 7) {
+            chartData['labels'].push(response[i].artist_name.slice(0,7)+'...')
           } else {
             chartData['labels'].push(response[i].artist_name)
           }
