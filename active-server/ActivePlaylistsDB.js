@@ -112,7 +112,7 @@ const nextTrack = (playlistName, accessToken, callback) => {
     setTimeout(function(){
       console.log("checking")
       nextTrack(playlistName, accessToken, callback)
-    }, 3000);
+    }, duration_ms - progress_ms);
   })
 }
 
@@ -173,7 +173,7 @@ const shouldPlaylistSkip = (playlistName) => {
   let skippers = Object.keys(playlists[playlistName].currentlyPlaying.skip).length
   let users = playlists[playlistName].users.length * 3 /5
   console.log(skippers, " vs ", users)
-  return (skippers > users)
+  return (skippers >= users)
 }
 
 const skipSong = (playlistName, callback) => {
@@ -193,6 +193,20 @@ const skipSong = (playlistName, callback) => {
       return
     }
     callback()
+    currentTrack(playlists[playlistName].accessToken, (id, name, albumArt, progress_ms, duration_ms) => {
+      if(isNewTrack(playlistName, id)) {
+        playlists[playlistName].currentlyPlaying.skip = {}
+        playlists[playlistName].currentlyPlaying = {
+          id: id,
+          name: name,
+          duration_ms: duration_ms,
+          progress_ms: progress_ms,
+          albumArt:albumArt,
+          skip: {}
+        }
+        callback(null, playlistName, playlists[playlistName].currentlyPlaying)
+      }
+    })
   })
 }
 
