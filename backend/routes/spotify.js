@@ -185,11 +185,15 @@ module.exports = (DataHelpers) => {
          associated_artist: track.artists[0].id,
          track_name: track.name,
          spotify_id: track.id,
-         image_urls: [
+         image_urls: track.album.images.length ? [
             {url: track.album.images[0].url},
-            {url: track.album.images[1].url},
-            {url: track.album.images[2].url}
-         ]
+            {url: track.album.images[1] ? track.album.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: track.album.images[2] ? track.album.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+         ] : [
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            ]
       }
       return cleanTrack
     })
@@ -292,8 +296,8 @@ module.exports = (DataHelpers) => {
           spotifyID: artist.id ? artist.id : 'noFollowerz',
           imageURLs: artist.images.length ? [
             {url: artist.images[0].url},
-            {url: artist.images[1].url},
-            {url: artist.images[2].url}
+            {url: artist.images[1] ? artist.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: artist.images[2] ? artist.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
             ] : [
             {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
             {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
