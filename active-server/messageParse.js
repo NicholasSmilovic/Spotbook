@@ -127,8 +127,8 @@ module.exports = (message, ws, callback) =>{
 
     case "leaveRoom":
       callback(null, null, null, null, ws, () => {
+        db.removeSkipVote(ws.playlist, ws.id)
         ws.playlist = "";
-        ws.voteSkip = false;
         return ws
       })
       break;
