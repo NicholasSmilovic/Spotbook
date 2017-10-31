@@ -25,7 +25,7 @@ class BarChart extends Component {
   }
 
   handleChartData(){
-    let chart = Prettiness(this.state.chartData, Palette().cool_5);
+    let chart = Prettiness(this.state.chartData, Palette().cool_10);
     this.setState({ chartData: chart.data });
   }
 
@@ -96,7 +96,7 @@ class BarChart extends Component {
                 },
                 ticks: {
                   fontColor: fontColor,
-                  fontSize: 12
+                  fontSize: 14
                 }
               }]
             },

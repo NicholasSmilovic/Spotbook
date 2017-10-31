@@ -88,7 +88,8 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            dataStash(options.headers, body)
+            let again = 1
+            dataStash(options.headers, body, 0, again)
 
           });
 
@@ -141,7 +142,7 @@ module.exports = (DataHelpers) => {
   return router
 
 
-  function dataStash(spotifyReqHeader, userInfo, trackOffset) {
+  function dataStash(spotifyReqHeader, userInfo, trackOffset, again) {
 
     // establish user that signed in, add to DB if necessary
     establishUser(userInfo)
@@ -149,7 +150,7 @@ module.exports = (DataHelpers) => {
         console.log(response)
       })
 
-    topTrackStash(spotifyReqHeader, userInfo, trackOffset)
+    topTrackStash(spotifyReqHeader, userInfo, trackOffset, again)
     absArtistStash(spotifyReqHeader, userInfo)
 
   }
@@ -184,11 +185,15 @@ module.exports = (DataHelpers) => {
          associated_artist: track.artists[0].id,
          track_name: track.name,
          spotify_id: track.id,
-         image_urls: [
+         image_urls: track.album.images.length ? [
             {url: track.album.images[0].url},
-            {url: track.album.images[1].url},
-            {url: track.album.images[2].url}
-         ]
+            {url: track.album.images[1] ? track.album.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: track.album.images[2] ? track.album.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+         ] : [
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            ]
       }
       return cleanTrack
     })
@@ -291,8 +296,8 @@ module.exports = (DataHelpers) => {
           spotifyID: artist.id ? artist.id : 'noFollowerz',
           imageURLs: artist.images.length ? [
             {url: artist.images[0].url},
-            {url: artist.images[1].url},
-            {url: artist.images[2].url}
+            {url: artist.images[1] ? artist.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
+            {url: artist.images[2] ? artist.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
             ] : [
             {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
             {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
@@ -320,11 +325,10 @@ module.exports = (DataHelpers) => {
       return insertReady
     }
 
-  function topTrackStash(spotifyReqHeader, userInfo, trackOffset) {
+  function topTrackStash(spotifyReqHeader, userInfo, trackOffset, again) {
 
     // set up API request for top tracks
     let limit = 50
-    trackOffset = 0
 
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
@@ -421,31 +425,36 @@ module.exports = (DataHelpers) => {
                   )
                 }))
               } else {
-                connectUserToTracks(userInfo, topTracks)
+                console.log('no tracks or artists to add')
                 return 0
               }
             })
             .then(() => {
-              let promises = [];
+              if (response) {
+                let promises = [];
 
-              tracksToAdd.forEach(track => {
-                let trackID = 0
-                let artistID = 0
-                return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
-                  .then((response) => {
-                    trackID = response.id
-                    return DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
-                  })
-                  .then((response) => {
-                    artistID = response.id
-                    promises.push(DataHelpers.artistTrackHelpers.joinArtistToTrack(artistID, trackID))
-                  })
+                tracksToAdd.forEach(track => {
+                  let trackID = 0
+                  let artistID = 0
+                  return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                    .then((response) => {
+                      trackID = response.id
+                      return DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
+                    })
+                    .then((response) => {
+                      artistID = response.id
+                      promises.push(DataHelpers.artistTrackHelpers.joinArtistToTrack(artistID, trackID))
+                    })
 
-              })
-              return Promise.all(promises)
+                })
+                return Promise.all(promises)
+              } else {
+                return 0
+              }
             })
-            .then(() => {
-              connectUserToTracks(userInfo, topTracks)
+            .then((response) => {
+                console.log('joining user to tracks...')
+                connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again)
             })
 
         })
@@ -455,7 +464,8 @@ module.exports = (DataHelpers) => {
       })
   }
 
-  function connectUserToTracks(userInfo, topTracks) {
+  function connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again) {
+    console.log('called this function')
     DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
     .then((response) => {
       let userID = response.id
@@ -468,10 +478,13 @@ module.exports = (DataHelpers) => {
           })
       })
     })
+    .then(() => {
+      if (again === 1) {
+        topTrackStash(spotifyReqHeader, userInfo, 50, 0)
+      }
+    })
   }
 
-  // error toptracks.foreach not a function => look at instantiation of toptracks
-  // make sure it's an array
 
 
   function absArtistStash(spotifyReqHeader, userInfo) {

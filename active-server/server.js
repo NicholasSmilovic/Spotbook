@@ -47,6 +47,7 @@ wss.on('connection', (ws) => {
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
     console.log('Client disconnected id: ', ws.id)
+    messageParse("leaveRoom", ws, wss.broadcast)
     delete sockets[ws.id]
     sendUpdate(() => {
       messageParse({type: "getPlaylists"}, ws, wss.broadcast)
