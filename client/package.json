@@ -6,7 +6,7 @@
     "lint": "eslint --ext .jsx,.js src",
     "start": "node server.js"
   },
-  "proxy": "http://localhost:3000",
+  "proxy": "https://spotifytuner.herokuapp.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/noahlotzer/react-simple-boilerplate.git"
