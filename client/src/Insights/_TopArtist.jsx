@@ -18,7 +18,7 @@ class TopArtistInsight extends Component{
       renderInsights = 'Click a bar in the chart for some juicy deets.';
     } else {
 
-      introText = 'Your top tracks from...';
+      introText = 'The top tracks from...';
       artistName = this.props.insightData.artist.artist_name;
       artistImage = <img src={this.props.insightData.artist.image_urls.medium} />
       renderInsights = this.props.insightData.tracks.map( track =>
