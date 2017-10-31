@@ -88,7 +88,8 @@ module.exports = (DataHelpers) => {
 
           request.get(options, function(error, response, body) {
             console.log(body);
-            dataStash(options.headers, body)
+            let again = 1
+            dataStash(options.headers, body, 0, again)
 
           });
 
@@ -141,7 +142,7 @@ module.exports = (DataHelpers) => {
   return router
 
 
-  function dataStash(spotifyReqHeader, userInfo, trackOffset) {
+  function dataStash(spotifyReqHeader, userInfo, trackOffset, again) {
 
     // establish user that signed in, add to DB if necessary
     establishUser(userInfo)
@@ -149,7 +150,7 @@ module.exports = (DataHelpers) => {
         console.log(response)
       })
 
-    topTrackStash(spotifyReqHeader, userInfo, trackOffset)
+    topTrackStash(spotifyReqHeader, userInfo, trackOffset, again)
     absArtistStash(spotifyReqHeader, userInfo)
 
   }
@@ -320,11 +321,11 @@ module.exports = (DataHelpers) => {
       return insertReady
     }
 
-  function topTrackStash(spotifyReqHeader, userInfo, trackOffset) {
+  function topTrackStash(spotifyReqHeader, userInfo, trackOffset, again) {
+    console.log('again',again)
 
     // set up API request for top tracks
     let limit = 50
-    trackOffset = 0
 
     let trackOffsetURL = trackOffset ? `&offset=${trackOffset}` : ''
     let trackReq = {
@@ -421,31 +422,40 @@ module.exports = (DataHelpers) => {
                   )
                 }))
               } else {
-                connectUserToTracks(userInfo, topTracks)
+                connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again)
                 return 0
               }
             })
             .then(() => {
-              let promises = [];
+              if (response) {
+                let promises = [];
 
-              tracksToAdd.forEach(track => {
-                let trackID = 0
-                let artistID = 0
-                return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
-                  .then((response) => {
-                    trackID = response.id
-                    return DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
-                  })
-                  .then((response) => {
-                    artistID = response.id
-                    promises.push(DataHelpers.artistTrackHelpers.joinArtistToTrack(artistID, trackID))
-                  })
+                tracksToAdd.forEach(track => {
+                  let trackID = 0
+                  let artistID = 0
+                  return DataHelpers.trackHelpers.getTrackBySpotifyID(track.spotify_id)
+                    .then((response) => {
+                      trackID = response.id
+                      return DataHelpers.artistHelpers.getArtistBySpotifyID(track.associated_artist)
+                    })
+                    .then((response) => {
+                      artistID = response.id
+                      promises.push(DataHelpers.artistTrackHelpers.joinArtistToTrack(artistID, trackID))
+                    })
 
-              })
-              return Promise.all(promises)
+                })
+                return Promise.all(promises)
+              } else {
+                return 0
+              }
             })
-            .then(() => {
-              connectUserToTracks(userInfo, topTracks)
+            .then((response) => {
+              if (response) {
+                connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again)
+              } else {
+                console.log('Database is up to date')
+              }
+
             })
 
         })
@@ -455,7 +465,8 @@ module.exports = (DataHelpers) => {
       })
   }
 
-  function connectUserToTracks(userInfo, topTracks) {
+  function connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again) {
+    console.log('*********again',again)
     DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
     .then((response) => {
       let userID = response.id
@@ -465,6 +476,12 @@ module.exports = (DataHelpers) => {
           .then((response) => {
             trackID = response.id
             return DataHelpers.userTrackHelpers.joinUserToTrack(userID, trackID)
+          })
+          // extra track stash should go here
+          .then(() => {
+            if (again === 1) {
+              topTrackStash(spotifyReqHeader, userInfo, 50, 0)
+            }
           })
       })
     })
