@@ -15,7 +15,7 @@ class UsersExplorer extends Component{
     })
 
     return(
-      <div className='users-explorer sticky-container'>
+      <div className='users-explorer'>
         <h1 className='explore'>Explore</h1><h4>Other Users Related To You</h4>
         {listUsers}
       </div>
