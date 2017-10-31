@@ -521,7 +521,7 @@ generatePlaylist = (trackIDs) => {
       <div>
         <div className='row'>
           <div className='col-md-12 user-profile'>
-            <img className='user-profile' src={this.state.user.image_urls.image} />
+            <img className='user-image' src={this.state.user.image_urls.image} />
             {displayName}
 
           </div>
