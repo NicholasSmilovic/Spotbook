@@ -322,7 +322,6 @@ module.exports = (DataHelpers) => {
     }
 
   function topTrackStash(spotifyReqHeader, userInfo, trackOffset, again) {
-    console.log('again',again)
 
     // set up API request for top tracks
     let limit = 50
@@ -422,7 +421,7 @@ module.exports = (DataHelpers) => {
                   )
                 }))
               } else {
-                connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again)
+                console.log('no tracks or artists to add')
                 return 0
               }
             })
@@ -450,12 +449,8 @@ module.exports = (DataHelpers) => {
               }
             })
             .then((response) => {
-              if (response) {
+                console.log('joining user to tracks...')
                 connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again)
-              } else {
-                console.log('Database is up to date')
-              }
-
             })
 
         })
@@ -466,7 +461,7 @@ module.exports = (DataHelpers) => {
   }
 
   function connectUserToTracks(userInfo, topTracks, spotifyReqHeader, again) {
-    console.log('*********again',again)
+    console.log('called this function')
     DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
     .then((response) => {
       let userID = response.id
@@ -477,18 +472,15 @@ module.exports = (DataHelpers) => {
             trackID = response.id
             return DataHelpers.userTrackHelpers.joinUserToTrack(userID, trackID)
           })
-          // extra track stash should go here
-          .then(() => {
-            if (again === 1) {
-              topTrackStash(spotifyReqHeader, userInfo, 50, 0)
-            }
-          })
       })
+    })
+    .then(() => {
+      if (again === 1) {
+        topTrackStash(spotifyReqHeader, userInfo, 50, 0)
+      }
     })
   }
 
-  // error toptracks.foreach not a function => look at instantiation of toptracks
-  // make sure it's an array
 
 
   function absArtistStash(spotifyReqHeader, userInfo) {
