@@ -1,0 +1,33 @@
+.insight {
+  text-align: center;
+  padding-left: 2em;
+  // padding-right: 3em;
+  // border: 1px solid black;
+  // border-top: 1px solid white;
+  border-left: 1px solid #444;
+  height: 375px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+// .top-separator {
+//   margin-left: 4.6em;
+//   border-top: 1px solid #444;
+//   // padding-bottom: 2em;
+//   width: 85%;
+// }
+
+.intro-text {
+  margin-top: 2em;
+}
+
+.insight img {
+  width: 200px;
+  height:200px;
+  align: left;
+  display: block;
+  margin: auto;
+  // margin-top: 5em;
+  border-radius: 50%;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+}

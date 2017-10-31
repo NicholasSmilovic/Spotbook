@@ -1,0 +1,176 @@
+.hide{
+  display:invisible
+}
+
+.table {
+  width:auto
+}
+.playlist-page-header h1{
+  color: white;
+  font-size: 350%;
+  margin-bottom: 1em;
+  font-family: $headerText;
+}
+
+.playlist-header{
+  font-family: $headerText;
+  text-align: center;
+  vertical-align: middle;
+  z-index: 2;
+  background: transparent;
+  // background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
+  // border-radius: 5px;
+  // border: 2px solid;
+  // background-color: $slightly-black;
+}
+
+.playlist-header h1 {
+  color: white;
+}
+
+.auto-size{
+  font-size: 1vmax;
+  text-align: center;
+}
+
+.search-bar-query{
+  border: none;
+  color:black;
+}
+
+.search-bar-query:focus{
+  outline-color: white
+}
+
+.sticky-container{
+  height: 100vh;
+  overflow: auto;
+}
+
+.sticky-block{
+  position: sticky;
+  top: 0px;
+}
+
+.button{
+  margin:0px auto; //it will center them
+}
+
+.active-playlist-form{
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.join-active-playlist{
+  display: flex;
+  justify-content: space-around;
+}
+
+.active-list-header{
+  font-size: 2vmax;
+}
+
+.active-playlists {
+  margin: 0 auto;
+  padding: 5px;
+  max-width: 100%
+}
+
+.box {
+  width: 100%;
+  height: 100%;
+}
+
+.skip-cirle {
+  z-index: 1;
+  top: 0px;
+  left:0px;
+  background-color:inherit;
+  text-decoration: none;
+}
+
+
+.over-skip-cirle {
+  top: 0px;
+  left: 0px;
+  position:absolute;
+  z-index: 2;
+  color:inherit;
+  border: none;
+  text-decoration: none;
+  color: white;
+  color: inherit;
+  text-decoration: inherit;
+}
+
+
+.over-skip-cirle:hover {
+  text-decoration: none;
+  background-color: inherit;
+  color: inherit;
+  text-decoration: inherit;
+
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: $spotify-green;
+  text-decoration: inherit;
+}
+
+a:focus{
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:visited{
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.show-tracks-button {
+  margin: auto;
+  width: 60%;
+  color: white;
+  text-align: center;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.show-tracks-button:hover {
+  cursor:pointer;
+}
+
+.new-active-button {
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.leave-active-button {
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: red;
+  padding: 20px 56px;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}

@@ -1,0 +1,51 @@
+.users-explorer {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: center;
+}
+
+.explore {
+  text-align: center;
+  color: black;
+  font-size: 450%;
+  font-family: $headerText;
+}
+
+.users-explorer h4 {
+  text-align: center;
+  color: white;
+  font-size: 300%;
+  text-align: center;
+  margin: auto;
+}
+
+.user-short-profile {
+  background: transparent;
+  border: none;
+  margin: 2em;
+}
+
+.user-short-profile img {
+  width: 200px;
+  height:200px;
+  align: left;
+  display: block;
+  margin: auto;
+  margin-top: 5em;
+  border-radius: 50%;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+}
+
+.profile-link {
+  color: white;
+  font-size: 330%;
+  margin-left: 3em;
+  font-family: $headerText;
+  display: inline-block;
+  margin: auto;
+}
+
+.profile-link:hover {
+  text-decoration: none;
+  color: $spotifyGreen;
+}

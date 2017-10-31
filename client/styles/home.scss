@@ -1,0 +1,143 @@
+$spotifyGreen: #1ED760;
+$headerText: 'Work Sans', sans-serif;
+
+h1 {
+  color: $spotify-green;
+}
+
+input {
+  color:black;
+}
+
+body {
+  color:white;
+  background: linear-gradient(#c074b2,#8ab5e8) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar
+{
+  width: 12px;  /* for vertical scrollbars */
+  height: 12px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: $spotify-green;
+  overflow: auto;
+}
+
+nav {
+  background: transparent;
+  overflow: hidden;
+  padding: 1em;
+  position: sticky;
+
+  .nav-link {
+    font-family: $headerText;
+    font-size: 1.5em;
+    color: white;
+    text-decoration: none;
+  }
+
+  .nav-link:visited {
+    color: white;
+    text-decoration: none;
+  }
+  .nav {
+    padding: 0;
+    font-family: $headerText;
+    background: transparent;
+    z-index: 9999;
+    // position: fixed;
+    // position: sticky;
+    width:100% !important;
+    height: 6em;
+    display: inline-block;
+    border-radius: 0;
+    vertical-align: top;
+    margin-bottom: 0;
+  }
+  .nav-element {
+    text-align: center;
+    margin-top: 1.2em;
+    font-size: 1.5em;
+  }
+  .nav-link:hover {
+    color: $spotifyGreen;
+    text-decoration: none;
+  }
+  .navWide {
+    display: none;
+    margin: 0 auto;
+
+    .wideDiv {
+      text-align: center;
+    }
+    .nav-link {
+      text-decoration: none;
+      display: inline-block;
+      padding: 0 2em;
+    }
+  }
+
+
+  .navNarrow {
+
+    i {
+      float: right;
+      cursor: pointer;
+      color: #FFF;
+    }
+
+    .narrowLinks {
+      display: none;
+
+      .nav-link {
+        text-decoration: none;
+        display: block;
+        float: right;
+        clear: right;
+        padding: 0.5em 0;
+      }
+    }
+  }
+}
+
+  .nav-link:hover {
+    color: $spotifyGreen;
+    text-decoration: none;
+  }
+
+  .flash-message-success{
+    text-align: center;
+    background-color: $spotify-green
+  }
+
+  .flash-message-error{
+    text-align: center;
+    background-color: red
+  }
+
+  @media (min-width: 768px) {
+    nav {
+
+      .navWide {
+        display: block;
+      }
+
+      .navNarrow {
+        display: none;
+      }
+    }
+  }

@@ -1,0 +1,168 @@
+// .user-page {
+//   height:100vh;
+//   overflow: scroll;
+// }
+
+// <<<<<<< HEAD
+// .logo {
+//   position:absolute;
+//   left:30%;
+//   top:30%;
+//   margin-top:-10px; /* -1/2 height */
+// }
+
+// .logo img {
+//   padding-top: 0.2em;
+//   height: 50px;
+//   width: 50px;
+// }
+
+// .logo-text {
+//   font-family: $headerText;
+//   float: left;
+//   color: white;
+//   font-size: 700%;
+//   padding-right: 0.2em;
+// }
+
+// .login-button {
+//   position:absolute;
+//   left:43%;
+//   top:50%;
+//   margin-top:-10px; /* -1/2 height */
+//   color: white;
+//   font-family: $headerText;
+//   text-decoration: none;
+//   background-color: $spotifyGreen;
+//   font-size: 16px;
+//   line-height: 1;
+//   border-radius: 500px;
+//   padding: 21px 56px 19px;
+
+// }
+
+// .login-button:hover {
+//   text-decoration: none;
+//   color: white;
+// }
+// =======
+// >>>>>>> 958477ed33081d550e994b5cfebfebcccfc33831
+.u-complete-me {
+  text-align: center;
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.u-complete-me:hover {
+  cursor: pointer
+}
+
+.u-complete-me-text {
+  font-size: 16px;
+  -moz-text-align-last: center;
+  text-align-last: center;
+  text-align: center;
+  font-family: $headerText;
+}
+
+h2,h3,h4,h5 {
+  font-family: $headerText;
+}
+
+.wrapper {
+  width: 183px;
+  height: 283px;
+  overflow: hidden;
+  border: 1px solid black;
+}
+
+.user-sidebar {
+  // max-height: 26em;
+  color: white;
+  background: transparent;
+  overflow: hidden;
+  padding:40px;
+  margin:0;
+}
+
+.profile {
+  padding: 0;
+  margin: 0;
+}
+
+.user-profile {
+  margin-top: 7em;
+  padding-top: 2em;
+  color: white;
+  // background-image:
+  //   $topDivGradient;
+  background: transparent;
+}
+
+.user-profile h1 {
+  font-family: $headerText;
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-size: 450%;
+  color: white;
+  padding-bottom: 2em;
+}
+
+.user-image {
+  margin: auto;
+  // text-align: center;
+  display: block;
+  // position: relative;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 50%;
+  img {
+    display: block;
+    text-align: center;
+    width: auto;
+    height: 100%;
+  }
+}
+
+.user-profile {
+  display: block;
+  margin: auto;
+  margin-top: 5em;
+
+}
+
+.analytic {
+  text-align: center;
+  padding-top: 3em;
+}
+
+.user-match-profile{
+  text-align: center;
+}
+.user-match-profile img{
+  height: 200px;
+  width: 200px;
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+
+}
+.top-matches-text {
+  text-align: center;
+}
+
+
+
+
+
+
+
+

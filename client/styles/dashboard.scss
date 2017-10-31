@@ -1,0 +1,67 @@
+.dashboard{
+    background: url("http://blogasc.websites.ascazure.com/wp-content/uploads/2015/02/TDS-Blog-2-28-15.jpg") no-repeat center center fixed
+     ;
+    background-size:cover;
+    height:100vh;
+}
+
+
+
+.top-div {
+  position: absolute;
+  top: 7%;
+  width: 100%;
+}
+
+.app-name{
+  text-align: center;
+  color: white;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 900;
+  font-size: 550%;
+  padding-left: 0.3em;
+}
+
+.tag-div{
+  position: absolute;
+  top: 19%;
+  width: 100%;
+  padding-left: 1.2em;
+}
+
+.tagline {
+  text-align: center;
+  color: white;
+  font-family: $headerText;
+  padding-left: 0.3em;
+}
+
+.login-button {
+  text-align: center;
+  color: white;
+  font-family: $headerText;
+  text-decoration: none;
+  background-color: $spotifyGreen;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 500px;
+  padding: 21px 56px 19px;
+}
+
+.login-button:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.force-to-bottom {
+  position:absolute;
+  bottom: 15%;
+  width: 100%;
+}
+
+
+
+
+
+
+
