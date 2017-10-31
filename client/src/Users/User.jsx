@@ -372,8 +372,8 @@ generatePlaylist = (trackIDs) => {
       }))
       .then(response => {
         for (let i = 0; i < response.length; i++) {
-          if(response[i].artist_name.length > 15) {
-            chartData['labels'].push(response[i].artist_name.slice(0,15)+'...')
+          if(response[i].artist_name.length > 10) {
+            chartData['labels'].push(response[i].artist_name.slice(0,10)+'...')
           } else {
             chartData['labels'].push(response[i].artist_name)
           }
@@ -437,7 +437,7 @@ generatePlaylist = (trackIDs) => {
       return b[1] - a[1];
     });
 
-    tally.splice(5);
+    tally.splice(10);
 
     let finalTally = [];
 
@@ -501,9 +501,19 @@ generatePlaylist = (trackIDs) => {
           'LOADING',
           'LOADING',
           'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
+          'LOADING',
           'LOADING'],
           datasets:[{ label:'Loading...',
           data:[
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random(),
             Math.random(),
             Math.random(),
             Math.random(),
