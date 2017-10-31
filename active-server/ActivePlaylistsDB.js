@@ -13,10 +13,11 @@ const getAllPlaylists = () => {
     let obj = {
       name:playlist,
       spotifyObject:playlists[playlist].spotifyObject,
-      users:playlists[playlist].users
+      users:playlists[playlist].users,
+      currentlyPlaying: playlists[playlist].currentlyPlaying,
+      password: playlists[playlist].password
     }
-    // arrayOfPlaylists.push(obj)
-    arrayOfPlaylists.push(playlists[playlist])
+    arrayOfPlaylists.push(obj)
   }
   return arrayOfPlaylists
 }
@@ -67,7 +68,7 @@ const addNewPlaylist = (playlist, accessToken, currentUser, callback) =>{
   })
 }
 
-const currentTrack = (accessToken, callback) => {
+const currentTrack = (accessToken, playlistName, callback) => {
   let options = {
     url: `https://api.spotify.com/v1/me/player/currently-playing`,
     method: "GET",
@@ -78,6 +79,11 @@ const currentTrack = (accessToken, callback) => {
   }
 
   request(options,(error, response, body) => {
+    if(response.statusCode == 401) {
+      delete playlists[playlistName]
+      callback("Playlist Expired")
+      return
+    }
     if (error) {
       callback("bad request to spotify")
       return
@@ -86,7 +92,7 @@ const currentTrack = (accessToken, callback) => {
       let albumArt = body.item.album.images[0].url
       callback(body.item.id, body.item.name, albumArt, body.progress_ms, body.item.duration_ms)
     } else {
-      currentTrack(accessToken, callback)
+      currentTrack(accessToken, playlistName, callback)
     }
   })
 }
@@ -96,7 +102,7 @@ const isNewTrack = (playlistName, retrievedId) => {
 }
 
 const nextTrack = (playlistName, accessToken, callback) => {
-  currentTrack(accessToken, (id, name, albumArt, progress_ms, duration_ms) => {
+  currentTrack(accessToken, playlistName, (id, name, albumArt, progress_ms, duration_ms) => {
     if(isNewTrack(playlistName, id)) {
       playlists[playlistName].currentlyPlaying.skip = {}
       playlists[playlistName].currentlyPlaying = {
@@ -112,7 +118,7 @@ const nextTrack = (playlistName, accessToken, callback) => {
     setTimeout(function(){
       console.log("checking")
       nextTrack(playlistName, accessToken, callback)
-    }, 3000);
+    }, duration_ms - progress_ms);
   })
 }
 
@@ -173,7 +179,7 @@ const shouldPlaylistSkip = (playlistName) => {
   let skippers = Object.keys(playlists[playlistName].currentlyPlaying.skip).length
   let users = playlists[playlistName].users.length * 3 /5
   console.log(skippers, " vs ", users)
-  return (skippers > users)
+  return (skippers >= users)
 }
 
 const skipSong = (playlistName, callback) => {
@@ -188,11 +194,29 @@ const skipSong = (playlistName, callback) => {
 
   request(options,(error, response, body) => {
     console.log(response.toJSON())
+    if(response.statusCode == 401) {
+      callback("Playlist Expired")
+      return
+    }
     if (error) {
       callback("bad request to spotify")
       return
     }
     callback()
+    currentTrack(playlists[playlistName].accessToken, playlistName, (id, name, albumArt, progress_ms, duration_ms) => {
+      if(isNewTrack(playlistName, id)) {
+        playlists[playlistName].currentlyPlaying.skip = {}
+        playlists[playlistName].currentlyPlaying = {
+          id: id,
+          name: name,
+          duration_ms: duration_ms,
+          progress_ms: progress_ms,
+          albumArt:albumArt,
+          skip: {}
+        }
+        callback(null, playlistName, playlists[playlistName].currentlyPlaying)
+      }
+    })
   })
 }
 
@@ -218,6 +242,12 @@ const updateRoomData = (sockets, callback) => {
   callback()
 }
 
+const removeSkipVote = (playlistName, socketId) => {
+  if(playlists[playlistName]) {
+    delete playlists[playlistName].currentlyPlaying.skip[socketId]
+  }
+}
+
 
 module.exports = {
   getAllPlaylists: getAllPlaylists,
@@ -226,5 +256,6 @@ module.exports = {
   getSecurePlaylist: getSecurePlaylist,
   addSongToPlaylist: addSongToPlaylist,
   voteToSkip: voteToSkip,
+  removeSkipVote: removeSkipVote,
   updateRoomData: updateRoomData
 }
