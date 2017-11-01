@@ -19,7 +19,7 @@ class Songs extends Component {
     return (
       <div draggable="true" onDragStart={(event) => {this.handleDragEvent(event)}}>
         <img src={this.props.track.album.images[0].url} className="img-responsive" />
-        {this.props.track.name}
+        {this.props.track.name} <br/>
         {this.props.track.artists[0].name}
         <hr />
       </div>
