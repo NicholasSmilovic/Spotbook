@@ -9,6 +9,7 @@ let querystring = require('querystring')
 let cookieParser = require('cookie-parser')
 require('dotenv')
 let Promise = require("bluebird");
+let faker = require('faker')
 
 
 let client_id = process.env.clientID // Your client id
@@ -90,7 +91,6 @@ module.exports = (DataHelpers) => {
             console.log(body);
             let again = 1
             dataStash(options.headers, body, 0, again)
-
           });
 
           console.log('redirecting...', app_uri +
@@ -166,9 +166,9 @@ module.exports = (DataHelpers) => {
         })
         .catch((e) => {
           if (e === 'user not found') {
-            let name = userInfo.display_name ? userInfo.display_name : 'Mystery Name'
+            let name = userInfo.display_name ? userInfo.display_name : faker.name.findName()
             let id = userInfo.id
-            let image = userInfo.images.length ? userInfo.images[0].url : 'https://media.tenor.com/images/fc63d5c22822973d74335e16a5401fd0/tenor.gif'
+            let image = userInfo.images.length ? userInfo.images[0].url : faker.image.animals()
             return DataHelpers.userHelpers.addUser(name, id, image)
           }
           reject(e)
@@ -187,12 +187,12 @@ module.exports = (DataHelpers) => {
          spotify_id: track.id,
          image_urls: track.album.images.length ? [
             {url: track.album.images[0].url},
-            {url: track.album.images[1] ? track.album.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: track.album.images[2] ? track.album.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            {url: track.album.images[1] ? track.album.images[1].url : track.album.images[0].url},
+            {url: track.album.images[2] ? track.album.images[2].url : track.album.images[0].url}
          ] : [
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            {url: faker.image.animals()},
+            {url: faker.image.animals()},
+            {url: faker.image.animals()}
             ]
       }
       return cleanTrack
@@ -296,12 +296,12 @@ module.exports = (DataHelpers) => {
           spotifyID: artist.id ? artist.id : 'noFollowerz',
           imageURLs: artist.images.length ? [
             {url: artist.images[0].url},
-            {url: artist.images[1] ? artist.images[1].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: artist.images[2] ? artist.images[2].url : 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            {url: artist.images[1] ? artist.images[1].url : artist.images[0].url},
+            {url: artist.images[2] ? artist.images[2].url : artist.images[0].url}
             ] : [
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'},
-            {url: 'https://media.giphy.com/media/euetPxpu9d0o8/giphy.gif'}
+            {url: faker.image.nature()},
+            {url: faker.image.nature()},
+            {url: faker.image.nature()}
             ],
           genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
         }
