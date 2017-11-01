@@ -9,7 +9,7 @@
 
 .top-div {
   position: absolute;
-  top: 7%;
+  top: 2%;
   width: 100%;
 }
 
@@ -22,17 +22,11 @@
   padding-left: 0.3em;
 }
 
-.tag-div{
-  position: absolute;
-  top: 19%;
-  width: 100%;
-  padding-left: 1.2em;
-}
-
 .tagline {
   text-align: center;
   color: white;
   font-family: $headerText;
+  font-weight: 700;
   padding-left: 0.3em;
 }
 

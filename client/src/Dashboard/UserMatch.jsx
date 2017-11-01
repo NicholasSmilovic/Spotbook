@@ -14,7 +14,7 @@ class UserMatch extends Component{
 
   getUserProfile() {
   return new Promise ((res,rej) => {
-  $.get('https://spotifytuner.herokuapp.com/users/getUserByID/'+ this.props.id)
+  $.get('http://localhost:3000/users/getUserByID/'+ this.props.id)
     .done( result => {
       setTimeout(() => res(result), 100)
     })

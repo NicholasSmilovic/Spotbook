@@ -296,7 +296,7 @@ class CurrentUser extends Component {
 
   // CURRENT USER
   setCurrentUserTopTracks = () => {
-    return $.get('https://spotifytuner.herokuapp.com/users/getUserTopTracks/'+this.props.currentLocal.id)
+    return $.get('http://localhost:3000/users/getUserTopTracks/'+this.props.currentLocal.id)
     .done( topTrackIDs => {
 
       let artistIDs = [];
@@ -305,7 +305,7 @@ class CurrentUser extends Component {
       for (let i = 0; i < topTrackIDs.length; i++) {
 
 // GET TRACK DETAILS BY TRACK_ID
-        $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+topTrackIDs[i].id)
+        $.get('http://localhost:3000/tracks/getTrackByID/'+topTrackIDs[i].id)
         .done( result => {
           let currentUserTopTracks = this.state.topTracks;
           currentUserTopTracks.push(result);
@@ -317,7 +317,7 @@ class CurrentUser extends Component {
         })
 
 // GET ARTIST_ID BY TRACK_ID
-        artistByTrack = $.get('https://spotifytuner.herokuapp.com/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
+        artistByTrack = $.get('http://localhost:3000/tracks/getArtistFromTrack/'+topTrackIDs[i].id)
         .done( result => {
           artistIDs.push(result.id);
           artist_track.push([result.id, topTrackIDs[i].id])
@@ -355,7 +355,7 @@ class CurrentUser extends Component {
       let chartDataRaw = [];
       return Promise.all(highLevelDetails.map(i => {
         let artistID = i[0];
-        return $.get('https://spotifytuner.herokuapp.com/artists/getArtistByID/' + artistID)
+        return $.get('http://localhost:3000/artists/getArtistByID/' + artistID)
       }))
       .then(response => {
         for (let i = 0; i < response.length; i++) {
@@ -376,7 +376,7 @@ class CurrentUser extends Component {
         return Promise.all(highLevelDetails.map(i => {
         // console.log(i)
           return Promise.all(i[1].map(trackID => {
-            return $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+trackID)
+            return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
           }))
           .then((response) => {
             // console.log(i[0])
@@ -444,11 +444,11 @@ class CurrentUser extends Component {
 
 
   setCurrentUserTopAbsArtists = () => {
-    return $.get('https://spotifytuner.herokuapp.com/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
+    return $.get('http://localhost:3000/users/getUserTopAbsArtists/' + this.props.currentLocal.id)
     .done(absArtistIDs => {
       // console.log(absArtistIDs)
       for(let i = 0; i < absArtistIDs.length; i++) {
-        $.get('https://spotifytuner.herokuapp.com/absArtists/getAbsArtistByID/' + absArtistIDs[i].id)
+        $.get('http://localhost:3000/absArtists/getAbsArtistByID/' + absArtistIDs[i].id)
         .done(artist => {
           let topArtists = this.state.topArtists
           topArtists.push(artist)
@@ -474,11 +474,11 @@ class CurrentUser extends Component {
       topArtists:null,
       userTrackAudioFeatures: null
     }
-      $.get('https://spotifytuner.herokuapp.com/users/getUserTopFullTracks/'+ id)
+      $.get('http://localhost:3000/users/getUserTopFullTracks/'+ id)
       .done( topTracks => {
         userInfo.topTracks = topTracks
         userInfo.userTrackAudioFeatures = this.getUserTrackAudioFeatures(topTracks)
-        $.get('https://spotifytuner.herokuapp.com/users/getUserTopFullAbsArtists/' + id)
+        $.get('http://localhost:3000/users/getUserTopFullAbsArtists/' + id)
         .done(absArtists => {
           userInfo.topArtists = absArtists
           res(userInfo)

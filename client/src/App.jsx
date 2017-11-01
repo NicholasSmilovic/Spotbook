@@ -28,8 +28,8 @@ class App extends React.Component {
     this.dashboard = null
 
     this.refreshAccessToken = () => {
-      console.log("https://spotifytuner.herokuapp.com?" + this.state.refresh_token)
-      fetch("https://spotifytuner.herokuapp.com/spotify/refresh_token/?refresh_token=" + this.state.refresh_token + "/")
+      console.log("http://localhost:3000?" + this.state.refresh_token)
+      fetch("http://localhost:3000/spotify/refresh_token/?refresh_token=" + this.state.refresh_token + "/")
       .then((response) => {
         if(response.status >= 400){
           console.log("refresh error")
@@ -88,7 +88,7 @@ class App extends React.Component {
 
     this.getAllUsers = () => {
       return new Promise ( (resolve, reject) => {
-        fetch('https://spotifytuner.herokuapp.com/users/getAllUsers')
+        fetch('http://localhost:3000/users/getAllUsers')
           .then((response) => {
             return response.json()
           })
@@ -124,7 +124,7 @@ class App extends React.Component {
   }
 
   setCurrentLocalUser() {
-    $.get('https://spotifytuner.herokuapp.com/users/getUserBySpotifyID/'+ this.state.currentUser)
+    $.get('http://localhost:3000/users/getUserBySpotifyID/'+ this.state.currentUser)
     .done( result => {
       this.setState({ currentLocal: result });
     })
