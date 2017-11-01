@@ -17,11 +17,17 @@
   text-align: center;
   vertical-align: middle;
   z-index: 2;
+  padding:5px;
   background: transparent;
   // background: radial-gradient(rgba(255,255,255,1), rgba(0,0,0,0));
   // border-radius: 5px;
   // border: 2px solid;
   // background-color: $slightly-black;
+}
+
+.playlist-name{
+
+  font-size: 5vmax;
 }
 
 .playlist-header h1 {

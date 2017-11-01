@@ -87,7 +87,7 @@ class Playlist extends Component{
           <div onDragOver={this.preventDefault} onDrop={(event) => {this.handleDrop(event)}}>
             <header className="playlist-header row text-center">
                       <div className='col-xl-6 text-center'>
-                        <h1>{this.props.playlist.name}</h1>
+                        <div className="playlist-name">{this.props.playlist.name}</div>
                       </div>
                         <p className="show-tracks-button col-xl-2 text-center playlist-header-button" onClick={this.toggleButton}>Show Tracks</p>
             </header>

@@ -74,21 +74,24 @@ class Playlists extends Component{
 
     return(
       <div>
-      <div className='row'>
-        <div className='col-md-5'>
+
+        <div className='row'>
+          <div className='col-md-5'>
+          </div>
+          <div className='col-md-2 playlist-page-header'>
+            <h1>Playlists</h1>
+          </div>
+          <div className='col-md-5'>
+          </div>
         </div>
-        <div className='col-md-2 playlist-page-header'>
-          <h1>Playlists</h1>
+
+        <div className="row">
+          <div className="col-sm-2 hidden-xs text-center sticky-block">
+            <StickySideBar accessToken={this.props.accessToken}/>
+          </div>
+          <div className="col-sm-10 col-xs-12 sticky-container">{renderPlaylists}</div>
         </div>
-        <div className='col-md-5'>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-2 col-xs-6 text-center sticky-block">
-          <StickySideBar accessToken={this.props.accessToken}/>
-        </div>
-        <div className="col-md-10 col-xs-6 sticky-container">{renderPlaylists}</div>
-      </div>
+
       </div>
     )
 }
