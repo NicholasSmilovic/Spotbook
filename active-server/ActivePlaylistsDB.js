@@ -79,11 +79,6 @@ const currentTrack = (accessToken, playlistName, callback) => {
   }
 
   request(options,(error, response, body) => {
-    if(response.statusCode == 401) {
-      delete playlists[playlistName]
-      callback("Playlist Expired")
-      return
-    }
     if (error) {
       callback("bad request to spotify")
       return
@@ -194,10 +189,6 @@ const skipSong = (playlistName, callback) => {
 
   request(options,(error, response, body) => {
     console.log(response.toJSON())
-    if(response.statusCode == 401) {
-      callback("Playlist Expired")
-      return
-    }
     if (error) {
       callback("bad request to spotify")
       return
