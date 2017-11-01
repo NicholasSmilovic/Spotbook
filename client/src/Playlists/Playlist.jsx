@@ -85,7 +85,7 @@ class Playlist extends Component{
         <div>
           {flashMessage}
           <div onDragOver={this.preventDefault} onDrop={(event) => {this.handleDrop(event)}}>
-            <header className="playlist-header row text-center sticky-block">
+            <header className="playlist-header row text-center">
                       <div className='col-xl-6 text-center'>
                         <h1>{this.props.playlist.name}</h1>
                       </div>
