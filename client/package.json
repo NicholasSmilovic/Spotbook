@@ -4,9 +4,10 @@
   "description": "Simple and lightweight Boilerplate for ReactJS projects",
   "scripts": {
     "lint": "eslint --ext .jsx,.js src",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "webpack --config webpack.config.js"
   },
-  "proxy": "http://localhost:3000",
+  "proxy": "https://spotifytuner.herokuapp.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/noahlotzer/react-simple-boilerplate.git"

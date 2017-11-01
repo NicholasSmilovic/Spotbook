@@ -5,7 +5,7 @@
 
     // for (let i = 0; i < highLevelDetails.length; i++) {
     //   return Promise.all(highLevelDetails[i][1].map(trackID => {
-    //     return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+    //     return $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+trackID)
     //   }))
     //   .then((response) => {
     //     console.log((response))
@@ -19,8 +19,8 @@
 
       // for (let i = 0; i < highLevelDetails.length; i++) {
       //   let artistID = highLevelDetails[i][0];
-      //   // let setArtist = $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
-      //   $.get('http://localhost:3000/artists/getArtistByID/'+ artistID)
+      //   // let setArtist = $.get('https://spotifytuner.herokuapp.com/artists/getArtistByID/'+ artistID)
+      //   $.get('https://spotifytuner.herokuapp.com/artists/getArtistByID/'+ artistID)
       //       .done( result => {
       //         if(result.artist_name.length > 15) {
       //           chartData['labels'].push(result.artist_name.slice(0,15)+'...')
@@ -32,7 +32,7 @@
       //       })
             // .then(() => {
             //   return Promise.all(highLevelDetails[i][1].map(trackID => {
-            //     return $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+            //     return $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+trackID)
             //   }))
             //     .then((response) => {
             //       console.log('after')
@@ -41,7 +41,7 @@
             //     })
               // for (let j = 0; j < highLevelDetails[i][1].length; j++) {
               //   let trackID = highLevelDetails[i][1][j];
-                // $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+                // $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+trackID)
               //   .done( result => {
               //     chartDataRaw[i]['tracks'].push(result);
               //   })
@@ -54,7 +54,7 @@
         // $.when(setArtist).done( () => {
         //   for (let j = 0; j < highLevelDetails[i][1].length; j++) {
         //     let trackID = highLevelDetails[i][1][j];
-        //     $.get('http://localhost:3000/tracks/getTrackByID/'+trackID)
+        //     $.get('https://spotifytuner.herokuapp.com/tracks/getTrackByID/'+trackID)
         //     .done( result => {
         //       chartDataRaw[i]['tracks'].push(result);
         //     })

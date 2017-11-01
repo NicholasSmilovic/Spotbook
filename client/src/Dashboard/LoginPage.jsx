@@ -18,7 +18,7 @@ class LoginPage extends Component{
         <div className="row force-to-bottom">
           <div className="col-md-4 col-sm-4 col-xs-2"></div>
             <div className="col-md-4 col-sm-4 col-xs-8">
-               <p className='login-button'><a href="http://localhost:3000/spotify/login">Login With Spotify</a></p>
+               <p className='login-button'><a href="https://spotifytuner.herokuapp.com/spotify/login">Login With Spotify</a></p>
             </div>
           <div className="col-md-4 col-sm-4 col-xs-2"></div>
         </div>
