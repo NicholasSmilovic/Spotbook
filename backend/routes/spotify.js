@@ -159,6 +159,16 @@ module.exports = (DataHelpers) => {
 
 
   function establishUser(userInfo) {
+    let puppyPix = [
+      'http://cdn1-www.dogtime.com/assets/uploads/gallery/siberian-husky-dog-breed-pictures/siberian-husky-dog-breed-pictures-2.jpg',
+      'https://pbs.twimg.com/media/C7Ys7spX0AA-T9f.jpg:large',
+      'http://www.dogexpress.in/wp-content/uploads/2016/03/German-Shepherd-660x330.jpg',
+      'https://drpem3xzef3kf.cloudfront.net/photos/pets/26194555/1/?bust=1370109467&width=632&no_scale_up=1',
+      'http://s1.1zoom.net/prev/460/459310.jpg',
+      'https://img1.picmix.com/output/pic/normal/3/4/8/6/5636843_7a702.gif'
+    ]
+    let urPup = Math.floor(Math.random()*5)
+
     return new Promise((resolve, reject) => {
       DataHelpers.userHelpers.getUserBySpotifyID(userInfo.id)
         .then((response) => {
@@ -168,7 +178,7 @@ module.exports = (DataHelpers) => {
           if (e === 'user not found') {
             let name = userInfo.display_name ? userInfo.display_name : faker.name.findName()
             let id = userInfo.id
-            let image = userInfo.images.length ? userInfo.images[0].url : faker.image.animals()
+            let image = userInfo.images.length ? userInfo.images[0].url : puppyPix[urPup]
             return DataHelpers.userHelpers.addUser(name, id, image)
           }
           reject(e)
@@ -180,6 +190,17 @@ module.exports = (DataHelpers) => {
 
 
   function parseForTracks(tracks) {
+    let puppyPix = [
+      'http://cdn1-www.dogtime.com/assets/uploads/gallery/siberian-husky-dog-breed-pictures/siberian-husky-dog-breed-pictures-2.jpg',
+      'https://pbs.twimg.com/media/C7Ys7spX0AA-T9f.jpg:large',
+      'http://www.dogexpress.in/wp-content/uploads/2016/03/German-Shepherd-660x330.jpg',
+      'https://drpem3xzef3kf.cloudfront.net/photos/pets/26194555/1/?bust=1370109467&width=632&no_scale_up=1',
+      'http://s1.1zoom.net/prev/460/459310.jpg',
+      'https://img1.picmix.com/output/pic/normal/3/4/8/6/5636843_7a702.gif'
+    ]
+    let urPup = Math.floor()*Math.random()*5
+
+
     let cleanTracks = tracks.map(track => {
       let cleanTrack = {
          associated_artist: track.artists[0].id,
@@ -190,9 +211,9 @@ module.exports = (DataHelpers) => {
             {url: track.album.images[1] ? track.album.images[1].url : track.album.images[0].url},
             {url: track.album.images[2] ? track.album.images[2].url : track.album.images[0].url}
          ] : [
-            {url: faker.image.animals()},
-            {url: faker.image.animals()},
-            {url: faker.image.animals()}
+            {url: puppyPix[urPup]},
+            {url: puppyPix[urPup]},
+            {url: puppyPix[urPup]}
             ]
       }
       return cleanTrack
@@ -290,6 +311,17 @@ module.exports = (DataHelpers) => {
     }
 
     function insertReadyArtists(artists) {
+      let puppyPix = [
+        'http://cdn1-www.dogtime.com/assets/uploads/gallery/siberian-husky-dog-breed-pictures/siberian-husky-dog-breed-pictures-2.jpg',
+        'https://pbs.twimg.com/media/C7Ys7spX0AA-T9f.jpg:large',
+        'http://www.dogexpress.in/wp-content/uploads/2016/03/German-Shepherd-660x330.jpg',
+        'https://drpem3xzef3kf.cloudfront.net/photos/pets/26194555/1/?bust=1370109467&width=632&no_scale_up=1',
+        'http://s1.1zoom.net/prev/460/459310.jpg',
+        'https://img1.picmix.com/output/pic/normal/3/4/8/6/5636843_7a702.gif'
+      ]
+      let urPup = Math.floor()*Math.random()*5
+
+
       let insertReady = artists.map(artist => {
         return {
           name: artist.name ? artist.name : 'John Wasson',
@@ -299,9 +331,9 @@ module.exports = (DataHelpers) => {
             {url: artist.images[1] ? artist.images[1].url : artist.images[0].url},
             {url: artist.images[2] ? artist.images[2].url : artist.images[0].url}
             ] : [
-            {url: faker.image.nature()},
-            {url: faker.image.nature()},
-            {url: faker.image.nature()}
+            {url: puppyPix[urPup]},
+            {url: puppyPix[urPup]},
+            {url: puppyPix[urPup]}
             ],
           genresArray: artist.genres.length ? artist.genres : ['Set Phasers to Stun']
         }
