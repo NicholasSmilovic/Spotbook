@@ -7,7 +7,7 @@
     "start": "node server.js",
     "build": "webpack --config webpack.config.js"
   },
-  "proxy": "https://spotifytuner.herokuapp.com",
+  "proxy": "http://localhost:3000",
   "repository": {
     "type": "git",
     "url": "https://github.com/noahlotzer/react-simple-boilerplate.git"
