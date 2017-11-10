@@ -2,6 +2,9 @@ TUNER. for Spotify
 ==================
 
 ## Enhance your social Spotify experience with TUNER.
+Find your musical compatibility with your friends and with other users, and use those connections to discover new music.
+
+Built using React.js and Bootstrap for front-end frameworks, Node.js and Express.js for the backend and PostgreSQL for our relational database. Deployed using Heroku and the PostgreSQL database plugin.
 
 ### Heroku URL
 https://spotifytuner.herokuapp.com
